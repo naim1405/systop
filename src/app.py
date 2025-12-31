@@ -6,7 +6,9 @@ from textual.containers import Container, VerticalScroll
 from textual.widgets import Header, Footer
 
 from src.monitors.cpu import CPUMonitor
+from src.monitors.memory import MemoryMonitor
 from src.widgets.cpu_widget import CPUWidget
+from src.widgets.memory_widget import MemoryWidget
 
 
 class SystemMonitorApp(App):
@@ -21,6 +23,7 @@ class SystemMonitorApp(App):
         super().__init__(**kwargs)
         # Initialize monitors
         self.cpu_monitor = CPUMonitor()
+        self.memory_monitor = MemoryMonitor()
     
     CSS = """
     Screen {
@@ -74,7 +77,7 @@ class SystemMonitorApp(App):
         yield Header(show_clock=True)
         with VerticalScroll():
             yield CPUWidget(self.cpu_monitor, id="cpu_container")
-            yield Container(id="memory_container")
+            yield MemoryWidget(self.memory_monitor, id="memory_container")
             yield Container(id="disk_container")
             yield Container(id="network_container")
             yield Container(id="gpu_container")
@@ -85,7 +88,6 @@ class SystemMonitorApp(App):
     def on_mount(self) -> None:
         """Setup after UI is mounted"""
         # Set border titles for remaining empty containers
-        self.query_one("#memory_container", Container).border_title = "Memory"
         self.query_one("#disk_container", Container).border_title = "Disk"
         self.query_one("#network_container", Container).border_title = "Network"
         self.query_one("#gpu_container", Container).border_title = "GPU"
