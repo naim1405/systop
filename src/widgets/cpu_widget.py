@@ -69,20 +69,23 @@ class CPUWidget(Widget):
         
         # Configure plotext for ASCII output
         plt.clf()  # Clear previous plot
-        plt.theme('dark')
+        plt.theme('clear')  # Use clear theme for better compatibility
         
-        # Plot the data
-        x_data = list(range(len(history)))
-        plt.plot(x_data, history, marker='braille')
+        # Reverse history so newest is on the right
+        # X-axis: negative numbers counting back from 0 (most recent)
+        x_data = list(range(-len(history) + 1, 1))
+        
+        # Plot the data with color
+        plt.plot(x_data, history, marker='braille', color='cyan')
         
         # Configure plot appearance
         plt.title("CPU Usage Over Time")
-        plt.xlabel("Time (seconds ago)")
-        plt.ylabel("Usage (%)")
+        plt.xlabel("Seconds Ago")
+        plt.ylabel("%")
         plt.ylim(0, 100)
         
-        # Set a reasonable plot size
-        plt.plotsize(60, 10)
+        # Set a larger plot size for better visibility
+        plt.plotsize(100, 12)
         
         # Build the plot and return as string
         return plt.build()
@@ -147,9 +150,9 @@ class CPUWidget(Widget):
         """
         if not self.data:
             return Panel(
-                Text("Loading CPU data...", style="italic"),
-                title="CPU",
-                border_style="blue"
+                Text("Loading CPU data...", style="italic dim"),
+                title="[bold cyan]CPU[/bold cyan]",
+                border_style="cyan"
             )
         
         # Create the graph
@@ -161,17 +164,27 @@ class CPUWidget(Widget):
         # Combine graph and table
         from rich.console import Group
         content = Group(
-            Text(graph_str, style="green"),
+            Text(graph_str),
             Text(""),  # Empty line for spacing
             stats_table
         )
         
-        # Get overall usage for dynamic title
+        # Get overall usage for dynamic title and border color
         overall = self.data['overall_percent']
-        title = f"CPU - {format_percentage(overall)}"
+        title = f"[bold]CPU[/bold] - {format_percentage(overall)}"
+        
+        # Dynamic border color based on usage
+        if overall < 50:
+            border_color = "cyan"
+        elif overall < 80:
+            border_color = "blue"
+        elif overall < 95:
+            border_color = "yellow"
+        else:
+            border_color = "red"
         
         return Panel(
             content,
             title=title,
-            border_style="blue" if overall < 80 else "yellow" if overall < 95 else "red"
+            border_style=border_color
         )
