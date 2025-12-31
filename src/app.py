@@ -8,9 +8,11 @@ from textual.widgets import Header, Footer
 from src.monitors.cpu import CPUMonitor
 from src.monitors.memory import MemoryMonitor
 from src.monitors.disk import DiskMonitor
+from src.monitors.network import NetworkMonitor
 from src.widgets.cpu_widget import CPUWidget
 from src.widgets.memory_widget import MemoryWidget
 from src.widgets.disk_widget import DiskWidget
+from src.widgets.network_widget import NetworkWidget
 
 
 class SystemMonitorApp(App):
@@ -27,6 +29,7 @@ class SystemMonitorApp(App):
         self.cpu_monitor = CPUMonitor()
         self.memory_monitor = MemoryMonitor()
         self.disk_monitor = DiskMonitor()
+        self.network_monitor = NetworkMonitor()
     
     CSS = """
     Screen {
@@ -82,7 +85,7 @@ class SystemMonitorApp(App):
             yield CPUWidget(self.cpu_monitor, id="cpu_container")
             yield MemoryWidget(self.memory_monitor, id="memory_container")
             yield DiskWidget(self.disk_monitor, id="disk_container")
-            yield Container(id="network_container")
+            yield NetworkWidget(self.network_monitor, id="network_container")
             yield Container(id="gpu_container")
             yield Container(id="sensors_container")
             yield Container(id="process_container")
@@ -91,7 +94,6 @@ class SystemMonitorApp(App):
     def on_mount(self) -> None:
         """Setup after UI is mounted"""
         # Set border titles for remaining empty containers
-        self.query_one("#network_container", Container).border_title = "Network"
         self.query_one("#gpu_container", Container).border_title = "GPU"
         self.query_one("#sensors_container", Container).border_title = "Sensors"
         self.query_one("#process_container", Container).border_title = "Processes"
