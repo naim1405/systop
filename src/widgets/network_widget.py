@@ -73,8 +73,8 @@ class NetworkWidget(Widget):
         # X-axis: negative numbers counting back from 0 (most recent)
         x_data = list(range(-len(history) + 1, 1))
         
-        # Plot the data with color
-        plt.plot(x_data, history, marker='braille', color='cyan')
+        # Plot the data with color (using default marker and color code)
+        plt.plot(x_data, history, color=45)  # 45 is cyan in ANSI
         
         # Configure plot appearance
         plt.title("Total Bandwidth Over Time")
