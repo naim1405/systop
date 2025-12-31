@@ -5,6 +5,9 @@ from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll
 from textual.widgets import Header, Footer
 
+from src.monitors.cpu import CPUMonitor
+from src.widgets.cpu_widget import CPUWidget
+
 
 class SystemMonitorApp(App):
     """A btop-like system monitor TUI application"""
@@ -12,6 +15,12 @@ class SystemMonitorApp(App):
     BINDINGS = [
         ("q", "quit", "Quit"),
     ]
+    
+    def __init__(self, **kwargs):
+        """Initialize the app with monitors."""
+        super().__init__(**kwargs)
+        # Initialize monitors
+        self.cpu_monitor = CPUMonitor()
     
     CSS = """
     Screen {
@@ -61,10 +70,10 @@ class SystemMonitorApp(App):
     """
     
     def compose(self) -> ComposeResult:
-        """Build UI structure with empty containers"""
+        """Build UI structure with widgets"""
         yield Header(show_clock=True)
         with VerticalScroll():
-            yield Container(id="cpu_container")
+            yield CPUWidget(self.cpu_monitor, id="cpu_container")
             yield Container(id="memory_container")
             yield Container(id="disk_container")
             yield Container(id="network_container")
@@ -75,15 +84,13 @@ class SystemMonitorApp(App):
     
     def on_mount(self) -> None:
         """Setup after UI is mounted"""
-        # Set border titles
-        self.query_one("#cpu_container", Container).border_title = "CPU"
+        # Set border titles for remaining empty containers
         self.query_one("#memory_container", Container).border_title = "Memory"
         self.query_one("#disk_container", Container).border_title = "Disk"
         self.query_one("#network_container", Container).border_title = "Network"
         self.query_one("#gpu_container", Container).border_title = "GPU"
         self.query_one("#sensors_container", Container).border_title = "Sensors"
         self.query_one("#process_container", Container).border_title = "Processes"
-        # Empty for now - will add timers later
     
     def action_quit(self) -> None:
         """Quit application"""
