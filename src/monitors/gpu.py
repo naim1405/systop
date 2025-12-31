@@ -1,13 +1,19 @@
 """GPU monitoring module for collecting GPU metrics with graceful fallback.
 
 This module provides the GPUMonitor class that collects GPU metrics including
-utilization, memory usage, and temperature using GPUtil. If GPUtil is not
-available or no GPU is detected, it gracefully returns None to allow the
-application to display "N/A" instead of crashing.
+utilization, memory usage, and temperature using pynvml (NVIDIA Management Library).
+If pynvml is not available or no GPU is detected, it gracefully returns None to 
+allow the application to display "N/A" instead of crashing.
+
+Note: Only NVIDIA GPUs are supported via pynvml. AMD GPUs are not currently supported.
 """
 
 try:
-    import GPUtil
+    # Try nvidia-ml-py first (official package)
+    from pynvml import nvmlInit, nvmlDeviceGetCount, nvmlDeviceGetHandleByIndex
+    from pynvml import nvmlDeviceGetName, nvmlDeviceGetUtilizationRates
+    from pynvml import nvmlDeviceGetMemoryInfo, nvmlDeviceGetTemperature
+    from pynvml import nvmlShutdown, NVML_TEMPERATURE_GPU
     GPU_AVAILABLE = True
 except ImportError:
     GPU_AVAILABLE = False
@@ -19,11 +25,13 @@ from src.monitors.base import BaseMonitor
 class GPUMonitor(BaseMonitor):
     """Monitor for GPU metrics with graceful fallback.
     
-    Collects GPU utilization, memory usage, and temperature. If GPUtil is not
-    installed or no GPU is detected, returns None to indicate unavailability.
+    Collects NVIDIA GPU utilization, memory usage, and temperature using pynvml.
+    If pynvml is not installed or no GPU is detected, returns None to indicate 
+    unavailability.
     
     Attributes:
         available: Boolean indicating if GPU monitoring is available
+        _initialized: Boolean indicating if NVML was successfully initialized
         
     Example:
         monitor = GPUMonitor()
@@ -42,6 +50,7 @@ class GPUMonitor(BaseMonitor):
                          Default is 60 for one minute of per-2-second data.
         """
         super().__init__(history_size)
+        self._initialized = False
         self.available = GPU_AVAILABLE and self._check_gpus()
     
     def _check_gpus(self) -> bool:
@@ -54,13 +63,16 @@ class GPUMonitor(BaseMonitor):
             return False
         
         try:
-            gpus = GPUtil.getGPUs()
-            return len(gpus) > 0
+            nvmlInit()
+            self._initialized = True
+            device_count = nvmlDeviceGetCount()
+            return device_count > 0
         except Exception:
+            self._initialized = False
             return False
     
     def collect(self) -> Optional[List[Dict[str, Any]]]:
-        """Collect current GPU metrics for all available GPUs.
+        """Collect current GPU metrics for all available NVIDIA GPUs.
         
         Returns None if GPU is not available or an error occurs.
         Otherwise returns a list of dictionaries, one per GPU.
@@ -78,37 +90,52 @@ class GPUMonitor(BaseMonitor):
             [
                 {
                     'id': 0,
-                    'name': 'NVIDIA GeForce RTX 3080',
+                    'name': 'NVIDIA GeForce RTX 3050 Laptop GPU',
                     'load': 75.5,
-                    'memory_used': 8192.0,
-                    'memory_total': 10240.0,
+                    'memory_used': 2048.0,
+                    'memory_total': 4096.0,
                     'temperature': 65.0
                 }
             ]
         """
-        if not self.available:
+        if not self.available or not self._initialized:
             return None
         
         try:
-            gpus = GPUtil.getGPUs()
+            device_count = nvmlDeviceGetCount()
             
-            if not gpus:
+            if device_count == 0:
                 return None
             
             gpu_data = []
-            for gpu in gpus:
+            for i in range(device_count):
+                handle = nvmlDeviceGetHandleByIndex(i)
+                name = nvmlDeviceGetName(handle)
+                
+                # Get utilization (GPU and memory)
+                utilization = nvmlDeviceGetUtilizationRates(handle)
+                
+                # Get memory info
+                memory = nvmlDeviceGetMemoryInfo(handle)
+                
+                # Get temperature
+                try:
+                    temp = nvmlDeviceGetTemperature(handle, NVML_TEMPERATURE_GPU)
+                except:
+                    temp = 0.0
+                
                 data = {
-                    'id': gpu.id,
-                    'name': gpu.name,
-                    'load': gpu.load * 100,  # Convert from 0-1 to 0-100
-                    'memory_used': gpu.memoryUsed,
-                    'memory_total': gpu.memoryTotal,
-                    'temperature': gpu.temperature
+                    'id': i,
+                    'name': name,
+                    'load': float(utilization.gpu),  # Already in 0-100 range
+                    'memory_used': float(memory.used / (1024 * 1024)),  # Convert bytes to MB
+                    'memory_total': float(memory.total / (1024 * 1024)),  # Convert bytes to MB
+                    'temperature': float(temp)
                 }
                 gpu_data.append(data)
                 
                 # Store the load in history for the first GPU (for graphing)
-                if gpu.id == 0:
+                if i == 0:
                     self.history.append(data['load'])
             
             self._last_data = gpu_data
@@ -116,3 +143,11 @@ class GPUMonitor(BaseMonitor):
             
         except Exception:
             return None
+    
+    def __del__(self):
+        """Cleanup: shutdown NVML when monitor is destroyed."""
+        if self._initialized:
+            try:
+                nvmlShutdown()
+            except:
+                pass

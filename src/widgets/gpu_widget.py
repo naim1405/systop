@@ -2,6 +2,8 @@
 
 This module provides the GPUWidget class that visualizes GPU usage,
 memory, and temperature. Gracefully displays "N/A" when GPU is unavailable.
+
+Note: Only NVIDIA GPUs are supported via pynvml.
 """
 
 from typing import Optional, List, Dict, Any
@@ -101,7 +103,8 @@ class GPUWidget(Widget):
         if self.data is None:
             # GPU not available - show N/A
             text = Text("GPU: N/A", style="dim yellow")
-            text.append("\n\nNo GPU detected or GPUtil not available.", style="dim")
+            text.append("\n\nNo NVIDIA GPU detected or pynvml not available.", style="dim")
+            text.append("\nNote: Only NVIDIA GPUs are supported.", style="dim italic")
             return Panel(
                 text,
                 title="[bold cyan]GPU[/bold cyan]",
