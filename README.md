@@ -171,12 +171,44 @@ source env/bin/activate.fish
 # Run all tests
 pytest
 
+# Run with verbose output
+pytest -v
+
 # Run with coverage
 pytest --cov=src --cov-report=html
 
 # Run specific test file
 pytest tests/test_monitors/test_cpu.py
 ```
+
+**Current test status**: 142/142 tests passing, 74% coverage
+
+### Testing Tools
+
+Three test scripts are available:
+
+1. **Automated Test Suite** (< 1 minute):
+   ```bash
+   pytest tests/ -v
+   ```
+   Runs all unit and integration tests.
+
+2. **Quick Stability Test** (5 minutes):
+   ```bash
+   python test_stability.py
+   ```
+   Monitors memory and CPU usage for 5 minutes to detect leaks and performance issues.
+
+3. **Comprehensive Testing** (45-60 minutes):
+   ```bash
+   python test_final_verification.py
+   ```
+   Interactive guide through all manual test cases including:
+   - Widget functionality
+   - Process widget interactions
+   - Keybindings
+   - 30-minute performance test
+   - Edge cases
 
 ### Code Style
 
