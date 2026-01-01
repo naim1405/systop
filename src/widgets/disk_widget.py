@@ -51,10 +51,15 @@ class DiskWidget(Widget):
     def on_mount(self) -> None:
         """Start periodic data updates when widget is mounted."""
         self.set_interval(5.0, self.refresh_data)  # 5-second interval
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            self.data = {'error': str(e)}
         
     def _create_graph(self) -> str:
         """Create ASCII graph of I/O rates over time using plotext.
@@ -171,6 +176,14 @@ class DiskWidget(Widget):
         Returns:
             Rich Panel containing disk information
         """
+        # Handle error state
+        if self.data and 'error' in self.data:
+            return Panel(
+                Text(f"Error: {self.data['error']}", style="red"),
+                title="[bold red]Disk - Error[/bold red]",
+                border_style="red"
+            )
+        
         if not self.data:
             return Panel(
                 Text("Loading disk data...", style="italic dim"),
@@ -178,44 +191,51 @@ class DiskWidget(Widget):
                 border_style="magenta"
             )
         
-        # Create partitions table
-        partition_table = self._create_partition_table()
-        
-        # Create I/O stats table
-        io_stats = self._create_io_stats()
-        
-        # Create the graph
-        graph_str = self._create_graph()
-        
-        # Combine all elements
-        from rich.console import Group
-        content = Group(
-            Text("[bold]Partitions:[/bold]"),
-            partition_table,
-            Text(""),  # Empty line for spacing
-            Text("[bold]I/O Statistics:[/bold]"),
-            io_stats,
-            Text(""),  # Empty line for spacing
-            Text(graph_str)
-        )
-        
-        # Calculate total I/O for dynamic title
-        total_io = self.data['io']['read_bytes_per_sec'] + self.data['io']['write_bytes_per_sec']
-        total_io_str = format_speed(total_io)
-        title = f"[bold]Disk[/bold] - {total_io_str}"
-        
-        # Dynamic border color based on I/O activity
-        if total_io < 1_000_000:  # < 1 MB/s
-            border_color = "magenta"
-        elif total_io < 10_000_000:  # < 10 MB/s
-            border_color = "blue"
-        elif total_io < 50_000_000:  # < 50 MB/s
-            border_color = "yellow"
-        else:
-            border_color = "red"
-        
-        return Panel(
-            content,
-            title=title,
-            border_style=border_color
-        )
+        try:
+            # Create partitions table
+            partition_table = self._create_partition_table()
+            
+            # Create I/O stats table
+            io_stats = self._create_io_stats()
+            
+            # Create the graph
+            graph_str = self._create_graph()
+            
+            # Combine all elements
+            from rich.console import Group
+            content = Group(
+                Text("[bold]Partitions:[/bold]"),
+                partition_table,
+                Text(""),  # Empty line for spacing
+                Text("[bold]I/O Statistics:[/bold]"),
+                io_stats,
+                Text(""),  # Empty line for spacing
+                Text(graph_str)
+            )
+            
+            # Calculate total I/O for dynamic title
+            total_io = self.data['io']['read_bytes_per_sec'] + self.data['io']['write_bytes_per_sec']
+            total_io_str = format_speed(total_io)
+            title = f"[bold]Disk[/bold] - {total_io_str}"
+            
+            # Dynamic border color based on I/O activity
+            if total_io < 1_000_000:  # < 1 MB/s
+                border_color = "magenta"
+            elif total_io < 10_000_000:  # < 10 MB/s
+                border_color = "blue"
+            elif total_io < 50_000_000:  # < 50 MB/s
+                border_color = "yellow"
+            else:
+                border_color = "red"
+            
+            return Panel(
+                content,
+                title=title,
+                border_style=border_color
+            )
+        except Exception as e:
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]Disk - Error[/bold red]",
+                border_style="red"
+            )

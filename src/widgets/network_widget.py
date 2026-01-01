@@ -50,10 +50,15 @@ class NetworkWidget(Widget):
     def on_mount(self) -> None:
         """Start periodic data updates when widget is mounted."""
         self.set_interval(1.0, self.refresh_data)  # 1-second interval
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            self.data = {'error': str(e)}
         
     def _create_graph(self) -> str:
         """Create ASCII graph of bandwidth over time using plotext.
@@ -152,6 +157,14 @@ class NetworkWidget(Widget):
         Returns:
             Rich Panel containing network information
         """
+        # Handle error state
+        if self.data and 'error' in self.data:
+            return Panel(
+                Text(f"Error: {self.data['error']}", style="red"),
+                title="[bold red]Network - Error[/bold red]",
+                border_style="red"
+            )
+        
         if not self.data:
             return Panel(
                 Text("Loading network data...", style="italic dim"),
@@ -159,44 +172,51 @@ class NetworkWidget(Widget):
                 border_style="cyan"
             )
         
-        # Create bandwidth stats table
-        bandwidth_stats = self._create_bandwidth_stats()
-        
-        # Create traffic stats table
-        traffic_stats = self._create_traffic_stats()
-        
-        # Create the graph
-        graph_str = self._create_graph()
-        
-        # Combine all elements
-        from rich.console import Group
-        content = Group(
-            Text.from_markup("[bold]Bandwidth:[/bold]"),
-            bandwidth_stats,
-            Text(""),  # Empty line for spacing
-            Text.from_markup("[bold]Traffic Statistics:[/bold]"),
-            traffic_stats,
-            Text(""),  # Empty line for spacing
-            Text(graph_str)
-        )
-        
-        # Calculate total bandwidth for dynamic title
-        total_bandwidth = self.data['bytes_sent_per_sec'] + self.data['bytes_recv_per_sec']
-        bandwidth_str = format_speed(total_bandwidth)
-        title = f"Network - {bandwidth_str}"
-        
-        # Dynamic border color based on bandwidth activity
-        if total_bandwidth < 100_000:  # < 100 KB/s
-            border_color = "cyan"
-        elif total_bandwidth < 1_000_000:  # < 1 MB/s
-            border_color = "blue"
-        elif total_bandwidth < 10_000_000:  # < 10 MB/s
-            border_color = "yellow"
-        else:
-            border_color = "red"
-        
-        return Panel(
-            content,
-            title=title,
-            border_style=border_color
-        )
+        try:
+            # Create bandwidth stats table
+            bandwidth_stats = self._create_bandwidth_stats()
+            
+            # Create traffic stats table
+            traffic_stats = self._create_traffic_stats()
+            
+            # Create the graph
+            graph_str = self._create_graph()
+            
+            # Combine all elements
+            from rich.console import Group
+            content = Group(
+                Text.from_markup("[bold]Bandwidth:[/bold]"),
+                bandwidth_stats,
+                Text(""),  # Empty line for spacing
+                Text.from_markup("[bold]Traffic Statistics:[/bold]"),
+                traffic_stats,
+                Text(""),  # Empty line for spacing
+                Text(graph_str)
+            )
+            
+            # Calculate total bandwidth for dynamic title
+            total_bandwidth = self.data['bytes_sent_per_sec'] + self.data['bytes_recv_per_sec']
+            bandwidth_str = format_speed(total_bandwidth)
+            title = f"Network - {bandwidth_str}"
+            
+            # Dynamic border color based on bandwidth activity
+            if total_bandwidth < 100_000:  # < 100 KB/s
+                border_color = "cyan"
+            elif total_bandwidth < 1_000_000:  # < 1 MB/s
+                border_color = "blue"
+            elif total_bandwidth < 10_000_000:  # < 10 MB/s
+                border_color = "yellow"
+            else:
+                border_color = "red"
+            
+            return Panel(
+                content,
+                title=title,
+                border_style=border_color
+            )
+        except Exception as e:
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]Network - Error[/bold red]",
+                border_style="red"
+            )

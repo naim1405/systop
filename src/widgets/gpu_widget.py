@@ -56,10 +56,15 @@ class GPUWidget(Widget):
         """Start periodic data updates when widget is mounted."""
         # Update every 2 seconds for GPU (less frequent than CPU)
         self.set_interval(2.0, self.refresh_data)
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            self.data = [{'error': str(e)}]
     
     def _create_graph(self) -> str:
         """Create ASCII graph of GPU usage over time using plotext.
@@ -100,6 +105,14 @@ class GPUWidget(Widget):
         Returns:
             Panel containing GPU information or "N/A" message
         """
+        # Handle error state
+        if self.data and len(self.data) > 0 and 'error' in self.data[0]:
+            return Panel(
+                Text(f"Error: {self.data[0]['error']}", style="red"),
+                title="[bold red]GPU - Error[/bold red]",
+                border_style="red"
+            )
+        
         if self.data is None:
             # GPU not available - show N/A
             text = Text("GPU: N/A", style="dim yellow")
@@ -111,56 +124,63 @@ class GPUWidget(Widget):
                 border_style="cyan"
             )
         
-        # GPU is available - display stats
-        table = Table.grid(padding=(0, 2))
-        table.add_column(justify="left", no_wrap=True)
-        table.add_column(justify="left")
-        
-        for gpu in self.data:
-            # GPU name header
-            table.add_row(
-                Text(f"GPU {gpu['id']}: {gpu['name']}", style="bold cyan")
-            )
-            table.add_row("")
+        try:
+            # GPU is available - display stats
+            table = Table.grid(padding=(0, 2))
+            table.add_column(justify="left", no_wrap=True)
+            table.add_column(justify="left")
             
-            # GPU Utilization
-            load_pct = gpu['load']
-            load_bar = self._create_progress_bar(load_pct, 30)
-            table.add_row(
-                Text("Utilization:", style="bold"),
-                Text(f"{load_bar} {format_percentage(load_pct)}")
-            )
+            for gpu in self.data:
+                # GPU name header
+                table.add_row(
+                    Text(f"GPU {gpu['id']}: {gpu['name']}", style="bold cyan")
+                )
+                table.add_row("")
+                
+                # GPU Utilization
+                load_pct = gpu['load']
+                load_bar = self._create_progress_bar(load_pct, 30)
+                table.add_row(
+                    Text("Utilization:", style="bold"),
+                    Text(f"{load_bar} {format_percentage(load_pct)}")
+                )
+                
+                # Memory Usage
+                mem_used = gpu['memory_used']
+                mem_total = gpu['memory_total']
+                mem_pct = (mem_used / mem_total * 100) if mem_total > 0 else 0
+                mem_bar = self._create_progress_bar(mem_pct, 30)
+                table.add_row(
+                    Text("Memory:", style="bold"),
+                    Text(f"{mem_bar} {format_bytes(mem_used * 1024 * 1024)} / {format_bytes(mem_total * 1024 * 1024)}")
+                )
+                
+                # Temperature
+                temp = gpu['temperature']
+                temp_color = self._get_temp_color(temp)
+                table.add_row(
+                    Text("Temperature:", style="bold"),
+                    Text(f"{temp:.1f}°C", style=temp_color)
+                )
+                
+                table.add_row("")
             
-            # Memory Usage
-            mem_used = gpu['memory_used']
-            mem_total = gpu['memory_total']
-            mem_pct = (mem_used / mem_total * 100) if mem_total > 0 else 0
-            mem_bar = self._create_progress_bar(mem_pct, 30)
-            table.add_row(
-                Text("Memory:", style="bold"),
-                Text(f"{mem_bar} {format_bytes(mem_used * 1024 * 1024)} / {format_bytes(mem_total * 1024 * 1024)}")
-            )
+            # Add graph if history available
+            if self.monitor.get_history():
+                graph = self._create_graph()
+                table.add_row(Text(graph, style="dim"))
             
-            # Temperature
-            temp = gpu['temperature']
-            temp_color = self._get_temp_color(temp)
-            table.add_row(
-                Text("Temperature:", style="bold"),
-                Text(f"{temp:.1f}°C", style=temp_color)
+            return Panel(
+                table,
+                title="[bold cyan]GPU[/bold cyan]",
+                border_style="cyan"
             )
-            
-            table.add_row("")
-        
-        # Add graph if history available
-        if self.monitor.get_history():
-            graph = self._create_graph()
-            table.add_row(Text(graph, style="dim"))
-        
-        return Panel(
-            table,
-            title="[bold cyan]GPU[/bold cyan]",
-            border_style="cyan"
-        )
+        except Exception as e:
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]GPU - Error[/bold red]",
+                border_style="red"
+            )
     
     def _create_progress_bar(self, percent: float, width: int = 30) -> str:
         """Create a text-based progress bar.

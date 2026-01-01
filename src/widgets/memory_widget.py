@@ -49,10 +49,15 @@ class MemoryWidget(Widget):
     def on_mount(self) -> None:
         """Start periodic data updates when widget is mounted."""
         self.set_interval(1.0, self.refresh_data)
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            self.data = {'error': str(e)}
         
     def _create_graph(self) -> str:
         """Create ASCII graph of RAM usage over time using plotext.
@@ -128,6 +133,14 @@ class MemoryWidget(Widget):
         Returns:
             Rich Panel containing memory information
         """
+        # Handle error state
+        if self.data and 'error' in self.data:
+            return Panel(
+                Text(f"Error: {self.data['error']}", style="red"),
+                title="[bold red]Memory - Error[/bold red]",
+                border_style="red"
+            )
+        
         if not self.data:
             return Panel(
                 Text("Loading memory data...", style="italic dim"),
@@ -135,36 +148,43 @@ class MemoryWidget(Widget):
                 border_style="green"
             )
         
-        # Create the graph
-        graph_str = self._create_graph()
-        
-        # Create the stats table
-        stats_table = self._create_stats_table()
-        
-        # Combine graph and table
-        from rich.console import Group
-        content = Group(
-            Text(graph_str),
-            Text(""),  # Empty line for spacing
-            stats_table
-        )
-        
-        # Get RAM usage for dynamic title and border color
-        ram_percent = self.data['ram']['percent']
-        title = f"[bold]Memory[/bold] - {format_percentage(ram_percent)}"
-        
-        # Dynamic border color based on usage
-        if ram_percent < 50:
-            border_color = "green"
-        elif ram_percent < 80:
-            border_color = "blue"
-        elif ram_percent < 95:
-            border_color = "yellow"
-        else:
-            border_color = "red"
-        
-        return Panel(
-            content,
-            title=title,
-            border_style=border_color
-        )
+        try:
+            # Create the graph
+            graph_str = self._create_graph()
+            
+            # Create the stats table
+            stats_table = self._create_stats_table()
+            
+            # Combine graph and table
+            from rich.console import Group
+            content = Group(
+                Text(graph_str),
+                Text(""),  # Empty line for spacing
+                stats_table
+            )
+            
+            # Get RAM usage for dynamic title and border color
+            ram_percent = self.data['ram']['percent']
+            title = f"[bold]Memory[/bold] - {format_percentage(ram_percent)}"
+            
+            # Dynamic border color based on usage
+            if ram_percent < 50:
+                border_color = "green"
+            elif ram_percent < 80:
+                border_color = "blue"
+            elif ram_percent < 95:
+                border_color = "yellow"
+            else:
+                border_color = "red"
+            
+            return Panel(
+                content,
+                title=title,
+                border_style=border_color
+            )
+        except Exception as e:
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]Memory - Error[/bold red]",
+                border_style="red"
+            )

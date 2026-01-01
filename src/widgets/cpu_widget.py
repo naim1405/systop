@@ -51,10 +51,16 @@ class CPUWidget(Widget):
     def on_mount(self) -> None:
         """Start periodic data updates when widget is mounted."""
         self.set_interval(1.0, self.refresh_data)
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            # Set error state instead of crashing
+            self.data = {'error': str(e)}
         
     def _create_graph(self) -> str:
         """Create ASCII graph of CPU usage over time using plotext.
@@ -148,6 +154,14 @@ class CPUWidget(Widget):
         Returns:
             Rich Panel containing CPU information
         """
+        # Handle error state
+        if self.data and 'error' in self.data:
+            return Panel(
+                Text(f"Error: {self.data['error']}", style="red"),
+                title="[bold red]CPU - Error[/bold red]",
+                border_style="red"
+            )
+        
         if not self.data:
             return Panel(
                 Text("Loading CPU data...", style="italic dim"),
@@ -155,36 +169,44 @@ class CPUWidget(Widget):
                 border_style="cyan"
             )
         
-        # Create the graph
-        graph_str = self._create_graph()
-        
-        # Create the stats table
-        stats_table = self._create_stats_table()
-        
-        # Combine graph and table
-        from rich.console import Group
-        content = Group(
-            Text(graph_str),
-            Text(""),  # Empty line for spacing
-            stats_table
-        )
-        
-        # Get overall usage for dynamic title and border color
-        overall = self.data['overall_percent']
-        title = f"[bold]CPU[/bold] - {format_percentage(overall)}"
-        
-        # Dynamic border color based on usage
-        if overall < 50:
-            border_color = "cyan"
-        elif overall < 80:
-            border_color = "blue"
-        elif overall < 95:
-            border_color = "yellow"
-        else:
-            border_color = "red"
-        
-        return Panel(
-            content,
-            title=title,
-            border_style=border_color
-        )
+        try:
+            # Create the graph
+            graph_str = self._create_graph()
+            
+            # Create the stats table
+            stats_table = self._create_stats_table()
+            
+            # Combine graph and table
+            from rich.console import Group
+            content = Group(
+                Text(graph_str),
+                Text(""),  # Empty line for spacing
+                stats_table
+            )
+            
+            # Get overall usage for dynamic title and border color
+            overall = self.data['overall_percent']
+            title = f"[bold]CPU[/bold] - {format_percentage(overall)}"
+            
+            # Dynamic border color based on usage
+            if overall < 50:
+                border_color = "cyan"
+            elif overall < 80:
+                border_color = "blue"
+            elif overall < 95:
+                border_color = "yellow"
+            else:
+                border_color = "red"
+            
+            return Panel(
+                content,
+                title=title,
+                border_style=border_color
+            )
+        except Exception as e:
+            # Render error if something goes wrong during rendering
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]CPU - Error[/bold red]",
+                border_style="red"
+            )

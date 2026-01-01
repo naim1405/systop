@@ -55,10 +55,15 @@ class SensorsWidget(Widget):
         """Start periodic data updates when widget is mounted."""
         # Update every 5 seconds for sensors (less frequent updates)
         self.set_interval(5.0, self.refresh_data)
+        # Initial data fetch
+        self.refresh_data()
         
     def refresh_data(self) -> None:
         """Fetch new data from monitor and trigger re-render."""
-        self.data = self.monitor.collect()
+        try:
+            self.data = self.monitor.collect()
+        except Exception as e:
+            self.data = {'error': str(e)}
     
     def render(self) -> RenderableType:
         """Render temperature sensors widget with readings.
@@ -67,50 +72,65 @@ class SensorsWidget(Widget):
             Empty string if sensors unavailable (widget hidden),
             otherwise Panel containing sensor information table
         """
+        # Handle error state
+        if self.data and 'error' in self.data:
+            return Panel(
+                Text(f"Error: {self.data['error']}", style="red"),
+                title="[bold red]Sensors - Error[/bold red]",
+                border_style="red"
+            )
+        
         if self.data is None or not self.data:
             # Sensors not available - return empty string to hide widget
             return ""
         
-        # Sensors are available - display readings in a table
-        table = Table(show_header=True, header_style="bold cyan", box=None)
-        table.add_column("Sensor", style="cyan", no_wrap=True)
-        table.add_column("Label", style="white")
-        table.add_column("Current", justify="right", style="white")
-        table.add_column("High", justify="right", style="yellow")
-        table.add_column("Critical", justify="right", style="red")
-        
-        # Add rows for each sensor grouped by type
-        for sensor_type, sensors in sorted(self.data.items()):
-            for idx, sensor in enumerate(sensors):
-                # Only show sensor type name for the first sensor of each type
-                type_display = sensor_type if idx == 0 else ""
-                
-                # Get current temperature and apply color coding
-                current_temp = sensor['current']
-                high_temp = sensor['high']
-                critical_temp = sensor['critical']
-                
-                # Color code current temperature based on thresholds
-                temp_color = self._get_temp_color(current_temp, high_temp, critical_temp)
-                current_display = Text(f"{current_temp:.1f}°C", style=temp_color)
-                
-                # Format high and critical temps (may be None)
-                high_display = f"{high_temp:.1f}°C" if high_temp is not None else "N/A"
-                critical_display = f"{critical_temp:.1f}°C" if critical_temp is not None else "N/A"
-                
-                table.add_row(
-                    type_display,
-                    sensor['label'],
-                    current_display,
-                    high_display,
-                    critical_display
-                )
-        
-        return Panel(
-            table,
-            title="[bold magenta]Temperature Sensors[/bold magenta]",
-            border_style="magenta"
-        )
+        try:
+            # Sensors are available - display readings in a table
+            table = Table(show_header=True, header_style="bold cyan", box=None)
+            table.add_column("Sensor", style="cyan", no_wrap=True)
+            table.add_column("Label", style="white")
+            table.add_column("Current", justify="right", style="white")
+            table.add_column("High", justify="right", style="yellow")
+            table.add_column("Critical", justify="right", style="red")
+            
+            # Add rows for each sensor grouped by type
+            for sensor_type, sensors in sorted(self.data.items()):
+                for idx, sensor in enumerate(sensors):
+                    # Only show sensor type name for the first sensor of each type
+                    type_display = sensor_type if idx == 0 else ""
+                    
+                    # Get current temperature and apply color coding
+                    current_temp = sensor['current']
+                    high_temp = sensor['high']
+                    critical_temp = sensor['critical']
+                    
+                    # Color code current temperature based on thresholds
+                    temp_color = self._get_temp_color(current_temp, high_temp, critical_temp)
+                    current_display = Text(f"{current_temp:.1f}°C", style=temp_color)
+                    
+                    # Format high and critical temps (may be None)
+                    high_display = f"{high_temp:.1f}°C" if high_temp is not None else "N/A"
+                    critical_display = f"{critical_temp:.1f}°C" if critical_temp is not None else "N/A"
+                    
+                    table.add_row(
+                        type_display,
+                        sensor['label'],
+                        current_display,
+                        high_display,
+                        critical_display
+                    )
+            
+            return Panel(
+                table,
+                title="[bold magenta]Temperature Sensors[/bold magenta]",
+                border_style="magenta"
+            )
+        except Exception as e:
+            return Panel(
+                Text(f"Render error: {str(e)}", style="red"),
+                title="[bold red]Sensors - Error[/bold red]",
+                border_style="red"
+            )
     
     def _get_temp_color(self, current: float, high: Optional[float], 
                         critical: Optional[float]) -> str:
