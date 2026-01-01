@@ -11,12 +11,14 @@ from src.monitors.disk import DiskMonitor
 from src.monitors.network import NetworkMonitor
 from src.monitors.gpu import GPUMonitor
 from src.monitors.sensors import SensorsMonitor
+from src.monitors.processes import ProcessMonitor
 from src.widgets.cpu_widget import CPUWidget
 from src.widgets.memory_widget import MemoryWidget
 from src.widgets.disk_widget import DiskWidget
 from src.widgets.network_widget import NetworkWidget
 from src.widgets.gpu_widget import GPUWidget
 from src.widgets.sensors_widget import SensorsWidget
+from src.widgets.process_widget import ProcessWidget
 
 
 class SystemMonitorApp(App):
@@ -36,6 +38,7 @@ class SystemMonitorApp(App):
         self.network_monitor = NetworkMonitor()
         self.gpu_monitor = GPUMonitor()
         self.sensors_monitor = SensorsMonitor()
+        self.process_monitor = ProcessMonitor()
     
     CSS = """
     Screen {
@@ -94,13 +97,13 @@ class SystemMonitorApp(App):
             yield NetworkWidget(self.network_monitor, id="network_container")
             yield GPUWidget(self.gpu_monitor, id="gpu_container")
             yield SensorsWidget(self.sensors_monitor, id="sensors_container")
-            yield Container(id="process_container")
+            yield ProcessWidget(self.process_monitor, id="process_container")
         yield Footer()
     
     def on_mount(self) -> None:
         """Setup after UI is mounted"""
-        # Set border titles for remaining empty containers
-        self.query_one("#process_container", Container).border_title = "Processes"
+        # Process widget sets its own border title in render()
+        pass
     
     def action_quit(self) -> None:
         """Quit application"""
