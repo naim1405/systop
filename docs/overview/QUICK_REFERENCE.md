@@ -22,8 +22,8 @@ This guide helps you navigate the systop project after Step 16 completion.
 | Script | Duration | Purpose |
 |--------|----------|---------|
 | `pytest tests/ -v` | < 1 min | Run all 142 automated tests |
-| `python test_stability.py` | 5 min | Quick memory leak and CPU usage check |
-| `python test_final_verification.py` | 45-60 min | Comprehensive interactive testing with guided checklist |
+| `python scripts/qa/test_stability.py` | 5 min | Quick memory leak and CPU usage check |
+| `python scripts/qa/test_final_verification.py` | 45-60 min | Comprehensive interactive testing with guided checklist |
 
 ---
 
@@ -69,8 +69,8 @@ python main.py
 │   └── CHANGELOG.md                # Version history
 │
 ├── 🧪 Test Scripts
-│   ├── test_stability.py           # 5-min stability test
-│   ├── test_final_verification.py  # Full interactive test
+│   ├── scripts/qa/test_stability.py           # 5-min stability test
+│   ├── scripts/qa/test_final_verification.py  # Full interactive test
 │   └── tests/                      # Unit & integration tests
 │       ├── test_integration.py
 │       ├── test_monitors/          # Monitor module tests
@@ -157,13 +157,13 @@ pytest --cov=src --cov-report=html                 # With coverage
 **Quick test (5 minutes):**
 ```bash
 source env/bin/activate.fish
-python test_stability.py
+python scripts/qa/test_stability.py
 ```
 
 **Full test (45-60 minutes):**
 ```bash
 source env/bin/activate.fish
-python test_final_verification.py
+python scripts/qa/test_final_verification.py
 ```
 Follow the interactive prompts.
 
@@ -183,8 +183,8 @@ Try all keybindings and features.
 - ✅ All widgets functional
 - ✅ Real-time updates working
 - ✅ Error handling robust
-- ⏳ 30-minute stability test (optional - use test_stability.py)
-- ⏳ Interactive features (optional - use test_final_verification.py)
+- ⏳ 30-minute stability test (optional - use scripts/qa/test_stability.py)
+- ⏳ Interactive features (optional - use scripts/qa/test_final_verification.py)
 
 ---
 

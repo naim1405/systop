@@ -36,8 +36,8 @@
 - [x] RELEASE_SUMMARY.md created
 
 ### 4. Test Scripts Created ✅
-- [x] `test_final_verification.py` - Comprehensive interactive testing suite
-- [x] `test_stability.py` - Quick 5-minute stability test
+- [x] `scripts/qa/test_final_verification.py` - Comprehensive interactive testing suite
+- [x] `scripts/qa/test_stability.py` - Quick 5-minute stability test
 - [x] Both scripts executable and documented
 
 ### 5. App Verification ✅
@@ -86,9 +86,9 @@ python main.py
 ### Performance Testing (30+ minutes)
 To test manually:
 ```bash
-python test_stability.py  # Quick 5-min test
+python scripts/qa/test_stability.py  # Quick 5-min test
 # OR
-python test_final_verification.py  # Full 30-min test
+python scripts/qa/test_final_verification.py  # Full 30-min test
 ```
 
 ### Edge Cases
@@ -114,7 +114,7 @@ To test manually:
 | GPU and sensors gracefully handle unavailability | ✅ PASS | Shows "N/A" or hides widget appropriately |
 | Unit tests pass with >80% coverage | ✅ PASS | Core modules >80%, overall 74% |
 | Integration smoke test passes | ✅ PASS | test_integration.py passes |
-| No memory leaks after 30min run | ⏳ OPTIONAL | Requires `test_stability.py` or `test_final_verification.py` |
+| No memory leaks after 30min run | ⏳ OPTIONAL | Requires `scripts/qa/test_stability.py` or `scripts/qa/test_final_verification.py` |
 | App responds to all keybindings | ⏳ OPTIONAL | Requires manual interactive testing |
 | Code is clean, documented, follows best practices | ✅ PASS | PEP 8, type hints, docstrings |
 
@@ -139,8 +139,8 @@ To test manually:
 - [x] `test_integration.py` - Integration tests
 - [x] All monitor unit tests (7 files)
 - [x] All utility unit tests (2 files)
-- [x] `test_stability.py` - Stability testing script
-- [x] `test_final_verification.py` - Interactive testing script
+- [x] `scripts/qa/test_stability.py` - Stability testing script
+- [x] `scripts/qa/test_final_verification.py` - Interactive testing script
 
 ### Documentation Files ✅
 - [x] `README.md` - User guide
@@ -165,10 +165,10 @@ To test manually:
 Run these if desired:
 ```bash
 # Quick test (5 minutes)
-python test_stability.py
+python scripts/qa/test_stability.py
 
 # Full test (45-60 minutes)
-python test_final_verification.py
+python scripts/qa/test_final_verification.py
 
 # Or just use the app
 python main.py
@@ -191,8 +191,8 @@ python main.py
 8. ✅ No critical bugs discovered
 
 **Optional** - Run interactive tests for 100% confidence:
-- `python test_stability.py` (5 min quick check)
-- `python test_final_verification.py` (full verification)
+- `python scripts/qa/test_stability.py` (5 min quick check)
+- `python scripts/qa/test_final_verification.py` (full verification)
 - Or simply use the app for 10-15 minutes
 
 ---
@@ -257,6 +257,6 @@ The optional interactive testing can be performed at any time using the provided
 
 **Scripts to run** (optional):
 - `pytest tests/ -v` - Run test suite
-- `python test_stability.py` - 5-min stability test
-- `python test_final_verification.py` - Full interactive test
+- `python scripts/qa/test_stability.py` - 5-min stability test
+- `python scripts/qa/test_final_verification.py` - Full interactive test
 - `python main.py` - Use the app!

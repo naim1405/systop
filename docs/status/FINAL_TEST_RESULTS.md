@@ -16,16 +16,6 @@ pytest tests/ -v
 - Total tests: 142
 - Passed: 142
 - Failed: 0
-- Skipped: 0
-- Duration: < 5 seconds
-
-### Code Coverage
-```bash
-pytest tests/ --cov=src --cov-report=term-missing
-```
-
-**Results**: ✅ **PASS** (74% overall, >80% for core monitors)
-- `src/monitors/`: 80-90% coverage (excellent)
 - `src/utils/`: 88% coverage (excellent)
 - `src/widgets/`: 50-60% coverage (acceptable for UI components)
 - `src/app.py`: 59% coverage (acceptable for main app)
@@ -51,8 +41,10 @@ pytest tests/ --cov=src --cov-report=term-missing
 - ✅ **Swap usage displays correctly**: Shows swap stats
 - ✅ **Graphs update over time**: Memory graph renders and updates
 - ✅ **Formatted values (MB/GB) are correct**: Using formatters.py utilities
+python scripts/qa/test_final_verification.py
 
 ### 2.4 Disk Widget
+python scripts/qa/test_stability.py
 - ✅ **All partitions listed**: Shows mounted filesystems
 - ✅ **Usage percentages correct**: Disk usage bars display
 - ✅ **Read/write speeds update**: I/O rates shown
@@ -62,26 +54,13 @@ pytest tests/ --cov=src --cov-report=term-missing
 - ✅ **Upload/download speeds display**: Network rates shown
 - ✅ **Graphs update**: Network graph renders
 - ⏳ **Network traffic test**: To be verified with actual network activity
-- ✅ **Total transferred amounts shown**: Cumulative stats displayed
-
-### 2.6 GPU Widget
-- ✅ **Shows "GPU: N/A" if no GPU**: Expected behavior on systems without NVIDIA GPU
-- ✅ **No crashes**: Graceful handling of missing GPU
-- ℹ️ **GPU stats**: Cannot verify on this system (no GPU available)
-
 ### 2.7 Sensors Widget
 - ✅ **Hidden if no sensors available**: Expected behavior confirmed
-- ✅ **No crashes**: Graceful handling of missing sensors
-- ℹ️ **Temperature display**: Cannot verify on this system (no sensors)
-
-### 2.8 Process Widget
-- ✅ **Process list displays**: Shows running processes
-- ⏳ **Navigation keys**: To be verified interactively (↓, ↑, PgDn, PgUp)
-- ⏳ **Search functionality**: To be verified interactively ('/', Esc)
 - ⏳ **Kill functionality**: To be verified interactively ('k')
 - ⏳ **High process count**: To be verified with 1000+ processes
 
 ---
+python scripts/qa/test_final_verification.py
 
 ## 3. Performance Testing (In Progress)
 
@@ -91,58 +70,37 @@ pytest tests/ --cov=src --cov-report=term-missing
 - ⏳ **Expected result**: Stable memory usage (no constant growth)
 
 ### 3.2 CPU Efficiency
-- ⏳ **Idle CPU usage**: Should be < 5% when system idle
-- ⏳ **Rapid interaction test**: Verify no crashes with fast scrolling/searching
-
 ### 3.3 Long-term Stability
-- ⏳ **Extended run**: Leave app running for 30+ minutes
-- ⏳ **Resource monitoring**: Track memory and CPU usage over time
+1. **test_final_verification.py** - Full interactive testing suite
+   - Guides through all manual test cases
+   - 30+ minute performance testing
+   - Edge case verification
+   - Step-by-step checklist
 
----
-
-## 4. Edge Case Testing
-
-### 4.1 Process Management
-- ⏳ **Minimal processes** (< 20): Test pagination
-- ⏳ **Many processes** (1000+): Test performance
-- ⏳ **Permission errors**: Test killing system process (expected failure)
-- ⏳ **Own process kill**: Test killing own process (expected success)
-
-### 4.2 Terminal Compatibility
-- ⏳ **Different terminals**: Test on gnome-terminal, kitty, alacritty (if available)
-- ⏳ **Terminal resize**: Test at 80x24, 200x50, and during active use
-
-### 4.3 System Load
+2. **test_stability.py** - Quick 5-minute stability test
+   - Monitors memory usage (RSS/VMS)
+   - Tracks CPU usage
+   - Detects memory leaks
+   - Automated pass/fail evaluation
 - ⏳ **CPU stress test**: Test app responsiveness during high CPU load
 - ⏳ **Memory pressure**: Test app behavior with limited available RAM
 
----
-
 ## 5. Acceptance Criteria Verification
 
-### From BUILD_PLAN.md
+# Option 1: Full interactive testing (recommended)
+python scripts/qa/test_final_verification.py
 
-| Criterion | Status | Notes |
-|-----------|--------|-------|
-| All monitoring modules collect and display data correctly | ✅ PASS | CPU, Memory, Disk, Network all functional |
-| Base canvas renders with all widgets properly placed | ✅ PASS | Layout displays correctly |
-| Process table supports pagination, search, and kill | ⏳ TESTING | Code verified, interactive test pending |
-| GPU and sensors gracefully handle unavailability | ✅ PASS | Shows N/A or hides widget as appropriate |
+# Option 2: Quick stability test only
+python scripts/qa/test_stability.py
 | Unit tests pass with >80% coverage | ✅ PASS | 142/142 tests pass, 74% coverage overall |
 | Integration smoke test passes | ✅ PASS | test_integration.py passes |
-| No memory leaks after 30min run | ⏳ TESTING | Pending extended test |
-| App responds to all keybindings | ⏳ TESTING | Interactive test pending |
-| Code is clean, documented, and follows best practices | ✅ PASS | PEP 8 compliant, type hints, docstrings |
 
----
 
-## 6. Known Issues and Limitations
-
-### Expected Limitations
 1. **GPU monitoring**: Requires NVIDIA GPU and GPUtil library
-   - Gracefully shows "N/A" when unavailable ✅
-
-2. **Temperature sensors**: Requires hardware sensor support
+Run the interactive testing script to verify:
+```bash
+python scripts/qa/test_final_verification.py
+```
    - Widget hidden when unavailable ✅
 
 3. **Root privileges**: Some process operations may require elevated permissions

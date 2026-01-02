@@ -135,7 +135,7 @@ try:
         print('='*70)
         print()
         print('systop is stable and ready for extended testing.')
-        print('Run the full 30-minute test with: python test_final_verification.py')
+        print('Run the full 30-minute test with: python scripts/qa/test_final_verification.py')
     else:
         print('='*70)
         print('⚠️  OVERALL: NEEDS REVIEW')

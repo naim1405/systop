@@ -78,7 +78,7 @@ Comprehensive test suite with 16 tests:
 **Test Results**: 16/16 PASSED ✓
 
 ### 5. Manual Testing ✓
-Created comprehensive manual test script (test_process_manual.py):
+Created comprehensive manual test script (scripts/qa/test_process_manual.py):
 - ✓ Process collection and data structure
 - ✓ Sorting by multiple fields
 - ✓ Pagination logic (multiple pages)
@@ -196,7 +196,7 @@ Uses config.py settings:
 1. `src/monitors/processes.py` (162 lines)
 2. `src/widgets/process_widget.py` (435 lines)
 3. `tests/test_monitors/test_processes.py` (434 lines)
-4. `test_process_manual.py` (308 lines)
+4. `scripts/qa/test_process_manual.py` (308 lines)
 
 ### Modified:
 1. `src/app.py` (added ProcessMonitor and ProcessWidget)

@@ -46,10 +46,10 @@ python main.py
 pytest tests/ -v
 
 # Run stability test
-python test_stability.py
+python scripts/qa/test_stability.py
 
 # Run comprehensive testing
-python test_final_verification.py
+python scripts/qa/test_final_verification.py
 ```
 
 ---
@@ -73,8 +73,8 @@ python test_final_verification.py
 
 ### Interactive Testing ⏳
 Scripts provided for complete verification:
-- `test_final_verification.py` - Full interactive suite
-- `test_stability.py` - Quick 5-minute stability check
+- `scripts/qa/test_final_verification.py` - Full interactive suite
+- `scripts/qa/test_stability.py` - Quick 5-minute stability check
 
 ---
 
@@ -189,14 +189,14 @@ All criteria from Step 16 met:
 ### Quick Test (5 minutes)
 ```bash
 source env/bin/activate.fish
-python test_stability.py
+python scripts/qa/test_stability.py
 ```
 Monitors memory and CPU for 5 minutes, detects issues.
 
 ### Complete Test (45-60 minutes)
 ```bash
 source env/bin/activate.fish
-python test_final_verification.py
+python scripts/qa/test_final_verification.py
 ```
 Interactive guide through all test cases including 30-min stability test.
 
@@ -219,8 +219,8 @@ Use the app normally:
 
 ### For User/Tester:
 1. Run `python main.py` to see it in action
-2. Run `python test_stability.py` for quick verification
-3. Run `python test_final_verification.py` for thorough testing
+2. Run `python scripts/qa/test_stability.py` for quick verification
+3. Run `python scripts/qa/test_final_verification.py` for thorough testing
 4. Report any issues found
 
 ### For Developer:
@@ -245,7 +245,7 @@ The application is fully functional, well-tested, and ready for use. All accepta
 
 **Status**: ✅ **APPROVED FOR RELEASE**
 
-Run `python test_final_verification.py` for final interactive verification.
+Run `python scripts/qa/test_final_verification.py` for final interactive verification.
 
 ---
 
@@ -256,6 +256,6 @@ Run `python test_final_verification.py` for final interactive verification.
 - [CHANGELOG.md](../../CHANGELOG.md) - Version history
 
 **Test Scripts**:
-- `test_final_verification.py` - Complete interactive testing
-- `test_stability.py` - Quick stability check
+- `scripts/qa/test_final_verification.py` - Complete interactive testing
+- `scripts/qa/test_stability.py` - Quick stability check
 - `pytest tests/ -v` - Automated test suite

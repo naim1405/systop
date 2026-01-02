@@ -195,13 +195,13 @@ Three test scripts are available:
 
 2. **Quick Stability Test** (5 minutes):
    ```bash
-   python test_stability.py
+   python scripts/qa/test_stability.py
    ```
    Monitors memory and CPU usage for 5 minutes to detect leaks and performance issues.
 
 3. **Comprehensive Testing** (45-60 minutes):
    ```bash
-   python test_final_verification.py
+   python scripts/qa/test_final_verification.py
    ```
    Interactive guide through all manual test cases including:
    - Widget functionality
