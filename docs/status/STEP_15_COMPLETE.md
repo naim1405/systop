@@ -11,7 +11,7 @@ Comprehensive documentation has been created for the systop project, making it r
 
 ### ✅ 1. Created Comprehensive README.md
 
-**Location**: [README.md](README.md)
+**Location**: [README.md](../../README.md)
 
 **Sections Included**:
 - ✅ Project title and description
@@ -79,7 +79,7 @@ Comprehensive documentation has been created for the systop project, making it r
 
 ### ✅ 4. Created CHANGELOG.md
 
-**Location**: [CHANGELOG.md](CHANGELOG.md)
+**Location**: [CHANGELOG.md](../../CHANGELOG.md)
 
 **Contents**:
 - ✅ Follows Keep a Changelog format

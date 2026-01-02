@@ -250,10 +250,10 @@ Run `python test_final_verification.py` for final interactive verification.
 ---
 
 **Documentation**:
-- [README.md](README.md) - User guide
-- [BUILD_PLAN.md](BUILD_PLAN.md) - Development guide
-- [FINAL_TEST_RESULTS.md](FINAL_TEST_RESULTS.md) - Detailed test results
-- [CHANGELOG.md](CHANGELOG.md) - Version history
+- [README.md](../../README.md) - User guide
+- [BUILD_PLAN.md](../plan/BUILD_PLAN.md) - Development guide
+- [FINAL_TEST_RESULTS.md](../status/FINAL_TEST_RESULTS.md) - Detailed test results
+- [CHANGELOG.md](../../CHANGELOG.md) - Version history
 
 **Test Scripts**:
 - `test_final_verification.py` - Complete interactive testing

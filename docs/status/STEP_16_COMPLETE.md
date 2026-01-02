@@ -250,10 +250,10 @@ The optional interactive testing can be performed at any time using the provided
 ---
 
 **Files to review**:
-- [README.md](README.md) - Start here for users
-- [RELEASE_SUMMARY.md](RELEASE_SUMMARY.md) - Quick overview
+- [README.md](../../README.md) - Start here for users
+- [RELEASE_SUMMARY.md](../overview/RELEASE_SUMMARY.md) - Quick overview
 - [FINAL_TEST_RESULTS.md](FINAL_TEST_RESULTS.md) - Detailed testing info
-- [BUILD_PLAN.md](BUILD_PLAN.md) - Development process
+- [BUILD_PLAN.md](../plan/BUILD_PLAN.md) - Development process
 
 **Scripts to run** (optional):
 - `pytest tests/ -v` - Run test suite

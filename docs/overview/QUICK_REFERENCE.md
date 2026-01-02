@@ -8,12 +8,12 @@ This guide helps you navigate the systop project after Step 16 completion.
 
 | File | Purpose | When to Read |
 |------|---------|-------------|
-| [README.md](README.md) | **START HERE** - User guide, installation, usage | First time users, end users |
+| [README.md](../../README.md) | **START HERE** - User guide, installation, usage | First time users, end users |
 | [RELEASE_SUMMARY.md](RELEASE_SUMMARY.md) | Quick project overview and status | Quick reference, project summary |
-| [BUILD_PLAN.md](BUILD_PLAN.md) | Complete 16-step development guide | Developers, understanding architecture |
-| [STEP_16_COMPLETE.md](STEP_16_COMPLETE.md) | Final testing checklist and results | Final verification, handoff |
-| [FINAL_TEST_RESULTS.md](FINAL_TEST_RESULTS.md) | Detailed test results and analysis | In-depth testing information |
-| [CHANGELOG.md](CHANGELOG.md) | Version history | Track changes between versions |
+| [BUILD_PLAN.md](../plan/BUILD_PLAN.md) | Complete 16-step development guide | Developers, understanding architecture |
+| [STEP_16_COMPLETE.md](../status/STEP_16_COMPLETE.md) | Final testing checklist and results | Final verification, handoff |
+| [FINAL_TEST_RESULTS.md](../status/FINAL_TEST_RESULTS.md) | Detailed test results and analysis | In-depth testing information |
+| [CHANGELOG.md](../../CHANGELOG.md) | Version history | Track changes between versions |
 
 ---
 
@@ -124,7 +124,7 @@ python main.py
 ```
 
 **Read documentation:**
-- Start with [README.md](README.md)
+- Start with [README.md](../../README.md)
 - See [RELEASE_SUMMARY.md](RELEASE_SUMMARY.md) for overview
 
 ---
@@ -132,7 +132,7 @@ python main.py
 ### For Developers
 
 **Understand the code:**
-1. Read [BUILD_PLAN.md](BUILD_PLAN.md) - Full architecture
+1. Read [BUILD_PLAN.md](../plan/BUILD_PLAN.md) - Full architecture
 2. Look at `src/app.py` - Main application
 3. Explore `src/monitors/` - Data collection
 4. Explore `src/widgets/` - UI components
@@ -192,7 +192,7 @@ Try all keybindings and features.
 
 **None!** 🎉
 
-All known limitations are documented in [README.md](README.md):
+All known limitations are documented in [README.md](../../README.md):
 - GPU monitoring: NVIDIA only (shows "N/A" gracefully)
 - Sensors: May not work on VMs (hides widget gracefully)
 - Platform: Linux only (by design)
@@ -221,11 +221,11 @@ All 16 steps from BUILD_PLAN.md completed successfully.
 
 ## 📞 Questions?
 
-1. **How do I use it?** → Read [README.md](README.md)
-2. **How was it built?** → Read [BUILD_PLAN.md](BUILD_PLAN.md)
-3. **Is it tested?** → Read [FINAL_TEST_RESULTS.md](FINAL_TEST_RESULTS.md)
+1. **How do I use it?** → Read [README.md](../../README.md)
+2. **How was it built?** → Read [BUILD_PLAN.md](../plan/BUILD_PLAN.md)
+3. **Is it tested?** → Read [FINAL_TEST_RESULTS.md](../status/FINAL_TEST_RESULTS.md)
 4. **Quick summary?** → Read [RELEASE_SUMMARY.md](RELEASE_SUMMARY.md)
-5. **What's next?** → Read [STEP_16_COMPLETE.md](STEP_16_COMPLETE.md)
+5. **What's next?** → Read [STEP_16_COMPLETE.md](../status/STEP_16_COMPLETE.md)
 
 ---
 
