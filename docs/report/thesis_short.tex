@@ -446,284 +446,87 @@ Our analysis identified key gaps motivating systop's development:
 \chapter{Requirements \& Development Workflow}
 \label{chap:requirements}
 
-This chapter presents the comprehensive requirements analysis that guided systop's development, including functional and non-functional requirements, system constraints, technology selection rationale, and the structured development workflow employed throughout the project. Understanding these requirements and the development process provides context for the design and implementation decisions discussed in subsequent chapters.
+This chapter details the requirements analysis and development methodology that guided systop's implementation.
 
 \section{Functional Requirements}
 \label{sec:functional-requirements}
 
-Functional requirements define what the system must do from a user's perspective. We organized systop's functional requirements into categories based on monitoring domains and user interactions. Due to space constraints, we present key requirements for each category:
+We organized systop's functional requirements into monitoring domain categories:
 
-\subsection{CPU Monitoring Requirements}
-\begin{itemize}
-    \item \textbf{FR-CPU-1}: Display overall CPU usage as a percentage (0-100\%)
-    \item \textbf{FR-CPU-2}: Display individual CPU core usage for all logical processors
-    \item \textbf{FR-CPU-3}: Display current CPU frequency in GHz
-    \item \textbf{FR-CPU-6}: Display real-time ASCII graph showing CPU usage history (60 seconds)
-    \item \textbf{FR-CPU-7}: Update CPU metrics at least once per second
-\end{itemize}
+\textbf{CPU Monitoring}: Display overall and per-core CPU usage percentages, current frequency, and real-time ASCII graphs showing 60-second history with updates at least once per second.
 
-\subsection{Memory and Process Requirements}
-\begin{itemize}
-    \item \textbf{FR-MEM-1}: Display total, used, and available RAM in human-readable format
-    \item \textbf{FR-MEM-6}: Display real-time ASCII graph showing memory usage history
-    \item \textbf{FR-PROC-2}: Support sorting processes by CPU usage, memory usage, PID, or name
-    \item \textbf{FR-PROC-3}: Support searching/filtering processes by name with real-time updates
-    \item \textbf{FR-PROC-5}: Allow users to kill selected processes with confirmation dialog
-\end{itemize}
+\textbf{Memory Monitoring}: Display total, used, and available RAM in human-readable format with historical graphs.
 
-\subsection{Network and Disk Requirements}
-\begin{itemize}
-    \item \textbf{FR-NET-2}: Display current upload speed for each interface in KB/s or MB/s
-    \item \textbf{FR-NET-3}: Display current download speed for each interface
-    \item \textbf{FR-DISK-4/5}: Display current disk read/write speeds
-    \item \textbf{FR-DISK-7}: Display visual bars representing partition space utilization
-\end{itemize}
+\textbf{Process Management}: Support sorting by CPU/memory/PID/name, real-time search/filtering, and process termination with confirmation dialogs.
 
-\subsection{GPU and Sensor Requirements}
-\begin{itemize}
-    \item \textbf{FR-GPU-1}: Attempt to detect and display NVIDIA GPU information if available
-    \item \textbf{FR-GPU-5}: Display ``N/A'' when GPU monitoring is unavailable
-    \item \textbf{FR-GPU-6}: Not crash or fail when GPU monitoring is unavailable
-    \item \textbf{FR-TEMP-3}: Hide temperature widget when no sensors are available
-\end{itemize}
+\textbf{Disk \& Network}: Display read/write speeds, upload/download rates per interface, and visual bars for partition utilization.
+
+\textbf{GPU \& Sensors}: Detect and display NVIDIA GPU information when available, show ``N/A'' gracefully when unavailable, and hide sensor widgets when no hardware is detected.
 
 \section{Non-functional Requirements}
 \label{sec:non-functional-requirements}
 
-Non-functional requirements specify quality attributes and constraints that define how the system performs its functions.
+\textbf{Performance}: Consume <1\% CPU and <50MB memory during operation, update UI smoothly without flickering, use fixed-size circular buffers (60 data points) to prevent unbounded memory growth.
 
-\subsection{Performance Requirements}
-\begin{itemize}
-    \item \textbf{NFR-PERF-1}: Consume less than 1\% CPU during normal operation
-    \item \textbf{NFR-PERF-2}: Consume less than 50MB of memory during normal operation
-    \item \textbf{NFR-PERF-3}: Update UI smoothly without visible flickering or lag
-    \item \textbf{NFR-PERF-5}: Use circular buffers with fixed size (60 data points) to prevent unbounded memory growth
-\end{itemize}
+\textbf{Reliability}: Handle missing hardware (GPU, sensors) gracefully, recover from system call failures without terminating, and continue operation despite individual module errors.
 
-\subsection{Reliability Requirements}
-\begin{itemize}
-    \item \textbf{NFR-REL-1}: Handle missing or unavailable hardware (GPU, sensors) gracefully without crashing
-    \item \textbf{NFR-REL-2}: Handle system call failures without terminating
-    \item \textbf{NFR-REL-3}: Continue operating even if individual monitoring modules encounter errors
-\end{itemize}
+\textbf{Maintainability}: Follow PEP 8 guidelines, separate concerns (data collection, logic, presentation), and achieve 70\% overall test coverage with 80\%+ for core modules.
 
-\subsection{Maintainability Requirements}
-\begin{itemize}
-    \item \textbf{NFR-MAIN-1}: Follow PEP 8 Python style guidelines
-    \item \textbf{NFR-MAIN-3}: Separate concerns (data collection, business logic, presentation)
-    \item \textbf{NFR-MAIN-5}: Achieve at least 70\% test coverage overall, with 80\%+ for core monitoring modules
-\end{itemize}
-
-\subsection{Usability Requirements}
-\begin{itemize}
-    \item \textbf{NFR-USE-1}: Users shall understand the basic interface without reading documentation
-    \item \textbf{NFR-USE-2}: Keyboard shortcuts shall follow common conventions (q for quit, / for search)
-    \item \textbf{NFR-USE-3}: Display metric values in human-readable formats (MB/GB, not bytes)
-\end{itemize}
+\textbf{Usability}: Provide intuitive interface without documentation, use standard shortcuts (q for quit, / for search), and display metrics in human-readable formats.
 
 \section{System Constraints}
 \label{sec:system-constraints}
 
-System constraints define limitations and boundaries within which the system must operate.
+\textbf{Hardware}: Requires multi-core processor (2+ cores), 100MB RAM, optional NVIDIA GPU with nvidia-smi, and accessible temperature sensors.
 
-\subsection{Hardware Constraints}
-\begin{itemize}
-    \item Requires multi-core processor (minimum 2 cores recommended)
-    \item Requires at least 100MB of available RAM
-    \item GPU monitoring requires NVIDIA GPU with nvidia-smi utility (graceful degradation without it)
-    \item Temperature monitoring requires accessible system sensors
-\end{itemize}
+\textbf{Software}: Python 3.10+, Linux OS, dependencies (textual $\geq$ 0.50.0, psutil $\geq$ 5.9.0, plotext $\geq$ 5.2.0, py-cpuinfo $\geq$ 9.0.0), terminal 80x24 minimum with Unicode and ANSI color support.
 
-\subsection{Software Constraints}
-\begin{itemize}
-    \item Requires Python 3.10 or later with pip package manager
-    \item Requires Linux operating system
-    \item Dependencies: textual $\geq$ 0.50.0, psutil $\geq$ 5.9.0, plotext $\geq$ 5.2.0, py-cpuinfo $\geq$ 9.0.0
-    \item Terminal must support at least 80x24 character dimensions
-    \item Terminal must support Unicode and ANSI color codes
-\end{itemize}
-
-\subsection{Development Constraints}
-\begin{itemize}
-    \item Must be completed within one academic semester (~16 weeks)
-    \item Must demonstrate software engineering principles taught in CSE-3200
-    \item Codebase must be maintainable by future students with intermediate Python knowledge
-    \item Must use free and open-source tools exclusively
-\end{itemize}
+\textbf{Development}: Complete within one semester (16 weeks), demonstrate CSE-3200 principles, maintain accessibility for intermediate Python developers, use free open-source tools exclusively.
 
 \section{Technology Stack Justification}
 \label{sec:technology-stack}
 
-The technology choices for systop were made based on careful evaluation of alternatives, considering development efficiency, learning objectives, performance requirements, and ecosystem maturity.
+\textbf{Python 3.13}: Chosen for educational alignment with CS curricula, rapid development compared to C++/Rust, rich ecosystem (psutil, Textual), and modern type hints. Trade-off: Some performance loss, but adequate for 1-2 second update intervals (achieved <1\% CPU target).
 
-\subsection{Python 3.13 as Primary Language}
+\textbf{Textual Framework}: State-of-the-art Python TUI with rich widgets, CSS-like styling, built-in asyncio support, and excellent documentation. Alternatives (curses, urwid, Rich) offered lower-level control or less interactivity.
 
-\textbf{Justification}:
-\begin{itemize}
-    \item \textbf{Educational Alignment}: Python is taught extensively in CS curricula, making the codebase accessible to students
-    \item \textbf{Rapid Development}: High-level abstractions enable faster development compared to C/C++ or Rust
-    \item \textbf{Rich Ecosystem}: Excellent libraries for system monitoring (psutil) and UI development (Textual)
-    \item \textbf{Modern Features}: Python 3.10+ provides type hints and improved error messages
-\end{itemize}
+\textbf{psutil}: Comprehensive, mature (10+ years), cross-platform system monitoring with efficient C bindings. Alternatives (direct /proc reading, subprocess utilities) were Linux-specific or fragile.
 
-\textbf{Trade-offs}: Python sacrifices some raw performance compared to compiled languages. However, for a monitoring tool updating at 1-2 second intervals, Python's performance is adequate (target <1\% CPU usage achieved).
+\textbf{Supporting Libraries}: plotext (ASCII graphs), py-cpuinfo (detailed CPU info), GPUtil (NVIDIA GPU interface), pytest (testing framework).
 
-\subsection{Textual Framework for TUI}
-
-\textbf{Justification}:
-\begin{itemize}
-    \item Modern framework representing state-of-the-art in Python TUI development
-    \item Rich widget library with built-in components
-    \item CSS-like styling system for visual appeal
-    \item Asynchronous support built on asyncio for real-time updates
-    \item Excellent documentation and active community
-\end{itemize}
-
-\textbf{Alternatives Considered}: curses (lower-level, steeper learning curve), urwid (older, less modern), Rich (not designed for interactive applications).
-
-\subsection{psutil for System Monitoring}
-
-\textbf{Justification}:
-\begin{itemize}
-    \item Comprehensive coverage of CPU, memory, disk, network, and process information
-    \item Well-tested mature library (10+ years) with wide usage
-    \item Cross-platform with consistent APIs
-    \item Efficient implementation with C bindings
-    \item Active maintenance with regular updates
-\end{itemize}
-
-\textbf{Alternatives Considered}: Direct /proc filesystem reading (Linux-specific, higher effort), subprocess calls to utilities (fragile, poor performance).
-
-\subsection{Supporting Libraries}
-
-\textbf{plotext}: Terminal-native ASCII graphs with simple matplotlib-like API, lightweight with minimal overhead.
-
-\textbf{py-cpuinfo}: Rich CPU details beyond what psutil offers, cross-platform, no root required.
-
-\textbf{GPUtil}: Python interface to nvidia-smi for NVIDIA GPU monitoring, optional dependency with graceful failure.
-
-\textbf{pytest}: Industry standard for Python testing with rich features, readable tests, and integration support.
-
-\section{Development Planning and Organization}
+\section{Development Planning}
 \label{sec:development-planning}
 
-As an individual project, careful planning and self-organization were essential for managing the complexity of building a comprehensive monitoring tool within a semester timeframe.
+\textbf{Scope Definition}: Must-have (CPU/memory/disk/network monitoring, process management, modular architecture, basic tests); should-have (GPU/sensors, 70\% coverage, search/filtering, documentation); nice-to-have (themes, config files, data export).
 
-\subsection{Project Scope Definition}
+\textbf{Timeline}: 16-week semester divided into planning (Weeks 1-2), core development (3-8), feature completion (9-12), QA (13-14), and finalization (15-16). Total: ~210 hours at 13 hours/week.
 
-At the project's outset, we defined the scope by identifying must-have, should-have, and nice-to-have features:
-
-\textbf{Must-Have Features}: CPU and memory monitoring with graphs, process list with basic management, disk and network monitoring, clean modular architecture, basic testing coverage.
-
-\textbf{Should-Have Features}: GPU monitoring with graceful fallback, temperature sensors, comprehensive testing (>70\% coverage), process search and filtering, complete documentation.
-
-\textbf{Nice-to-Have Features}: Customizable themes, configuration file support, historical data export, multiple layout options.
-
-\subsection{Time Management Strategy}
-
-The project was planned across a 16-week semester:
-
-\textbf{Weeks 1-2} (Planning): Requirements analysis, technology evaluation, environment setup, initial project structure.
-
-\textbf{Weeks 3-8} (Core Development): Implement monitoring modules (CPU, memory, disk, network), develop basic UI widgets, integrate components, iterative testing.
-
-\textbf{Weeks 9-12} (Feature Completion): Implement advanced features (GPU, sensors, process management), comprehensive testing, bug fixing and refinement.
-
-\textbf{Weeks 13-14} (Quality Assurance): Full test suite execution, stability testing, performance optimization, documentation completion.
-
-\textbf{Weeks 15-16} (Finalization): Final testing and verification, user documentation, project report writing, presentation preparation.
-
-\subsection{Individual Responsibilities}
-
-As the sole developer, responsibilities spanned all project aspects: architecture and design, implementation of all modules and widgets, writing 142 tests, creating comprehensive documentation, quality assurance, and project management.
-
-\section{Development Workflow and Process}
+\section{Development Workflow}
 \label{sec:development-workflow}
 
-Rather than using formal project management tools like Jira or Trello, the development process followed a structured plan documented in BUILD\_PLAN.md, which outlined a systematic 16-step approach to building systop.
-
-\subsection{Structured Development Plan}
-
-The BUILD\_PLAN.md document served as the roadmap for development, breaking the project into incremental, testable steps:
-
-\textbf{Steps 1-2} (Foundation): Install dependencies, create project structure, set up configuration management.
-
-\textbf{Steps 3-5} (Utilities): Implement formatters, circular buffer, and monitoring base classes that other components depend on.
-
-\textbf{Steps 6-8} (Core Monitors): Develop CPU, memory, and disk monitoring modules with corresponding tests.
-
-\textbf{Steps 9-11} (Extended Monitors): Implement network, GPU, and temperature sensor monitoring with graceful fallbacks.
-
-\textbf{Step 12} (Process Management): Build comprehensive process monitoring with sorting, filtering, and kill capabilities.
-
-\textbf{Step 13} (UI Integration): Create widgets for each monitor and integrate them into the main Textual application.
-
-\textbf{Steps 14-15} (Testing and Refinement): Implement comprehensive test suite, conduct stability testing, fix bugs.
-
-\textbf{Step 16} (Finalization): Complete documentation, final verification, prepare for deployment.
-
-Each step defined specific deliverables, acceptance criteria, and test requirements, ensuring measurable progress.
-
-\subsection{Iterative Development Approach}
-
-The development followed an iterative pattern within each step:
-
+\textbf{BUILD\_PLAN.md Structure}: 16-step incremental approach:
 \begin{enumerate}
-    \item \textbf{Design}: Review requirements, design module interface, identify dependencies
-    \item \textbf{Implement}: Write core functionality following defined architecture
-    \item \textbf{Test}: Implement unit tests, verify functionality, test edge cases
-    \item \textbf{Document}: Add docstrings, update relevant documentation
-    \item \textbf{Integrate}: Merge with existing code, test integration points
-    \item \textbf{Verify}: Run full test suite, manual testing, update status documents
+    \item \textbf{Steps 1-2}: Foundation (dependencies, structure, configuration)
+    \item \textbf{Steps 3-5}: Utilities (formatters, circular buffer, base classes)
+    \item \textbf{Steps 6-8}: Core monitors (CPU, memory, disk)
+    \item \textbf{Steps 9-11}: Extended monitors (network, GPU, sensors)
+    \item \textbf{Step 12}: Process management (sort, filter, kill)
+    \item \textbf{Step 13}: UI integration (widgets, Textual app)
+    \item \textbf{Steps 14-15}: Testing and refinement (142 tests, stability)
+    \item \textbf{Step 16}: Finalization (documentation, verification)
 \end{enumerate}
 
-This cycle ensured each component was complete before moving to the next, reducing technical debt and integration issues.
+\textbf{Iterative Cycle}: Each step followed design $\rightarrow$ implement $\rightarrow$ test $\rightarrow$ document $\rightarrow$ integrate $\rightarrow$ verify pattern, ensuring completeness before advancing.
 
-\subsection{Version Control Strategy}
+\textbf{Version Control}: Git with main branch development, descriptive commits per logical unit, and milestone tags (e.g., ``step-6-complete'').
 
-Git was used throughout development with the following practices:
+\textbf{Testing Strategy}: Test-driven development for utilities, continuous testing per module, regression tests for bug fixes, and regular coverage monitoring.
 
-\textbf{Branch Strategy}: Primary development on main branch with feature branches for major components when needed.
+\textbf{Progress Tracking}: BUILD\_PLAN.md checkboxes, status documents, CHANGELOG.md entries, and test execution results.
 
-\textbf{Commit Discipline}: Frequent, focused commits with descriptive messages. Each commit represented a logical unit of work.
+\textbf{Quality Gates}: PEP 8 compliance, comprehensive docstrings, passing unit/integration tests, zero critical bugs, updated documentation, and successful manual testing before step completion.
 
-\textbf{Milestone Tags}: Tagged significant milestones (e.g., ``step-6-complete'', ``testing-complete'') for easy reference.
-
-\subsection{Testing Integration}
-
-Testing was integrated throughout development rather than deferred to the end:
-
-\begin{itemize}
-    \item \textbf{Test-Driven Development}: For utility functions, tests were often written first
-    \item \textbf{Continuous Testing}: After implementing each module, corresponding tests were added
-    \item \textbf{Regression Testing}: When fixing bugs, added tests to prevent regression
-    \item \textbf{Coverage Monitoring}: Regularly checked test coverage to identify untested code paths
-\end{itemize}
-
-\subsection{Progress Tracking}
-
-Progress was tracked through:
-\begin{itemize}
-    \item BUILD\_PLAN.md updates with checkboxes for completed steps
-    \item Status documents (STEP\_13\_COMPLETE.md, PROCESS\_MODULE\_COMPLETE.md)
-    \item CHANGELOG.md documenting features, bugs, and improvements
-    \item Test execution results as objective progress indicators
-\end{itemize}
-
-\subsection{Quality Gates}
-
-Before marking steps complete, specific quality criteria had to be met:
-\begin{itemize}
-    \item Code follows PEP 8 style guidelines
-    \item All functions have docstrings
-    \item Unit tests written and passing
-    \item Integration tests passing
-    \item No critical bugs or crashes
-    \item Documentation updated
-    \item Manual testing confirms expected behavior
-\end{itemize}
-
-The structured workflow, though executed individually, demonstrated software engineering best practices including planning, iterative development, continuous testing, version control, and documentation---all key learning objectives for CSE-3200 Software Development II.
+This structured approach demonstrated software engineering best practices---planning, iterative development, continuous testing, version control, and documentation---achieving all objectives within the semester timeframe.
 
 %=============================================================================
 % CHAPTER 4: PROJECT MANAGEMENT & FINANCE
