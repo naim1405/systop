@@ -1810,9 +1810,9 @@ Integrating seven monitors, seven widgets, and the main application required sys
 
 \textbf{Incremental Integration}: Rather than building all components then integrating, we integrated progressively:
 \begin{itemize}
-    \item Step 6: CPU monitor + CPU widget + minimal app → Verified single monitor works
-    \item Step 7-8: Added memory and disk → Verified three monitors coexist
-    \item Step 9-12: Added remaining monitors → Full feature set verified
+    \item Step 6: CPU monitor + CPU widget + minimal app $\rightarrow$ Verified single monitor works
+    \item Step 7-8: Added memory and disk $\rightarrow$ Verified three monitors coexist
+    \item Step 9-12: Added remaining monitors $\rightarrow$ Full feature set verified
 \end{itemize}
 
 \subsection{Integration Testing Approach}
@@ -2129,7 +2129,7 @@ Tested systop under high system load to assess monitoring accuracy and overhead:
 \begin{itemize}
     \item CPU monitoring remained accurate (±2\% vs. independent verification)
     \item Memory readings consistent with \texttt{free -h}
-    \item Systop overhead increased minimally (0.7\% → 0.9\% CPU) under stress
+    \item Systop overhead increased minimally (0.7\% $\rightarrow$ 0.9\% CPU) under stress
     \item No crashes or data corruption during 30-minute stress test
     \item Process list correctly identified stress-ng as top CPU consumer
 \end{itemize}
@@ -2322,39 +2322,39 @@ Cross-system testing validates systop's portability and graceful degradation des
 
 All primary and secondary objectives successfully achieved, validating systop as a functional, efficient, and educationally valuable system monitoring tool.
 
-\textbf{Decision 4 — Include GPU Monitoring}: Implemented comprehensive GPU monitoring despite complexity. \textit{Outcome}: Became showcase for graceful degradation pattern.
+\textbf{Decision 4 --- Include GPU Monitoring}: Implemented comprehensive GPU monitoring despite complexity. \textit{Outcome}: Became showcase for graceful degradation pattern.
 
 \subsection{Architecture Decisions}
 
-\textbf{Decision 5 — Layered Architecture}: Strict separation of monitors (data), widgets (presentation), app (coordination). \textit{Outcome}: Simplified testing, enabled parallel development.
+\textbf{Decision 5 --- Layered Architecture}: Strict separation of monitors (data), widgets (presentation), app (coordination). \textit{Outcome}: Simplified testing, enabled parallel development.
 
-\textbf{Decision 6 — Circular Buffer}: Custom CircularBuffer class for time-series data. \textit{Outcome}: Memory-efficient, reusable utility preventing unbounded growth.
+\textbf{Decision 6 --- Circular Buffer}: Custom CircularBuffer class for time-series data. \textit{Outcome}: Memory-efficient, reusable utility preventing unbounded growth.
 
-\textbf{Decision 7 — BaseMonitor Abstract Class}: Created base class to reduce duplication. \textit{Outcome}: Consistent pattern across all monitors, easier maintenance.
+\textbf{Decision 7 --- BaseMonitor Abstract Class}: Created base class to reduce duplication. \textit{Outcome}: Consistent pattern across all monitors, easier maintenance.
 
 \subsection{Testing and Quality Decisions}
 
-\textbf{Decision 8 — Concurrent Testing}: Write tests immediately after implementation. \textit{Outcome}: Early bug detection, testing didn't become bottleneck.
+\textbf{Decision 8 --- Concurrent Testing}: Write tests immediately after implementation. \textit{Outcome}: Early bug detection, testing didn't become bottleneck.
 
-\textbf{Decision 9 — Explicit Coverage Targets}: Set 70\%+ overall, 80\%+ core targets. \textit{Outcome}: Achieved 74\% overall, focused testing effectively.
+\textbf{Decision 9 --- Explicit Coverage Targets}: Set 70\%+ overall, 80\%+ core targets. \textit{Outcome}: Achieved 74\% overall, focused testing effectively.
 
-\textbf{Decision 10 — Stability Testing}: Created dedicated long-running stability test script. \textit{Outcome}: Discovered and fixed memory leak in network monitoring.
+\textbf{Decision 10 --- Stability Testing}: Created dedicated long-running stability test script. \textit{Outcome}: Discovered and fixed memory leak in network monitoring.
 
 \subsection{Process Decisions}
 
-\textbf{Decision 11 — Strict Plan Adherence}: Followed BUILD\_PLAN.md without jumping ahead. \textit{Outcome}: Prevented architectural issues, proper dependency management.
+\textbf{Decision 11 --- Strict Plan Adherence}: Followed BUILD\_PLAN.md without jumping ahead. \textit{Outcome}: Prevented architectural issues, proper dependency management.
 
-\textbf{Decision 12 — Frequent Commits}: Commit after each logical unit with descriptive messages. \textit{Outcome}: Clear project history, easy rollback capability.
+\textbf{Decision 12 --- Frequent Commits}: Commit after each logical unit with descriptive messages. \textit{Outcome}: Clear project history, easy rollback capability.
 
-\textbf{Decision 13 — Progressive Documentation}: Document during development, not at end. \textit{Outcome}: Complete documentation without last-minute rush.
+\textbf{Decision 13 --- Progressive Documentation}: Document during development, not at end. \textit{Outcome}: Complete documentation without last-minute rush.
 
 \subsection{Problem-Solving Decisions}
 
-\textbf{Decision 14 — Graceful Permission Handling}: Wrap psutil calls in try-except for permission errors. \textit{Outcome}: Application usable without sudo.
+\textbf{Decision 14 --- Graceful Permission Handling}: Wrap psutil calls in try-except for permission errors. \textit{Outcome}: Application usable without sudo.
 
-\textbf{Decision 15 — Variable Update Intervals}: Different intervals per monitor type (1s for CPU, 5s for disk). \textit{Outcome}: Reduced CPU usage from 1.5\% to <1\%.
+\textbf{Decision 15 --- Variable Update Intervals}: Different intervals per monitor type (1s for CPU, 5s for disk). \textit{Outcome}: Reduced CPU usage from 1.5\% to <1\%.
 
-\textbf{Decision 16 — Stability Over Features}: Week 14 prioritization of stability over new features. \textit{Outcome}: Polished, reliable application delivery.
+\textbf{Decision 16 --- Stability Over Features}: Week 14 prioritization of stability over new features. \textit{Outcome}: Polished, reliable application delivery.
 
 \subsection{Decision-Making Principles}
 
@@ -3076,7 +3076,7 @@ The systop project required adapting to several technologies and tools that were
 \textbf{Lessons Learned}:
 \begin{itemize}
     \item Start with smallest possible working example
-    \item Don't skip documentation—it saves time long-term
+    \item Don't skip documentation---it saves time long-term
     \item Community resources are invaluable for new frameworks
     \item Accept initial frustration as part of learning curve
     \item Build confidence through small successes before tackling complex features
@@ -3170,7 +3170,7 @@ Reflecting on the learning process, several strategies proved effective:
 
 \textbf{1. Documentation-First Approach}: Always start with official documentation rather than tutorials or Stack Overflow. Documentation provides authoritative, comprehensive information.
 
-\textbf{2. Build Mental Models}: Don't just memorize APIs—understand underlying concepts and architectures. This enables problem-solving beyond cookbook examples.
+\textbf{2. Build Mental Models}: Don't just memorize APIs---understand underlying concepts and architectures. This enables problem-solving beyond cookbook examples.
 
 \textbf{3. Hands-On Experimentation}: Reading alone is insufficient. Writing code, breaking things, and fixing them builds understanding.
 
@@ -3395,7 +3395,7 @@ Most importantly, systop reinforced a growth mindset:
     \item Continuous learning is essential as technology evolves
 \end{itemize}
 
-This mindset—valuing growth over innate ability, embracing challenges, and maintaining curiosity—will serve us throughout our careers regardless of specific technologies or roles.
+This mindset---valuing growth over innate ability, embracing challenges, and maintaining curiosity---will serve us throughout our careers regardless of specific technologies or roles.
 
 The systop project thus represents not just a completed academic requirement, but a foundation for lifelong learning and growth in software engineering. The technical skills, professional competencies, learning strategies, and confidence gained provide a strong platform for future success in whatever directions our careers may take.
 
@@ -3416,7 +3416,7 @@ The systop project set out to create a modern Terminal User Interface (TUI) appl
 
 We began with thorough requirements analysis, identifying 40+ functional and non-functional requirements organized across monitoring domains (CPU, memory, disk, network, GPU, sensors, processes) and quality attributes (performance, reliability, maintainability, usability). The requirements phase established clear targets: <1\% CPU usage, <50MB memory consumption, >70\% test coverage, and graceful handling of unavailable hardware.
 
-Technology evaluation led to selecting Python 3.13, the Textual framework for UI development, psutil for system monitoring, and pytest for testing—choices that balanced development efficiency, learning objectives, performance requirements, and ecosystem maturity.
+Technology evaluation led to selecting Python 3.13, the Textual framework for UI development, psutil for system monitoring, and pytest for testing---choices that balanced development efficiency, learning objectives, performance requirements, and ecosystem maturity.
 
 A structured 16-step development plan documented in BUILD\_PLAN.md provided the roadmap for systematic project execution, breaking the complex system into incremental, testable deliverables across 16 weeks.
 
@@ -3473,8 +3473,8 @@ Testing was integrated continuously throughout development rather than deferred 
 Performance evaluation confirmed systop meets all efficiency targets:
 
 \begin{itemize}
-    \item \textbf{CPU Usage}: 0.7\% average (target: <1\%) — 30\% margin below threshold
-    \item \textbf{Memory Usage}: 41MB average (target: <50MB) — 18\% margin below threshold
+    \item \textbf{CPU Usage}: 0.7\% average (target: <1\%) --- 30\% margin below threshold
+    \item \textbf{Memory Usage}: 41MB average (target: <50MB) --- 18\% margin below threshold
     \item \textbf{Update Latency}: <100ms per refresh cycle ensuring smooth UI updates
     \item \textbf{Scalability}: Handles 200+ processes without performance degradation
     \item \textbf{Stability}: No memory leaks or crashes during 5-minute stress tests
@@ -3568,7 +3568,7 @@ Test case validation (Table 7.3) confirmed all process management features funct
 
 \textit{Evidence}:
 \begin{itemize}
-    \item Three-layer architecture (Monitors → Widgets → App) with clear boundaries
+    \item Three-layer architecture (Monitors $\rightarrow$ Widgets $\rightarrow$ App) with clear boundaries
     \item BaseMonitor abstract class enforcing consistent interface across 7 monitors
     \item Each monitor independently testable in isolation
     \item Widgets depend on monitor interfaces, not implementations
@@ -3692,7 +3692,7 @@ As we conclude this comprehensive report on the systop project, we reflect on th
 
 The systop project holds significance across multiple dimensions:
 
-\textbf{Educational Impact}: For CSE-3200 Software Development II, systop demonstrates mastery of software engineering principles through concrete application. The project showcases requirements analysis, architectural design, iterative development, comprehensive testing, and professional documentation—all key learning outcomes for the course. Future students can study systop's codebase, BUILD\_PLAN.md, and test suite as examples of systematic software development methodology.
+\textbf{Educational Impact}: For CSE-3200 Software Development II, systop demonstrates mastery of software engineering principles through concrete application. The project showcases requirements analysis, architectural design, iterative development, comprehensive testing, and professional documentation---all key learning outcomes for the course. Future students can study systop's codebase, BUILD\_PLAN.md, and test suite as examples of systematic software development methodology.
 
 \textbf{Technical Contribution}: While numerous system monitoring tools exist, systop contributes unique value through its combination of modern Python development, accessible codebase, educational documentation, and comprehensive testing. The clean three-layer architecture provides a reference implementation for building complex TUI applications in Python, and the graceful degradation patterns demonstrate defensive programming practices applicable broadly.
 
