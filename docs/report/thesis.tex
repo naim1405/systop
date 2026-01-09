@@ -154,16 +154,18 @@ Performance evaluation shows that systop achieves its objectives with minimal re
 
 \newpage
 % List of Figures
-\listoffigures
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
 
 \newpage
 % List of Tables
-\listoftables
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
 
-% Main content
-\mainmatter
+% Main content begins
+\newpage
 
 %=============================================================================
 % CHAPTER 1: INTRODUCTION
@@ -3767,7 +3769,7 @@ Finally, systop demonstrates individual developers' continued relevance in the o
 
 Completing systop has been immensely rewarding. The project pushed our technical boundaries, requiring mastery of unfamiliar frameworks, system programming concepts, and testing strategies. The frustrations encountered when debugging obscure Textual behaviors or hunting memory leaks were balanced by satisfactions of seeing components integrate smoothly and tests pass reliably.
 
-Most importantly, systop demonstrated that systematic application of software engineering principles enables individuals to complete ambitious projects within realistic timeframes. The 210 hours invested over 16 weeks, while substantial, produced a comprehensive, well-tested, documented application—proof that careful planning and disciplined execution overcome complexity.
+Most importantly, systop demonstrated that systematic application of software engineering principles enables individuals to complete ambitious projects within realistic timeframes. The 210 hours invested over 16 weeks, while substantial, produced a comprehensive, well-tested, documented application---proof that careful planning and disciplined execution overcome complexity.
 
 \subsection{Looking Forward}
 
@@ -3775,7 +3777,7 @@ Systop represents both an end and a beginning. As a CSE-3200 project, it conclud
 
 The technical skills acquired (Python proficiency, TUI development, system programming, testing strategies) transfer directly to professional software development. The project management experience (planning, time management, quality assurance) applies whether working individually or in teams. The confidence gained from completing a complex system independently provides foundation for tackling future challenges.
 
-Systop may evolve through future enhancements (configuration files, extended GPU support, remote monitoring) or serve as stable foundation for other projects. Regardless of its specific trajectory, the experience of building systop—the challenges overcome, skills developed, and lessons learned—will inform our software engineering careers for years to come.
+Systop may evolve through future enhancements (configuration files, extended GPU support, remote monitoring) or serve as stable foundation for other projects. Regardless of its specific trajectory, the experience of building systop---the challenges overcome, skills developed, and lessons learned---will inform our software engineering careers for years to come.
 
 \subsection{Closing Statement}
 
@@ -3801,6 +3803,7 @@ Thank you for the opportunity to undertake this challenging and rewarding projec
 % BIBLIOGRAPHY
 %=============================================================================
 \bibliographystyle{IEEEtran}
+\phantomsection
 \addcontentsline{toc}{chapter}{References}
 \begin{thebibliography}{99}
 
@@ -3820,24 +3823,5 @@ A. Johansson, ``btop: A resource monitor in C++,'' \url{https://github.com/arist
 H. Bartels, ``htop: An interactive process viewer,'' \url{https://htop.dev/}, accessed Jan. 2026.
 
 \end{thebibliography}
-
-%=============================================================================
-% APPENDICES (Optional)
-%=============================================================================
-\appendix
-\chapter{Installation Guide}
-\label{app:installation}
-
-Detailed installation instructions, dependency requirements, and setup procedures.
-
-\chapter{User Manual}
-\label{app:user-manual}
-
-Complete user guide with keyboard shortcuts and feature descriptions.
-
-\chapter{Test Results}
-\label{app:test-results}
-
-Detailed test execution results and coverage reports.
 
 \end{document}
