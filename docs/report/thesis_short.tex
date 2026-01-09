@@ -173,149 +173,117 @@ Performance evaluation shows that systop achieves its objectives with minimal re
 \chapter{Introduction}
 \label{chap:introduction}
 
-System monitoring is a fundamental aspect of modern computing, enabling users and administrators to understand resource utilization, diagnose performance issues, and maintain system health. While Linux provides traditional command-line tools like \texttt{top} and \texttt{htop} for monitoring system resources, these tools often lack the visual appeal, intuitive interface, and comprehensive feature set that modern users expect. The evolution of terminal user interfaces (TUIs) has opened new possibilities for creating more sophisticated and user-friendly monitoring tools that combine the efficiency of command-line applications with rich visual presentations.
+System monitoring enables users to understand resource utilization, diagnose issues, and maintain system health. While Linux provides tools like \texttt{top} and \texttt{htop}, they often lack visual appeal and comprehensive features. Modern TUI frameworks enable sophisticated monitoring tools combining CLI efficiency with rich visual presentations.
 
-This chapter introduces our project, \textbf{systop}, a modern system monitoring TUI application for Linux. We begin by defining the specific problem this project addresses, explore the motivation behind developing a new monitoring solution, outline our project objectives, summarize our key contributions, and provide an overview of this report's structure.
+This chapter introduces \textbf{systop}, a modern system monitoring TUI for Linux, defining the problem, motivation, objectives, contributions, and report structure.
 
 \section{Problem Statement}
 \label{sec:problem-statement}
 
-Existing system monitoring tools for Linux present several limitations that hinder effective system resource management:
+Existing system monitoring tools present key limitations:
 
-\textbf{Limited Visual Representation}: Traditional tools like \texttt{top} provide text-based output with minimal visual aids, making it difficult to quickly understand trends and patterns in resource usage. While \texttt{htop} offers some improvements with color coding, it still lacks graphical representations of historical data that would enable users to identify patterns over time.
+\textbf{Limited Visual Representation}: Tools like \texttt{top} lack graphical representations of historical data for identifying patterns.
 
-\textbf{Fragmented Information}: Users often need to run multiple separate tools to monitor different system aspects---\texttt{top} for processes, \texttt{iostat} for disk I/O, \texttt{iftop} for network traffic, and \texttt{nvidia-smi} for GPU metrics. This fragmentation requires switching between multiple terminal windows or sessions, reducing efficiency and making it difficult to correlate metrics across different system components.
+\textbf{Fragmented Information}: Users run multiple tools (\texttt{top}, \texttt{iostat}, \texttt{iftop}, \texttt{nvidia-smi}) requiring window switching and making correlation difficult.
 
-\textbf{Inconsistent User Experience}: Different monitoring tools have varying interfaces, keyboard shortcuts, and output formats. This inconsistency creates a steep learning curve and reduces productivity, especially for users who need to monitor multiple system aspects simultaneously.
+\textbf{Inconsistent User Experience}: Different tools have varying interfaces and shortcuts, creating steep learning curves.
 
-\textbf{Limited Interactivity}: While tools like \texttt{htop} offer basic process management, they often lack advanced features such as flexible sorting, real-time filtering, and comprehensive search capabilities that would enable users to quickly locate and manage specific processes in systems running hundreds or thousands of concurrent processes.
+\textbf{Limited Interactivity}: Basic tools lack advanced sorting, filtering, and search for managing hundreds of processes.
 
-\textbf{Inadequate Historical Data}: Most traditional monitoring tools display only current snapshots of system state, with limited or no access to historical trends. Understanding system behavior over time requires external logging and graphing tools, adding complexity to the monitoring workflow.
+\textbf{Inadequate Historical Data}: Most show only current snapshots; historical trends require external tools.
 
-The problem this project solves is the lack of a unified, visually rich, and interactive system monitoring tool that consolidates all essential system metrics in a single interface while providing historical context and modern user experience features.
+This project addresses the lack of a unified, visually rich, interactive monitoring tool consolidating all metrics with historical context.
 
 \section{Motivation}
 \label{sec:motivation}
 
-The motivation for developing systop stems from several key factors in the modern computing landscape:
+Systop development was motivated by:
 
-\textbf{Increasing System Complexity}: Modern systems, whether personal computers, workstations, or servers, have become increasingly complex with multi-core processors, multiple storage devices, various network interfaces, and dedicated GPUs. Effectively monitoring these diverse components requires a tool that can present comprehensive information in an organized, easily digestible format.
+\textbf{Increasing System Complexity}: Modern systems with multi-core CPUs, multiple devices, and GPUs require comprehensive monitoring in organized format.
 
-\textbf{Rise of Developer-Focused TUIs}: Recent years have seen a renaissance in terminal user interface development, with tools like \texttt{btop}, \texttt{bottom}, and \texttt{lazygit} demonstrating that command-line applications can offer sophisticated, visually appealing interfaces. The Textual framework for Python has made it easier than ever to develop rich TUIs, creating an opportunity to build modern monitoring tools with relatively modest development effort.
+\textbf{Rise of Developer-Focused TUIs}: Tools like \texttt{btop}, \texttt{bottom}, and \texttt{lazygit} show CLI apps can be sophisticated and visual. Textual framework enables modern TUIs with modest effort.
 
-\textbf{Educational Value}: Developing a comprehensive system monitoring tool provides excellent learning opportunities in multiple domains of software engineering, including:
-\begin{itemize}
-    \item System programming and interaction with OS-level APIs
-    \item Real-time data processing and visualization
-    \item User interface design and implementation
-    \item Software architecture and modular design patterns
-    \item Testing strategies for complex, system-dependent applications
-    \item Performance optimization and resource-efficient programming
-\end{itemize}
+\textbf{Educational Value}: Provides learning in system programming, real-time visualization, UI design, architecture patterns, testing strategies, and performance optimization.
 
-\textbf{Personal Workflow Optimization}: As developers and system administrators, we frequently need to monitor system resources during development, testing, and troubleshooting. Having a single, comprehensive tool that combines all necessary metrics in an intuitive interface can significantly improve workflow efficiency and reduce cognitive load when diagnosing system issues.
+\textbf{Personal Workflow Optimization}: Single tool combining all metrics improves efficiency and reduces cognitive load.
 
-\textbf{Open Source Contribution}: By developing an open-source monitoring tool, we contribute to the broader Linux ecosystem, providing users with an alternative to existing tools and demonstrating modern software development practices in Python.
+\textbf{Open Source Contribution}: Contributes to Linux ecosystem demonstrating modern Python practices.
 
-The inspiration from \texttt{btop} (a C++ monitoring tool with excellent visual design) combined with the accessibility of Python and the Textual framework motivated us to create a similar experience while leveraging Python's extensive ecosystem for system monitoring.
+Inspiration from \texttt{btop}'s visual design combined with Python's accessibility motivated creating similar experience leveraging Python's monitoring ecosystem.
 
 \section{Objectives}
 \label{sec:objectives}
 
-The systop project aims to achieve the following measurable objectives:
+Systop objectives:
 
 \subsection{Primary Objectives}
 
 \begin{enumerate}
-    \item \textbf{Unified Monitoring Interface}: Develop a single application that displays all essential system metrics including CPU usage, memory utilization, disk I/O, network bandwidth, GPU metrics, temperature sensors, and process information in a cohesive interface.
-    
-    \item \textbf{Real-Time Data Visualization}: Implement real-time ASCII-based graphs and charts that display both current values and historical trends for key metrics, enabling users to quickly identify patterns and anomalies.
-    
-    \item \textbf{Interactive Process Management}: Create an interactive process list with capabilities for sorting, searching, filtering, and process termination, supporting efficient process management even on systems with hundreds of concurrent processes.
-    
-    \item \textbf{Modular and Maintainable Architecture}: Design a clean, modular architecture that separates data collection, business logic, and presentation concerns, facilitating future enhancements and maintenance.
-    
-    \item \textbf{Robust Error Handling}: Implement comprehensive error handling to ensure the application remains stable even when specific hardware components (like GPUs or temperature sensors) are unavailable or when system calls fail.
+    \item \textbf{Unified Monitoring Interface}: Single application displaying CPU, memory, disk, network, GPU, sensors, and processes.
+    \item \textbf{Real-Time Data Visualization}: ASCII graphs showing current values and historical trends.
+    \item \textbf{Interactive Process Management}: Sort, search, filter, and terminate processes efficiently.
+    \item \textbf{Modular Architecture}: Clean separation of data collection, logic, and presentation.
+    \item \textbf{Robust Error Handling}: Stable operation despite missing hardware or failed calls.
 \end{enumerate}
 
 \subsection{Secondary Objectives}
 
 \begin{enumerate}
     \setcounter{enumi}{5}
-    \item \textbf{Performance Efficiency}: Ensure the monitoring tool itself has minimal resource overhead, consuming less than 1\% CPU and under 50MB of memory during normal operation, so it doesn't significantly impact the system it's monitoring.
-    
-    \item \textbf{Comprehensive Testing}: Achieve >70\% code coverage through unit and integration tests, with >80\% coverage for critical monitoring modules, ensuring reliability and facilitating future modifications.
-    
-    \item \textbf{User-Friendly Documentation}: Provide clear documentation including installation instructions, usage guides, and code documentation that enables both users and future developers to understand and extend the system.
-    
-    \item \textbf{Cross-Platform Foundation}: While initially targeting Linux, design the architecture to facilitate potential future ports to other Unix-like systems with minimal modifications.
-    
-    \item \textbf{Professional Development Practices}: Apply industry-standard software development practices including version control, automated testing, continuous integration considerations, and systematic development planning.
+    \item \textbf{Performance Efficiency}: <1\% CPU and <50MB memory overhead.
+    \item \textbf{Comprehensive Testing}: >70\% overall coverage, >80\% for core modules.
+    \item \textbf{User-Friendly Documentation}: Installation, usage, and code documentation.
+    \item \textbf{Cross-Platform Foundation}: Architecture facilitating future Unix ports.
+    \item \textbf{Professional Practices}: Version control, automated testing, systematic planning.
 \end{enumerate}
 
 \section{Contribution Summary}
 \label{sec:contributions}
 
-This project makes several key contributions to both the Linux monitoring tool ecosystem and software engineering education:
+Key contributions:
 
 \subsection{Technical Contributions}
-
 \begin{enumerate}
-    \item \textbf{Modern Python TUI Architecture}: We demonstrate a clean, layered architecture for building complex TUI applications in Python, separating monitoring logic from presentation and providing reusable patterns for similar projects.
-    
-    \item \textbf{Comprehensive Monitoring Framework}: We implement a complete set of monitoring modules that interface with Linux system APIs through \texttt{psutil}, providing a reference implementation for collecting diverse system metrics.
-    
-    \item \textbf{Historical Data Management}: We develop an efficient circular buffer implementation for storing time-series data, enabling historical visualizations without excessive memory consumption.
-    
-    \item \textbf{Graceful Hardware Detection}: We implement robust fallback mechanisms that allow the application to function fully even when optional hardware (GPU, temperature sensors) is unavailable, demonstrating defensive programming practices.
-    
-    \item \textbf{Interactive TUI Design Patterns}: We showcase effective patterns for implementing interactive features in TUIs, including keyboard navigation, search functionality, and modal confirmations.
+    \item \textbf{Modern Python TUI Architecture}: Layered design with reusable patterns.
+    \item \textbf{Comprehensive Monitoring Framework}: Complete psutil integration reference.
+    \item \textbf{Historical Data Management}: Efficient circular buffer for time-series.
+    \item \textbf{Graceful Hardware Detection}: Robust fallbacks for missing hardware.
+    \item \textbf{Interactive TUI Patterns}: Keyboard navigation, search, confirmations.
 \end{enumerate}
 
 \subsection{Educational Contributions}
-
 \begin{enumerate}
     \setcounter{enumi}{5}
-    \item \textbf{Software Development Methodology}: The project follows a structured 16-step development plan, demonstrating systematic approach to building complex software from requirements through testing and deployment.
-    
-    \item \textbf{Testing Strategy Implementation}: We implement a comprehensive testing strategy with 142 automated tests covering unit, integration, and stability testing scenarios, achieving 74\% overall code coverage.
-    
-    \item \textbf{Documentation Practices}: We provide multi-level documentation including user guides, API documentation, development plans, and test reports, illustrating professional documentation standards.
+    \item \textbf{Development Methodology}: Structured 16-step plan from requirements to deployment.
+    \item \textbf{Testing Strategy}: 142 tests achieving 74\% coverage.
+    \item \textbf{Documentation Practices}: Multi-level professional documentation.
 \end{enumerate}
 
 \subsection{Practical Contributions}
-
 \begin{enumerate}
     \setcounter{enumi}{8}
-    \item \textbf{Functional System Monitoring Tool}: We deliver a fully functional, production-ready system monitoring application that provides real value to Linux users and administrators.
-    
-    \item \textbf{Open Source Reference Implementation}: The complete source code, tests, and documentation serve as a reference for students and developers learning Python TUI development or system programming.
+    \item \textbf{Functional Tool}: Production-ready monitoring application.
+    \item \textbf{Open Source Reference}: Complete source for learning TUI development.
 \end{enumerate}
 
 \section{Report Structure}
 \label{sec:report-structure}
 
-This report is organized into the following chapters, each focusing on a specific aspect of the systop project:
+Report organization:
 
-\textbf{Chapter 2: Background \& Literature Review} examines existing system monitoring tools for Linux, analyzes their strengths and limitations, and reviews the technologies and frameworks we employed in developing systop. This chapter provides context for our design decisions and positions our work within the existing ecosystem.
+\textbf{Chapter 2: Background \& Literature Review} examines existing tools and technologies employed.
 
-\textbf{Chapter 3: Requirements \& Development Workflow} details the functional and non-functional requirements we identified for systop, system constraints, technology stack justification, and the structured 16-step development workflow employed throughout the project. This chapter establishes what the system needed to accomplish and how we organized the development process.
+\textbf{Chapter 3: Requirements \& Development Workflow} details requirements, constraints, and 16-step workflow.
 
-\textbf{Chapter 4: Project Management \& Finance} presents the project management methodologies employed, including work breakdown structure, scheduling, budget analysis, and risk management. This chapter demonstrates professional project management practices applied to an academic software development project.
+\textbf{Chapter 4: Project Management \& Finance} presents WBS, scheduling, budget, and risk management.
 
-\textbf{Chapter 5: System Design \& Architecture} would present the overall architecture of systop, describing the layered design that separates concerns, the module structure, and key design patterns employed. (Note: This chapter's detailed content is distributed throughout other chapters in this report.)
+\textbf{Chapter 7: Testing, Results \& Evaluation} describes testing strategy, results, performance, and comparisons.
 
-\textbf{Chapter 6: Implementation Details} would discuss the actual implementation of the system, covering the development process, key algorithms and data structures, and critical implementation decisions. (Note: Implementation details are integrated into Chapters 3, 4, and 7 in this report.)
+\textbf{Chapter 8: Discussion \& Analysis} analyzes results, strengths, limitations, and lessons learned.
 
-\textbf{Chapter 7: Testing, Results \& Evaluation} describes our comprehensive testing strategy, presents test results and coverage metrics, evaluates performance characteristics, compares systop with existing tools, and demonstrates achievement of objectives through quantitative evidence.
+\textbf{Chapter 9: Life-long Learning Impact} examines skills acquired and career foundation.
 
-\textbf{Chapter 8: Discussion \& Analysis} provides critical analysis interpreting the results, discusses the project's strengths and limitations, recommends directions for future development, and reflects on design and implementation decisions with lessons learned.
-
-\textbf{Chapter 9: Life-long Learning Impact} examines the long-term educational value of the project, detailing technical and professional skills acquired, the process of learning new technologies and tools, and how this experience establishes foundation for future career growth in software engineering.
-
-\textbf{Chapter 10: Conclusion} summarizes the work accomplished, evaluates achievement of all stated objectives with supporting evidence, and provides final remarks on the project's significance, value delivered to multiple stakeholders, and broader implications for software engineering education and practice.
-
-Each chapter builds upon the previous ones, taking the reader through the complete journey from problem identification through requirements, management, testing, critical analysis, learning outcomes, and final conclusions, providing a comprehensive understanding of the systop project and its educational impact.
+\textbf{Chapter 10: Conclusion} summarizes work, evaluates objectives, and provides final remarks.
 
 %=============================================================================
 % CHAPTER 2: BACKGROUND & LITERATURE REVIEW
@@ -586,38 +554,24 @@ M8: Project Done & Week 16 & Week 16 & $\checkmark$ & Complete deliverables \\
 \section{Budget \& Cost Analysis}
 \label{sec:budget}
 
-\textbf{Direct Costs}: \$0 (personal laptop, open-source software: Python 3.13, textual, psutil, pytest, Git, Linux).
+\textbf{Direct Costs}: \$0 (personal laptop, open-source tools).
 
-\textbf{Time Investment}: 210 hours (13.1 hours/week average): Planning 20h (9.5\%), Implementation 130h (61.9\%), Testing 30h (14.3\%), Documentation 20h (9.5\%), Report 10h (4.8\%). Notional value: \$4,200 at \$20/hour.
+\textbf{Time Investment}: 210 hours: Planning 20h (9.5\%), Implementation 130h (62\%), Testing 30h (14\%), Documentation 30h (14.5\%). Notional value: \$4,200 at \$20/hour.
 
-\textbf{Efficiency Gains}: Open-source tools provided 2x development efficiency: Python vs. C++ (30-40\% faster), Textual vs. curses (60\% UI time reduction), psutil eliminated ~40 hours low-level work, pytest saved ~10 hours.
+\textbf{Efficiency Gains}: Open-source tools provided 2x efficiency; Python vs. C++ 30-40\% faster, Textual vs. curses 60\% time reduction, psutil eliminated ~40 hours.
 
 \section{Risk Management}
 \label{sec:risk-analysis}
 
-Twelve key risks were identified and successfully mitigated:
+Key risks successfully mitigated:
 
-\textbf{Technical Risks}:
-\begin{itemize}
-    \item \textbf{T1: Library Compatibility}: Pinned versions, virtual environment. \textit{Outcome}: No issues.
-    \item \textbf{T2: Platform Behavior}: Defensive programming, graceful fallbacks. \textit{Outcome}: Successfully handled.
-    \item \textbf{T3: GPU Unavailability}: Try-except wrappers, ``N/A'' displays. \textit{Outcome}: Works universally.
-    \item \textbf{T4: Performance}: Early profiling, tuned intervals, efficient structures. \textit{Outcome}: Met targets.
-\end{itemize}
+\textbf{Technical}: Library compatibility (pinned versions), platform behavior (defensive programming), GPU unavailability (try-except wrappers), performance (early profiling).
 
-\textbf{Schedule Risks}:
-\begin{itemize}
-    \item \textbf{S1: Feature Creep}: Strict BUILD\_PLAN.md adherence. \textit{Outcome}: Avoided successfully.
-    \item \textbf{S2: Underestimation}: 15-20\% time buffer. \textit{Outcome}: Absorbed 5\% overruns.
-    \item \textbf{S3: Testing Delays}: Continuous testing, two-week QA allocation. \textit{Outcome}: No accumulation.
-    \item \textbf{S4: Academic Demands}: Exam planning, steady pace. \textit{Outcome}: Maintained schedule.
-\end{itemize}
+\textbf{Schedule}: Feature creep (strict BUILD\_PLAN.md), underestimation (15-20\% buffer), testing delays (continuous testing), academic demands (steady pace).
 
-\textbf{Quality Risks}:
-\begin{itemize}
-    \item \textbf{Q1: Test Coverage}: Mandatory testing, explicit targets. \textit{Outcome}: Achieved 74\% overall.
-    \item \textbf{Q2: Code Quality}: PEP 8 standards, comprehensive docstrings. \textit{Outcome}: Consistent quality.
-\end{itemize}
+\textbf{Quality}: Test coverage (explicit targets, achieved 74\%), code quality (PEP 8, docstrings).
+
+All risks addressed successfully with no major impact on delivery.
 
 \section{Key Management Decisions}
 \label{sec:management-decisions}
@@ -637,25 +591,19 @@ This chapter presents the architectural design of systop, describing the modular
 \section{Methodological Structure}
 \label{sec:methodological-structure}
 
-The systop architecture follows a three-layer design pattern separating concerns and promoting modularity.
+Three-layer architecture:
 
 \subsection{Architecture Overview}
 
-\textbf{Layer 1: Data Collection (Monitors)}: Seven monitor modules interface with OS APIs through \texttt{psutil}. Each inherits from \texttt{BaseMonitor} and implements a \texttt{collect()} method returning structured data. Monitors maintain historical data using circular buffers.
+\textbf{Layer 1: Data Collection}: Seven monitors inherit from \texttt{BaseMonitor}, implement \texttt{collect()}, use circular buffers.
 
-\textbf{Layer 2: Presentation (Widgets)}: Seven widget modules render monitor data using the Textual framework. Widgets periodically invoke \texttt{collect()} and transform raw metrics into visual representations (graphs, tables, progress bars).
+\textbf{Layer 2: Presentation}: Seven widgets render data using Textual, periodically invoke \texttt{collect()}.
 
-\textbf{Layer 3: Application Coordination (App)}: The \texttt{SystemMonitorApp} class instantiates monitors and widgets, manages the application lifecycle, handles keyboard bindings, and orchestrates shutdown.
+\textbf{Layer 3: Coordination}: \texttt{SystemMonitorApp} manages lifecycle, keyboard bindings, orchestration.
 
 \subsection{Design Principles}
 
-\textbf{Separation of Concerns}: Monitors contain no UI code, widgets contain no data collection logic, enabling independent testing and modification.
-
-\textbf{Dependency Inversion}: Widgets depend on the \texttt{BaseMonitor} interface rather than concrete implementations.
-
-\textbf{Defensive Programming}: System calls wrapped in try-except blocks with graceful fallbacks. Missing hardware shows ``N/A'' rather than crashing.
-
-\textbf{Resource Efficiency}: Fixed-size circular buffers (60 points) prevent memory growth. Update intervals tuned per-monitor (CPU: 1s, disk: 5s).
+\textbf{Separation of Concerns}: Monitors have no UI code, widgets have no data logic. \textbf{Dependency Inversion}: Widgets depend on \texttt{BaseMonitor} interface. \textbf{Defensive Programming}: Try-except blocks with graceful fallbacks. \textbf{Resource Efficiency}: Fixed circular buffers, tuned update intervals.
 
 \section{High-Level Architecture Diagram}
 \label{sec:architecture-diagram}
@@ -782,29 +730,11 @@ Security and performance considerations informed several design decisions.
 
 \subsection{Security Considerations}
 
-\textbf{Process Termination}: \texttt{kill\_process()} requires user confirmation via modal dialog. Users can only kill processes their account has permission to terminate (OS-enforced). Attempting to kill privileged processes fails gracefully.
-
-\textbf{Privilege Separation}: Operates entirely in user space, requiring no root privileges. GPU and sensor monitoring degrades gracefully when permissions are insufficient.
-
-\textbf{Input Validation}: Process filters and sort keys validated against allowed values.
-
-\textbf{Dependency Security}: Dependencies pinned to specific versions in \texttt{requirements.txt}, preventing supply chain attacks. Dependencies chosen for maturity and security track records.
+\textbf{Process Termination}: Requires confirmation, OS-enforced permissions, graceful failure for privileged processes. \textbf{Privilege Separation}: User space only, no root required. \textbf{Input Validation}: Filters and keys validated. \textbf{Dependency Security}: Pinned versions prevent attacks.
 
 \subsection{Performance Design}
 
-\textbf{Update Interval Tuning}: CPU updates every 1s for responsiveness, disk every 5s, reducing unnecessary system calls.
-
-\textbf{Efficient Data Structures}: \texttt{collections.deque} with fixed \texttt{maxlen} provides O(1) append operations.
-
-\textbf{Lazy Evaluation}: Graphs computed only when rendered, not on every collection. Raw data stored until widgets format for display.
-
-\textbf{Asynchronous Updates}: Textual's reactive properties enable non-blocking updates, preventing UI freezes.
-
-\textbf{Memory Footprint}: Bounded buffers keep memory usage around 40MB. Widget objects reused across updates.
-
-\textbf{CPU Overhead}: Profiling showed <0.8\% CPU during normal operation, meeting the <1\% requirement.
-
-\textbf{Graceful Degradation}: Optional features fail silently without retrying. Single startup check determines availability; subsequent updates skip unavailable monitors.
+\textbf{Update Tuning}: CPU 1s, disk 5s, reducing calls. \textbf{Efficient Structures}: \texttt{deque} with fixed \texttt{maxlen} provides O(1) operations. \textbf{Lazy Evaluation}: Graphs computed only when rendered. \textbf{Async Updates}: Textual reactive properties prevent blocking. \textbf{Memory}: Bounded buffers ~40MB. \textbf{CPU}: <0.8\%, meeting <1\% requirement. \textbf{Graceful Degradation}: Single startup check, no retries.
 
 %=============================================================================
 % CHAPTER 6: IMPLEMENTATION
@@ -817,69 +747,35 @@ This chapter describes the practical implementation of systop, covering the deve
 \section{Development Environment Setup}
 \label{sec:dev-environment}
 
-\textbf{Primary System}: Arch Linux (kernel 6.x), Python 3.13.1 with \texttt{venv}, Neovim 0.9+ with LSP integration.
+\textbf{System}: Arch Linux (kernel 6.x), Python 3.13.1 with \texttt{venv}, Neovim with LSP.
 
-\textbf{Core Dependencies}: \texttt{textual==0.50.0} (TUI framework), \texttt{psutil==5.9.6} (system metrics), \texttt{plotext==5.2.8} (ASCII graphs), \texttt{py-cpuinfo==9.0.0}, \texttt{GPUtil==1.4.0} (optional GPU support).
+\textbf{Dependencies}: \texttt{textual==0.50.0}, \texttt{psutil==5.9.6}, \texttt{plotext==5.2.8}, \texttt{py-cpuinfo==9.0.0}, \texttt{GPUtil==1.4.0}, \texttt{pytest==7.4.3}, \texttt{pytest-cov==4.1.0}.
 
-\textbf{Dev Dependencies}: \texttt{pytest==7.4.3}, \texttt{pytest-cov==4.1.0}, \texttt{black==23.12.0}, \texttt{mypy==1.7.1}.
+\textbf{Version Control}: Git with conventional commits, milestone tags, main branch.
 
-\textbf{Version Control}: Git with conventional commit messages, milestone tags (v0.1.0, step-13-complete), main branch for stable development.
-
-\textbf{Project Structure}:
-\begin{verbatim}
-systop/
-|-- src/                 # Source code
-|   |-- monitors/        # Data collection modules
-|   |-- widgets/         # UI presentation modules
-|   +-- utils/           # Shared utilities
-|-- tests/               # Test suite
-+-- requirements.txt     # Dependencies
-\end{verbatim}
+\textbf{Structure}: src/ (monitors/, widgets/, utils/), tests/, requirements.txt.
 
 \section{Coding Standards \& Version Control Strategy}
 \label{sec:coding-standards}
 
-\textbf{PEP 8 Compliance}: 4-space indentation, 88-char line length, snake\_case/PascalCase naming conventions.
+\textbf{PEP 8 Compliance}: 4-space indent, 88-char lines, snake\_case/PascalCase.
 
-\textbf{Type Hints \& Documentation}: All functions include type annotations and comprehensive Google-style docstrings.
+\textbf{Type Hints}: All functions annotated with Google-style docstrings.
 
-\begin{lstlisting}
-def format_bytes(bytes_value: int) -> str:
-    """Convert bytes to human-readable format."""
-    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
-        if bytes_value < 1024.0:
-            return f"{bytes_value:.1f} {unit}"
-        bytes_value /= 1024.0
-    return f"{bytes_value:.1f} PB"
-\end{lstlisting}
+\textbf{Error Handling}: Try-except around system calls, specific exceptions, graceful defaults.
 
-\textbf{Error Handling}: Defensive programming with try-except blocks around all system calls, specific exception handling (\texttt{psutil.Error}), graceful degradation returning safe defaults.
-
-\textbf{Version Control}: Main branch for stable code, frequent atomic commits (5-10 per session) with conventional messages (\texttt{feat(cpu): add per-core frequency}), milestone tagging (\texttt{step-13-complete}, \texttt{v0.1.0}).
+\textbf{Version Control}: Main branch, atomic commits with conventional messages, milestone tags.
 
 \section{Module-Wise Implementation}
 \label{sec:module-implementation}
 
-Key modules demonstrate design patterns and implementation decisions.
-
 \subsection{Foundation: CircularBuffer \& BaseMonitor}
 
-\texttt{CircularBuffer} provides efficient O(1) time-series storage using \texttt{deque(maxlen)} with thread-safe operations. \texttt{BaseMonitor} abstract class enforces consistent interface across all monitors with \texttt{CircularBuffer} composition and \texttt{\_last\_data} caching.
-
-\begin{lstlisting}
-class BaseMonitor(ABC):
-    def __init__(self, history_size: int = 60):
-        self.history = CircularBuffer(maxsize=history_size)
-        self._last_data = None
-    
-    @abstractmethod
-    def collect(self) -> Dict[str, Any]:
-        pass
-\end{lstlisting}
+\texttt{CircularBuffer} uses \texttt{deque(maxlen)} for O(1) storage. \texttt{BaseMonitor} abstract class enforces consistent interface with circular buffer composition.
 
 \subsection{CPUMonitor Implementation}
 
-\texttt{CPUMonitor} collects overall/per-core CPU usage, frequency, and load averages using \texttt{psutil.cpu\_percent(interval=None)} for non-blocking sampling. CPU info cached at initialization, only scalar values stored in history for efficiency, error handling returns safe defaults.
+Collects CPU usage, frequency, load using \texttt{psutil.cpu\_percent(interval=None)} for non-blocking sampling. CPU info cached, only scalars stored, error handling returns defaults.
 
 \begin{lstlisting}
 class CPUMonitor(BaseMonitor):
