@@ -534,77 +534,31 @@ This structured approach demonstrated software engineering best practices---plan
 \chapter{Project Management \& Finance}
 \label{chap:management}
 
-Effective project management was crucial for successfully completing systop within the constraints of a single semester academic project. This chapter details the project management methodologies employed, including work breakdown, scheduling, budget analysis, risk management, and key decisions made throughout development.
+This chapter details project management methodologies employed, including work breakdown, scheduling, budget analysis, and risk management for systop development.
 
 \section{Work Breakdown Structure (WBS)}
 \label{sec:wbs}
 
-The Work Breakdown Structure provides a hierarchical decomposition of the systop project into manageable tasks and deliverables, organized into seven major phases.
+The project was decomposed into seven phases totaling ~200 hours over 16 weeks:
 
-\subsection{WBS Hierarchy Overview}
+\textbf{Phase 1: Planning \& Setup} (10\%, 20h): Requirements analysis, technology selection, environment configuration, BUILD\_PLAN.md creation.
 
-\textbf{Phase 1: Project Planning and Setup} (10\% effort, 20 hours)
-\begin{itemize}
-    \item Requirements analysis and documentation
-    \item Technology evaluation and selection
-    \item Environment setup (Python 3.13, virtual environment, dependencies)
-    \item Development planning (BUILD\_PLAN.md creation)
-\end{itemize}
+\textbf{Phase 2: Foundation \& Utilities} (10\%, 20h): Configuration module, formatters, circular buffer, BaseMonitor abstract class.
 
-\textbf{Phase 2: Foundation and Utilities} (10\% effort, 20 hours)
-\begin{itemize}
-    \item Configuration management module
-    \item Utility functions (formatters for bytes, percentages, frequencies)
-    \item Circular buffer implementation for time-series data
-    \item BaseMonitor abstract class with common functionality
-\end{itemize}
+\textbf{Phase 3: Core Monitoring} (25\%, 50h): CPU, memory, disk monitors with psutil integration and comprehensive unit testing.
 
-\textbf{Phase 3: Core Monitoring Implementation} (25\% effort, 50 hours)
-\begin{itemize}
-    \item CPU monitoring (psutil integration, py-cpuinfo integration, per-core tracking)
-    \item Memory monitoring (RAM and swap tracking, historical data collection)
-    \item Disk monitoring (partition usage, I/O tracking)
-    \item Comprehensive unit testing for each monitor
-\end{itemize}
+\textbf{Phase 4: Extended Monitoring} (25\%, 50h): Network, GPU, temperature sensors, process management with sort/filter/kill functionality.
 
-\textbf{Phase 4: Extended Monitoring Features} (25\% effort, 50 hours)
-\begin{itemize}
-    \item Network monitoring (bandwidth per interface, upload/download speeds)
-    \item GPU monitoring (GPUtil integration, graceful fallback handling)
-    \item Temperature sensors (detection and graceful degradation)
-    \item Process management (sorting, filtering, search, kill functionality)
-\end{itemize}
+\textbf{Phase 5: UI Integration} (15\%, 30h): Seven widgets, Textual framework integration, keyboard bindings, CSS styling.
 
-\textbf{Phase 5: UI Integration and Refinement} (15\% effort, 30 hours)
-\begin{itemize}
-    \item Widget development (CPU, memory, disk, network, GPU, sensors, process widgets)
-    \item Main application integration with Textual framework
-    \item Keyboard bindings and CSS styling
-    \item UI refinement and responsive behavior testing
-\end{itemize}
+\textbf{Phase 6: Testing \& QA} (10\%, 20h): 142 unit/integration tests, stability testing, manual verification.
 
-\textbf{Phase 6: Testing and Quality Assurance} (10\% effort, 20 hours)
-\begin{itemize}
-    \item Unit testing (142 tests across all modules)
-    \item Integration testing (app startup, monitor-widget integration)
-    \item Stability testing (5-minute stress tests, memory leak detection)
-    \item Manual verification with comprehensive checklist
-\end{itemize}
+\textbf{Phase 7: Documentation} (5\%, 10h): User/developer documentation, project report, final packaging.
 
-\textbf{Phase 7: Documentation and Finalization} (5\% effort, 10 hours)
-\begin{itemize}
-    \item User documentation (README, keyboard shortcuts, troubleshooting)
-    \item Developer documentation (docstrings, architecture documentation)
-    \item Project report writing
-    \item Final packaging (requirements.txt, pyproject.toml, version tagging)
-\end{itemize}
-
-\textbf{WBS Summary}: 24 work packages, 97 total tasks, ~200 estimated hours over 16 weeks (~12-15 hours/week).
-
-\section{Project Schedule --- Gantt Chart}
+\section{Project Schedule}
 \label{sec:schedule}
 
-The project schedule spanned 16 weeks aligned with the academic semester. Table~\ref{tab:milestones} summarizes the major milestones and their completion status.
+Table~\ref{tab:milestones} summarizes milestone completion across the 16-week semester.
 
 \begin{table}[h]
 \centering
@@ -627,154 +581,50 @@ M8: Project Done & Week 16 & Week 16 & $\checkmark$ & Complete deliverables \\
 \end{tabular}
 \end{table}
 
-\subsection{Timeline and Dependencies}
+\textbf{Critical Path}: Environment Setup $\rightarrow$ Foundation $\rightarrow$ Core Monitors $\rightarrow$ Extended Monitors $\rightarrow$ UI Integration $\rightarrow$ Testing $\rightarrow$ Finalization. All milestones completed on schedule through structured BUILD\_PLAN.md approach preventing scope creep.
 
-\textbf{Critical Path}: Environment Setup $\rightarrow$ Foundation $\rightarrow$ Core Monitors $\rightarrow$ Extended Monitors $\rightarrow$ UI Integration $\rightarrow$ Testing $\rightarrow$ Finalization
-
-\textbf{Key Dependencies}:
-\begin{itemize}
-    \item All monitors depend on BaseMonitor completion (Phase 2)
-    \item All widgets depend on corresponding monitor implementation
-    \item Integration testing requires completed UI
-    \item Documentation requires feature-complete implementation
-\end{itemize}
-
-\textbf{Schedule Performance}: The project maintained excellent schedule adherence, completing all eight milestones on time. The structured BUILD\_PLAN.md approach with clear deliverables prevented scope creep and facilitated consistent progress at ~13 hours/week throughout the semester.
-
-\section{Budget \& Financial Cost Analysis}
+\section{Budget \& Cost Analysis}
 \label{sec:budget}
 
-As an academic project conducted individually using personal resources and open-source software, systop incurred minimal direct financial costs. However, we present a comprehensive cost analysis.
+\textbf{Direct Costs}: \$0 (personal laptop, open-source software: Python 3.13, textual, psutil, pytest, Git, Linux).
 
-\subsection{Direct Costs}
+\textbf{Time Investment}: 210 hours (13.1 hours/week average): Planning 20h (9.5\%), Implementation 130h (61.9\%), Testing 30h (14.3\%), Documentation 20h (9.5\%), Report 10h (4.8\%). Notional value: \$4,200 at \$20/hour.
 
-\textbf{Hardware}: \$0 (used existing development laptop)
+\textbf{Efficiency Gains}: Open-source tools provided 2x development efficiency: Python vs. C++ (30-40\% faster), Textual vs. curses (60\% UI time reduction), psutil eliminated ~40 hours low-level work, pytest saved ~10 hours.
 
-\textbf{Software}: \$0 (all open-source):
-\begin{itemize}
-    \item Python 3.13, all libraries (textual, psutil, plotext, py-cpuinfo, GPUtil, pytest)
-    \item Development tools (VS Code, Git)
-    \item Operating system (Linux)
-\end{itemize}
-
-\textbf{Infrastructure}: \$0 (included in existing internet, GitHub free tier)
-
-\textbf{Total Direct Costs}: \$0
-
-\subsection{Time Investment Analysis}
-
-\textbf{Development Time}: 210 actual hours over 16 weeks (average 13.1 hours/week)
-
-\textbf{Time Breakdown}:
-\begin{itemize}
-    \item Planning and setup: 20 hours (9.5\%)
-    \item Implementation: 130 hours (61.9\%)
-    \item Testing and debugging: 30 hours (14.3\%)
-    \item Documentation: 20 hours (9.5\%)
-    \item Report writing: 10 hours (4.8\%)
-\end{itemize}
-
-\textbf{Notional Value}: At \$20/hour student developer rate: ~\$4,200 time investment value
-
-\subsection{Resource Utilization Efficiency}
-
-\textbf{Development Efficiency Gains}:
-\begin{itemize}
-    \item Python vs. C++: ~30-40\% faster development
-    \item Textual vs. raw curses: ~60\% reduction in UI development time
-    \item psutil: Eliminated ~40 hours of low-level implementation
-    \item pytest: Saved ~10 hours vs. manual testing alone
-\end{itemize}
-
-\textbf{Total Efficiency Gain}: Open-source ecosystem saved approximately 100+ hours, enabling completion of comprehensive monitoring tool within academic timeframe---roughly 2x development efficiency.
-
-\textbf{Cost-Benefit Conclusion}: Zero financial cost, efficient resource utilization, substantial educational value (course completion, skill development, portfolio project) significantly exceeding the 210-hour time investment.
-
-\section{Risk Analysis \& Mitigation Plan}
+\section{Risk Management}
 \label{sec:risk-analysis}
 
-Effective risk management ensured project completion within the semester timeframe. We identified, assessed, and mitigated twelve key risks across technical, schedule, and quality domains.
+Twelve key risks were identified and successfully mitigated:
 
-\subsection{Technical Risks}
-
-\textbf{T1: Library Compatibility Issues} (Medium likelihood, High impact)
+\textbf{Technical Risks}:
 \begin{itemize}
-    \item \textbf{Mitigation}: Pin dependency versions, use virtual environment, test installation early
-    \item \textbf{Outcome}: No issues encountered; pinned versions worked correctly
+    \item \textbf{T1: Library Compatibility}: Pinned versions, virtual environment. \textit{Outcome}: No issues.
+    \item \textbf{T2: Platform Behavior}: Defensive programming, graceful fallbacks. \textit{Outcome}: Successfully handled.
+    \item \textbf{T3: GPU Unavailability}: Try-except wrappers, ``N/A'' displays. \textit{Outcome}: Works universally.
+    \item \textbf{T4: Performance}: Early profiling, tuned intervals, efficient structures. \textit{Outcome}: Met targets.
 \end{itemize}
 
-\textbf{T2: Platform-Specific Behavior} (Medium likelihood, Medium impact)
+\textbf{Schedule Risks}:
 \begin{itemize}
-    \item \textbf{Mitigation}: Test on multiple systems, defensive programming with try-except, graceful fallbacks
-    \item \textbf{Outcome}: Minor variations successfully handled
+    \item \textbf{S1: Feature Creep}: Strict BUILD\_PLAN.md adherence. \textit{Outcome}: Avoided successfully.
+    \item \textbf{S2: Underestimation}: 15-20\% time buffer. \textit{Outcome}: Absorbed 5\% overruns.
+    \item \textbf{S3: Testing Delays}: Continuous testing, two-week QA allocation. \textit{Outcome}: No accumulation.
+    \item \textbf{S4: Academic Demands}: Exam planning, steady pace. \textit{Outcome}: Maintained schedule.
 \end{itemize}
 
-\textbf{T3: GPU Monitoring Unavailability} (High likelihood, Low impact if handled)
+\textbf{Quality Risks}:
 \begin{itemize}
-    \item \textbf{Mitigation}: Comprehensive try-except around GPU code, display ``N/A'' when unavailable, test on both GPU and non-GPU systems
-    \item \textbf{Outcome}: Successfully handled; application works universally
+    \item \textbf{Q1: Test Coverage}: Mandatory testing, explicit targets. \textit{Outcome}: Achieved 74\% overall.
+    \item \textbf{Q2: Code Quality}: PEP 8 standards, comprehensive docstrings. \textit{Outcome}: Consistent quality.
 \end{itemize}
 
-\textbf{T4: Performance Issues} (Low-Medium likelihood, Medium impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Profile code early, adjust update intervals (1-5s), use efficient data structures
-    \item \textbf{Outcome}: Targets met (<1\% CPU, ~40MB memory)
-\end{itemize}
-
-\subsection{Schedule Risks}
-
-\textbf{S1: Feature Creep} (High likelihood, High impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Define must-have vs. nice-to-have, follow BUILD\_PLAN.md strictly, defer enhancements
-    \item \textbf{Outcome}: Successfully avoided; maintained focus on core features
-\end{itemize}
-
-\textbf{S2: Underestimated Complexity} (Medium likelihood, High impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Build 15-20\% time buffer, tackle complex tasks early, track time vs. estimates
-    \item \textbf{Outcome}: Small overruns (~5\%) absorbed by buffer
-\end{itemize}
-
-\textbf{S3: Testing Delays} (Medium likelihood, High impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Write tests continuously, fix bugs immediately, allocate two weeks for testing/QA
-    \item \textbf{Outcome}: Continuous testing prevented bug accumulation
-\end{itemize}
-
-\textbf{S4: Competing Academic Demands} (High likelihood, Medium impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Plan around exam periods, maintain steady 12-15 hours/week, front-load when possible
-    \item \textbf{Outcome}: Steady pace maintained despite exam weeks
-\end{itemize}
-
-\subsection{Quality Risks}
-
-\textbf{Q1: Insufficient Test Coverage} (Medium likelihood, High impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Make testing mandatory in plan, write tests per module, set explicit targets (70\%/80\%)
-    \item \textbf{Outcome}: Achieved 74\% overall, 80\%+ for core modules
-\end{itemize}
-
-\textbf{Q2: Poor Code Quality} (Medium likelihood, Medium impact)
-\begin{itemize}
-    \item \textbf{Mitigation}: Establish PEP 8 standards, comprehensive docstrings, regular self-review
-    \item \textbf{Outcome}: Consistent quality maintained throughout
-\end{itemize}
-
-\textbf{Risk Management Effectiveness}: All twelve identified risks were successfully mitigated through proactive planning and disciplined execution, contributing significantly to on-time, on-quality project completion.
-
-\section{Summary of Management Decisions}
+\section{Key Management Decisions}
 \label{sec:management-decisions}
 
-Throughout the project, key management decisions shaped development and influenced outcomes. We highlight sixteen critical decisions across scope, architecture, testing, process, and problem-solving domains.
+\textbf{Technology Choices}: Python over C++/Rust prioritized development speed and educational accessibility. Textual framework over curses significantly accelerated UI development.
 
-\subsection{Scope and Feature Decisions}
-
-\textbf{Decision 1 --- Python Over C++/Rust}: Chose Python for development speed and educational accessibility despite performance trade-off. \textit{Outcome}: Completed on time with maintainable code.
-
-\textbf{Decision 2 --- Textual Framework}: Selected Textual over curses for modern reactive architecture. \textit{Outcome}: UI development significantly faster than anticipated.
-
-\textbf{Decision 3 --- Defer Customization}: Week 10 decision to postpone theme customization to maintain schedule. \textit{Outcome}: Completed all critical features on time.
+\textbf{Scope Management}: Week 10 decision to defer theme customization ensured critical feature completion within semester constraints.
 
 %=============================================================================
 % CHAPTER 5: SYSTEM DESIGN & ARCHITECTURE
