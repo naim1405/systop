@@ -1097,13 +1097,27 @@ Figure~\ref{fig:architecture} illustrates the systop architecture, showing the f
 \section{Module Interaction Diagram}
 \label{sec:module-interaction}
 
-Figure~\ref{fig:modules} details the relationships between specific modules within systop's architecture.
+Figure~\ref{fig:monitor-hierarchy} shows the monitor layer architecture, Figure~\ref{fig:widget-hierarchy} presents the widget layer structure, and Figure~\ref{fig:integration} illustrates how monitors and widgets integrate.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.95\textwidth]{images/module_interaction.png}
-\caption{Detailed module interaction showing inheritance hierarchies, dependencies, and communication patterns}
-\label{fig:modules}
+\includegraphics[width=0.75\textwidth]{images/monitor_hierarchy.png}
+\caption{Monitor architecture showing inheritance from BaseMonitor and CircularBuffer composition}
+\label{fig:monitor-hierarchy}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{images/widget_hierarchy.png}
+\caption{Widget architecture showing inheritance from Textual framework and utility usage}
+\label{fig:widget-hierarchy}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{images/monitor_widget_integration.png}
+\caption{Integration showing one-to-one monitor-widget relationships and data flow to application}
+\label{fig:integration}
 \end{figure}
 
 \subsection{Monitor Domain}
