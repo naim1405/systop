@@ -632,35 +632,35 @@ Twelve key risks were identified and successfully mitigated:
 \chapter{System Design \& Architecture}
 \label{chap:design}
 
-This chapter presents the architectural design of systop, describing the modular structure, component interactions, interface specifications, and design decisions that enable the application to efficiently monitor system resources while maintaining clean code organization. We emphasize how the architecture supports the project's objectives of maintainability, extensibility, and graceful error handling.
+This chapter presents the architectural design of systop, describing the modular structure, component interactions, and key design decisions that enable efficient system monitoring with clean code organization.
 
 \section{Methodological Structure}
 \label{sec:methodological-structure}
 
-The systop architecture follows a three-layer design pattern that separates concerns and promotes modularity, testability, and maintainability.
+The systop architecture follows a three-layer design pattern separating concerns and promoting modularity.
 
 \subsection{Architecture Overview}
 
-\textbf{Layer 1: Data Collection (Monitors)}: Seven specialized monitor modules interface with operating system APIs through the \texttt{psutil} library and hardware-specific tools. Each monitor inherits from the \texttt{BaseMonitor} abstract class and implements a \texttt{collect()} method that gathers metrics and returns structured data. Monitors operate independently and maintain their own historical data using circular buffers.
+\textbf{Layer 1: Data Collection (Monitors)}: Seven monitor modules interface with OS APIs through \texttt{psutil}. Each inherits from \texttt{BaseMonitor} and implements a \texttt{collect()} method returning structured data. Monitors maintain historical data using circular buffers.
 
-\textbf{Layer 2: Presentation (Widgets)}: Seven corresponding widget modules render monitor data in the terminal interface using the Textual framework. Each widget maintains a reference to its monitor, periodically invokes \texttt{collect()}, and transforms raw metrics into visual representations including ASCII graphs, tables, and progress bars. Widgets handle their own update intervals and rendering logic.
+\textbf{Layer 2: Presentation (Widgets)}: Seven widget modules render monitor data using the Textual framework. Widgets periodically invoke \texttt{collect()} and transform raw metrics into visual representations (graphs, tables, progress bars).
 
-\textbf{Layer 3: Application Coordination (App)}: The \texttt{SystemMonitorApp} class serves as the top-level coordinator, instantiating all monitors and widgets, managing the Textual application lifecycle, handling global keyboard bindings, and orchestrating graceful shutdown. The app layer remains thin, delegating domain logic to monitors and presentation logic to widgets.
+\textbf{Layer 3: Application Coordination (App)}: The \texttt{SystemMonitorApp} class instantiates monitors and widgets, manages the application lifecycle, handles keyboard bindings, and orchestrates shutdown.
 
 \subsection{Design Principles}
 
-\textbf{Separation of Concerns}: Each layer has distinct responsibilities. Monitors never contain UI code, widgets never implement data collection logic, and the app never directly accesses system APIs. This separation enables independent testing and modification of each layer.
+\textbf{Separation of Concerns}: Monitors contain no UI code, widgets contain no data collection logic, enabling independent testing and modification.
 
-\textbf{Dependency Inversion}: Widgets depend on monitor abstractions (the \texttt{BaseMonitor} interface) rather than concrete implementations, allowing monitors to evolve independently of their presentation.
+\textbf{Dependency Inversion}: Widgets depend on the \texttt{BaseMonitor} interface rather than concrete implementations.
 
-\textbf{Defensive Programming}: Every system call is wrapped in try-except blocks with graceful fallbacks. Missing hardware (GPU, sensors) results in ``N/A'' displays rather than crashes, ensuring systop functions across diverse Linux systems.
+\textbf{Defensive Programming}: System calls wrapped in try-except blocks with graceful fallbacks. Missing hardware shows ``N/A'' rather than crashing.
 
-\textbf{Resource Efficiency}: Circular buffers with fixed sizes (60 data points) prevent unbounded memory growth. Update intervals are tuned per-monitor type---fast for CPU (1s), slower for disk (5s)---balancing responsiveness with overhead.
+\textbf{Resource Efficiency}: Fixed-size circular buffers (60 points) prevent memory growth. Update intervals tuned per-monitor (CPU: 1s, disk: 5s).
 
 \section{High-Level Architecture Diagram}
 \label{sec:architecture-diagram}
 
-Figure~\ref{fig:architecture} illustrates the systop architecture, showing the flow of data from system APIs through monitors to widgets and ultimately to the user interface.
+Figure~\ref{fig:architecture} illustrates the systop architecture showing data flow from system APIs through monitors to widgets.
 
 \begin{figure}[h]
 \centering
@@ -669,14 +669,14 @@ Figure~\ref{fig:architecture} illustrates the systop architecture, showing the f
 \label{fig:architecture}
 \end{figure}
 
-\textbf{Data Flow}: System metrics originate from Linux kernel interfaces (\texttt{/proc}, \texttt{/sys}), accessed via \texttt{psutil}. Monitor modules collect and aggregate this data every 1-5 seconds (depending on metric type). Raw data is stored in circular buffers and returned as dictionaries. Widgets invoke monitor \texttt{collect()} methods on scheduled intervals, receive data dictionaries, and render visualizations. The Textual framework handles terminal drawing, event loops, and keyboard input. User commands (sorting, killing processes) flow upward from keyboard events through widgets to monitors that execute the requested operations.
+\textbf{Data Flow}: Metrics from Linux kernel interfaces (\texttt{/proc}, \texttt{/sys}) via \texttt{psutil} are collected by monitors every 1-5 seconds, stored in circular buffers, and returned as dictionaries. Widgets invoke \texttt{collect()}, receive data, and render visualizations. User commands flow from keyboard events through widgets to monitors.
 
-\textbf{Component Independence}: Each monitor-widget pair operates independently. Failure in one component (e.g., GPU monitoring unavailable) does not impact others. The architecture supports adding new monitoring capabilities by implementing a new monitor-widget pair without modifying existing code.
+\textbf{Component Independence}: Each monitor-widget pair operates independently. Failures in one component don't impact others. New capabilities can be added by implementing new monitor-widget pairs without modifying existing code.
 
 \section{Module Interaction Diagram}
 \label{sec:module-interaction}
 
-Figure~\ref{fig:monitor-hierarchy} shows the monitor layer architecture, Figure~\ref{fig:widget-hierarchy} presents the widget layer structure, and Figure~\ref{fig:integration} illustrates how monitors and widgets integrate.
+Figures~\ref{fig:monitor-hierarchy}, \ref{fig:widget-hierarchy}, and \ref{fig:integration} show the monitor layer, widget layer, and their integration.
 
 \begin{figure}[h]
 \centering
@@ -701,155 +701,110 @@ Figure~\ref{fig:monitor-hierarchy} shows the monitor layer architecture, Figure~
 
 \subsection{Monitor Domain}
 
-\textbf{BaseMonitor Abstract Class}: Defines the interface all monitors must implement. Contains a \texttt{CircularBuffer} for historical data and a \texttt{collect()} abstract method. Provides common functionality for tracking update times and retrieving historical data.
+\textbf{BaseMonitor}: Defines the interface all monitors must implement. Contains a \texttt{CircularBuffer} for historical data and a \texttt{collect()} abstract method.
 
-\textbf{Concrete Monitors}: Seven monitor implementations---\texttt{CPUMonitor}, \texttt{MemoryMonitor}, \texttt{DiskMonitor}, \texttt{NetworkMonitor}, \texttt{GPUMonitor}, \texttt{SensorsMonitor}, and \texttt{ProcessMonitor}---each inherit from \texttt{BaseMonitor} and implement domain-specific data collection logic. For example, \texttt{CPUMonitor} uses \texttt{psutil.cpu\_percent()} and \texttt{cpuinfo.get\_cpu\_info()}, while \texttt{GPUMonitor} attempts to import \texttt{GPUtil} with fallback handling.
+\textbf{Concrete Monitors}: Seven implementations (\texttt{CPUMonitor}, \texttt{MemoryMonitor}, \texttt{DiskMonitor}, \texttt{NetworkMonitor}, \texttt{GPUMonitor}, \texttt{SensorsMonitor}, \texttt{ProcessMonitor}) inherit from \texttt{BaseMonitor} and implement domain-specific collection logic.
 
 \subsection{Widget Domain}
 
-\textbf{Textual Widget Base}: All widgets inherit from \texttt{textual.widget.Widget}, gaining reactive properties, lifecycle hooks, and rendering capabilities from the Textual framework.
+\textbf{Textual Widget Base}: All widgets inherit from \texttt{textual.widget.Widget}, gaining reactive properties and rendering capabilities.
 
-\textbf{Custom Widgets}: Seven widget implementations---\texttt{CPUWidget}, \texttt{MemoryWidget}, etc.---correspond one-to-one with monitors. Each widget holds a reference to its monitor, sets up periodic refresh timers in \texttt{on\_mount()}, and implements \texttt{render()} methods that convert monitor data into Rich renderables (panels, tables, graphs).
+\textbf{Custom Widgets}: Seven implementations correspond one-to-one with monitors. Each holds a monitor reference, sets up periodic timers in \texttt{on\_mount()}, and implements \texttt{render()} methods.
 
 \subsection{Utility Domain}
 
-\textbf{CircularBuffer}: Thread-safe fixed-size deque for time-series data storage. Provides \texttt{append()}, \texttt{get\_all()}, and \texttt{clear()} methods. Used by all monitors to maintain 60-second historical data windows.
+\textbf{CircularBuffer}: Thread-safe fixed-size deque for time-series storage. Provides \texttt{append()}, \texttt{get\_all()}, and \texttt{clear()}.
 
-\textbf{Formatters}: Pure functions for converting raw values to human-readable strings---\texttt{format\_bytes()} converts bytes to KB/MB/GB, \texttt{format\_percentage()} formats floats as percentages, \texttt{format\_frequency()} converts MHz values to GHz strings. Promotes consistency across widget displays.
+\textbf{Formatters}: Pure functions converting values to human-readable strings (\texttt{format\_bytes()}, \texttt{format\_percentage()}, \texttt{format\_frequency()}).
 
-\textbf{Config}: Dataclass holding application configuration including update intervals per monitor type, history buffer sizes, and display preferences. Currently uses hardcoded defaults but structured to support configuration file loading in future enhancements.
+\textbf{Config}: Dataclass holding configuration including update intervals, buffer sizes, and display preferences.
 
 \subsection{Application Domain}
 
-\textbf{SystemMonitorApp}: Textual \texttt{App} subclass that instantiates all seven monitors, creates corresponding widgets, composes the UI layout, defines global keyboard bindings (q=quit, r=refresh), and manages the event loop. Implements graceful shutdown by stopping widget update timers and closing monitor resources.
+\textbf{SystemMonitorApp}: Textual \texttt{App} subclass instantiating monitors and widgets, composing UI layout, defining keyboard bindings, and managing the event loop.
 
 \section{Database Schema / ER Diagram}
 \label{sec:database-schema}
 
 \textbf{Architectural Decision: No Persistent Database}
 
-Systop does not employ a traditional database. This design decision stems from several considerations aligned with the project's requirements and use case:
+Systop does not employ a traditional database due to its real-time focus and design goals.
 
 \textbf{Rationale}:
 \begin{enumerate}
-    \item \textbf{Real-Time Focus}: The application is designed for real-time monitoring, not historical analysis across sessions. Users need current system state and recent trends (last 60 seconds), not long-term storage.
-    
-    \item \textbf{Simplicity and Portability}: Avoiding database dependencies simplifies installation and deployment. Users can install systop via pip without configuring database servers or worrying about database file locations and permissions.
-    
-    \item \textbf{Performance Overhead}: Database I/O operations would introduce latency and resource overhead counter to the goal of minimal monitoring tool footprint (<1\% CPU, <50MB memory).
-    
-    \item \textbf{Data Volatility}: System metrics change continuously. Persisting every data point would generate massive storage requirements with limited utility for a personal monitoring tool.
+    \item \textbf{Real-Time Focus}: Designed for current system state and recent trends (60 seconds), not long-term storage.
+    \item \textbf{Simplicity}: No database dependencies simplifies installation and deployment.
+    \item \textbf{Performance}: Database I/O would add overhead counter to minimal footprint goals (<1\% CPU, <50MB memory).
+    \item \textbf{Data Volatility}: Metrics change continuously; persisting all data points would generate massive storage with limited utility.
 \end{enumerate}
 
 \subsection{In-Memory Data Management}
 
-Instead of persistent storage, systop uses in-memory circular buffers for recent historical data:
+Systop uses in-memory circular buffers: Each monitor maintains a \texttt{collections.deque} with fixed size (60 elements). Appending new data evicts the oldest entry, providing O(1) operations and bounded memory (~500 bytes per buffer, ~3.5KB total).
 
-\textbf{CircularBuffer Implementation}: Each monitor maintains a \texttt{collections.deque} with fixed maximum size (default 60 elements). When the buffer fills, appending new data automatically evicts the oldest entry, providing constant-time operations and bounded memory usage. For 60-second windows at 1-second update intervals, each buffer stores approximately 60 floating-point values (~500 bytes per buffer, ~3.5KB total for seven monitors).
-
-\textbf{Data Lifecycle}: Data exists only during application runtime. Starting systop initializes empty buffers. As monitors collect metrics, buffers populate with recent history. Quitting systop discards all data. This ephemeral approach is appropriate for a real-time monitoring tool where historical data older than a minute has limited value for troubleshooting or system understanding.
-
-\textbf{Future Extension Path}: While no database currently exists, the architecture supports adding optional persistent storage without major refactoring. A new \texttt{StorageManager} component could subscribe to monitor data and write to SQLite or time-series databases (InfluxDB, Prometheus) for users requiring historical analysis. The monitor layer would remain unchanged, demonstrating the architecture's extensibility.
+Data exists only during runtime. Starting systop initializes empty buffers; quitting discards all data. The architecture supports adding optional persistent storage (SQLite, InfluxDB) without major refactoring.
 
 \section{Interface Specifications / API Contracts}
 \label{sec:interface-specifications}
 
-Systop is a standalone terminal application, not a networked service, so it has no REST APIs or HTTP endpoints. Instead, we document the internal Python interfaces that define contracts between architectural layers.
+Systop has no REST APIs or HTTP endpoints. We document internal Python interfaces defining contracts between layers.
 
 \subsection{BaseMonitor Interface Contract}
-
-All monitor implementations must adhere to this interface:
 
 \textbf{Required Method}: \texttt{collect() -> Dict[str, Any]}
 
 \begin{itemize}
-    \item \textbf{Responsibility}: Gather current system metrics for the monitor's domain
-    \item \textbf{Return Value}: Dictionary with consistent keys across calls for the same monitor type. Values must be JSON-serializable (strings, numbers, lists, dicts).
-    \item \textbf{Side Effects}: Must update \texttt{self.history} circular buffer with time-series data (typically one numeric value representing overall metric). Must update \texttt{self.\_last\_data} with returned dictionary.
-    \item \textbf{Error Handling}: Should not raise exceptions. Must return partial data or empty dictionary with error indicators if system calls fail.
-    \item \textbf{Performance}: Must complete within 100ms to avoid blocking the UI event loop.
+    \item \textbf{Responsibility}: Gather current system metrics
+    \item \textbf{Return}: Dictionary with consistent keys. Values must be JSON-serializable.
+    \item \textbf{Side Effects}: Updates \texttt{self.history} circular buffer and \texttt{self.\_last\_data}
+    \item \textbf{Error Handling}: Should not raise exceptions. Returns partial data or empty dictionary with error indicators on failure.
+    \item \textbf{Performance}: Must complete within 100ms
 \end{itemize}
 
-\textbf{Example Contract Implementation}:
+\textbf{Example}: \texttt{CPUMonitor.collect()} returns \texttt{overall\_percent}, \texttt{per\_core\_percent}, \texttt{frequency}, \texttt{load\_avg}, \texttt{cpu\_count}, and \texttt{model}.
 
-\texttt{CPUMonitor.collect()} returns:
-\begin{itemize}
-    \item \texttt{overall\_percent}: float (0-100)
-    \item \texttt{per\_core\_percent}: list of floats (0-100 per core)
-    \item \texttt{frequency}: dict with \texttt{current}, \texttt{min}, \texttt{max} in MHz
-    \item \texttt{load\_avg}: dict with \texttt{1min}, \texttt{5min}, \texttt{15min} load averages
-    \item \texttt{cpu\_count}: dict with \texttt{physical} and \texttt{logical} core counts
-    \item \texttt{model}: string (CPU model name)
-\end{itemize}
+\subsection{Widget-Monitor Interaction}
 
-\subsection{Widget-Monitor Interaction Pattern}
-
-Widgets interact with monitors through a polling pattern:
-
-\begin{enumerate}
-    \item \textbf{Initialization}: Widget constructor receives monitor instance: \texttt{widget = CPUWidget(cpu\_monitor)}
-    \item \textbf{Timer Setup}: In \texttt{on\_mount()}, widget schedules periodic refresh: \texttt{self.set\_interval(1.0, self.refresh\_data)}
-    \item \textbf{Data Collection}: Refresh method calls monitor: \texttt{data = self.monitor.collect()}
-    \item \textbf{State Update}: Widget stores data in reactive property: \texttt{self.data = data}
-    \item \textbf{Rendering}: Textual framework triggers \texttt{render()} when reactive property changes
-    \item \textbf{Visualization}: \texttt{render()} transforms data dictionary into Rich renderables
-\end{enumerate}
-
-This unidirectional data flow (monitor $\rightarrow$ widget) simplifies reasoning about state and testing---monitors never know about widgets, enabling independent testing.
+Widgets interact through polling: Widget receives monitor instance, schedules periodic refresh in \texttt{on\_mount()}, calls \texttt{monitor.collect()}, stores data in reactive property, and \texttt{render()} transforms data into Rich renderables. This unidirectional flow (monitor $\rightarrow$ widget) simplifies testing.
 
 \subsection{Configuration Interface}
 
-The \texttt{Config} dataclass provides a centralized configuration interface:
-
-\textbf{Access Pattern}: Modules import \texttt{Config} and instantiate: \texttt{config = Config()}. Access settings via attributes: \texttt{config.UPDATE\_INTERVAL\_CPU}.
-
-\textbf{Extensibility}: While currently using dataclass defaults, the architecture supports loading from configuration files. A future \texttt{load\_config()} function could parse TOML/YAML files and override defaults, maintaining backward compatibility through the dataclass's default values.
+\texttt{Config} dataclass provides centralized configuration. Modules instantiate \texttt{Config()} and access settings via attributes. Supports future loading from TOML/YAML files while maintaining backward compatibility through defaults.
 
 \subsection{Process Management Interface}
 
-\texttt{ProcessMonitor} provides an extended interface beyond basic collection:
-
-\begin{itemize}
-    \item \texttt{collect() -> Dict}: Returns process list with sort/filter applied
-    \item \texttt{set\_sort\_key(key: str)}: Sets sorting column (``cpu'', ``memory'', ``pid'', ``name'')
-    \item \texttt{set\_filter(pattern: str)}: Sets name filter (empty string shows all)
-    \item \texttt{kill\_process(pid: int, signal: int = SIGTERM)}: Terminates specified process
-\end{itemize}
-
-\texttt{ProcessWidget} calls these methods in response to keyboard events (arrow keys for sorting, \texttt{/} for search, \texttt{k} for kill), implementing interactive process management.
+\texttt{ProcessMonitor} provides: \texttt{collect()}, \texttt{set\_sort\_key(key)}, \texttt{set\_filter(pattern)}, and \texttt{kill\_process(pid, signal)}. \texttt{ProcessWidget} calls these in response to keyboard events for interactive process management.
 
 \section{Security \& Performance Design}
 \label{sec:security-performance}
 
-While systop is a local monitoring tool without network exposure, security and performance considerations informed several design decisions.
+Security and performance considerations informed several design decisions.
 
 \subsection{Security Considerations}
 
-\textbf{Process Termination}: The \texttt{kill\_process()} function requires user confirmation via a modal dialog to prevent accidental termination of critical processes. Users can only kill processes their user account has permission to terminate (enforced by OS-level access control). Attempting to kill privileged processes without sudo fails gracefully with an error message rather than crashing.
+\textbf{Process Termination}: \texttt{kill\_process()} requires user confirmation via modal dialog. Users can only kill processes their account has permission to terminate (OS-enforced). Attempting to kill privileged processes fails gracefully.
 
-\textbf{Privilege Separation}: Systop operates entirely in user space, requiring no root privileges for core functionality. GPU and sensor monitoring gracefully degrades when permissions are insufficient rather than prompting for elevated access or failing to start.
+\textbf{Privilege Separation}: Operates entirely in user space, requiring no root privileges. GPU and sensor monitoring degrades gracefully when permissions are insufficient.
 
-\textbf{Input Validation}: Process search filters and sort keys are validated against allowed values before use, preventing potential command injection if monitor implementations used subprocess calls (though systop avoids subprocess for performance).
+\textbf{Input Validation}: Process filters and sort keys validated against allowed values.
 
-\textbf{Dependency Security}: All dependencies (textual, psutil, plotext, etc.) are pinned to specific versions in \texttt{requirements.txt}, preventing supply chain attacks through malicious package updates. Dependencies were chosen based on maturity, active maintenance, and security track records.
+\textbf{Dependency Security}: Dependencies pinned to specific versions in \texttt{requirements.txt}, preventing supply chain attacks. Dependencies chosen for maturity and security track records.
 
 \subsection{Performance Design}
 
-\textbf{Update Interval Tuning}: Different metrics update at different rates---CPU every 1 second for responsiveness, disk I/O every 5 seconds since storage metrics change slowly. This reduces unnecessary system calls and overhead.
+\textbf{Update Interval Tuning}: CPU updates every 1s for responsiveness, disk every 5s, reducing unnecessary system calls.
 
-\textbf{Efficient Data Structures}: Circular buffers use \texttt{collections.deque} with fixed \texttt{maxlen}, providing O(1) append operations and automatic memory management. Deque's underlying C implementation offers performance comparable to manual circular buffer implementations.
+\textbf{Efficient Data Structures}: \texttt{collections.deque} with fixed \texttt{maxlen} provides O(1) append operations.
 
-\textbf{Lazy Evaluation}: Graphs and visualizations are computed only when rendered, not on every data collection. Historical data stored in buffers remains in raw numeric form until widgets transform it for display, avoiding redundant formatting work.
+\textbf{Lazy Evaluation}: Graphs computed only when rendered, not on every collection. Raw data stored until widgets format for display.
 
-\textbf{Asynchronous UI Updates}: Textual's reactive properties and asynchronous event loop enable non-blocking updates. While one widget renders, others continue collecting data and updating, preventing UI freezes.
+\textbf{Asynchronous Updates}: Textual's reactive properties enable non-blocking updates, preventing UI freezes.
 
-\textbf{Memory Footprint}: Bounded buffers, efficient string formatting, and minimal object creation keep memory usage around 40MB. Widget objects are reused across updates rather than recreated. Monitor data dictionaries are overwritten rather than appended to lists.
+\textbf{Memory Footprint}: Bounded buffers keep memory usage around 40MB. Widget objects reused across updates.
 
-\textbf{CPU Overhead}: Performance profiling showed the monitoring tool itself consuming <0.8\% CPU during normal operation on a quad-core system, meeting the <1\% requirement. The overhead primarily comes from terminal rendering, not data collection, validating the choice to prioritize visual richness over minimal CPU usage.
+\textbf{CPU Overhead}: Profiling showed <0.8\% CPU during normal operation, meeting the <1\% requirement.
 
-\textbf{Graceful Degradation}: Optional features (GPU, sensors) fail silently without retrying, eliminating overhead from repeated failed hardware probes. A single check at startup determines availability; subsequent updates skip unavailable monitors entirely.
-
-The architecture's emphasis on modularity, defensive programming, and performance consciousness enables systop to provide comprehensive system monitoring with minimal resource impact, fulfilling its design objectives while maintaining clean, maintainable code suitable for educational purposes.
+\textbf{Graceful Degradation}: Optional features fail silently without retrying. Single startup check determines availability; subsequent updates skip unavailable monitors.
 
 %=============================================================================
 % CHAPTER 6: IMPLEMENTATION
