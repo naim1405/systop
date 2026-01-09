@@ -7,7 +7,7 @@
 % Packages
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{times}
+\usepackage{lmodern}
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{listings}
@@ -182,7 +182,7 @@ Existing system monitoring tools for Linux present several limitations that hind
 
 \textbf{Limited Visual Representation}: Traditional tools like \texttt{top} provide text-based output with minimal visual aids, making it difficult to quickly understand trends and patterns in resource usage. While \texttt{htop} offers some improvements with color coding, it still lacks graphical representations of historical data that would enable users to identify patterns over time.
 
-\textbf{Fragmented Information}: Users often need to run multiple separate tools to monitor different system aspects—\texttt{top} for processes, \texttt{iostat} for disk I/O, \texttt{iftop} for network traffic, and \texttt{nvidia-smi} for GPU metrics. This fragmentation requires switching between multiple terminal windows or sessions, reducing efficiency and making it difficult to correlate metrics across different system components.
+\textbf{Fragmented Information}: Users often need to run multiple separate tools to monitor different system aspects---\texttt{top} for processes, \texttt{iostat} for disk I/O, \texttt{iftop} for network traffic, and \texttt{nvidia-smi} for GPU metrics. This fragmentation requires switching between multiple terminal windows or sessions, reducing efficiency and making it difficult to correlate metrics across different system components.
 
 \textbf{Inconsistent User Experience}: Different monitoring tools have varying interfaces, keyboard shortcuts, and output formats. This inconsistency creates a steep learning curve and reduces productivity, especially for users who need to monitor multiple system aspects simultaneously.
 
@@ -433,19 +433,19 @@ To understand where systop fits in the ecosystem, we conducted a systematic comp
 \hline
 \textbf{Feature} & \textbf{top} & \textbf{htop} & \textbf{btop} & \textbf{bottom} & \textbf{glances} & \textbf{systop} \\
 \hline
-CPU Monitoring & ✓ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-Per-Core CPU & ✗ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-CPU Graphs & ✗ & ✗ & ✓ & ✓ & ✗ & ✓ \\
-Memory Monitoring & ✓ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-Memory Graphs & ✗ & ✗ & ✓ & ✓ & ✗ & ✓ \\
-Disk I/O & ✗ & ✗ & ✓ & ✓ & ✓ & ✓ \\
-Network Monitoring & ✗ & ✗ & ✓ & ✓ & ✓ & ✓ \\
-GPU Monitoring & ✗ & ✗ & ✓ & ✗ & ✓ & ✓ \\
-Temperature Sensors & ✗ & ✗ & ✓ & ✓ & ✓ & ✓ \\
-Process Management & ✓ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-Process Search & ✗ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-Process Kill & ✓ & ✓ & ✓ & ✓ & ✓ & ✓ \\
-Historical Graphs & ✗ & ✗ & ✓ & ✓ & ✗ & ✓ \\
+CPU Monitoring & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Per-Core CPU & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+CPU Graphs & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+Memory Monitoring & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Memory Graphs & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+Disk I/O & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Network Monitoring & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+GPU Monitoring & $\times$ & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ & $\checkmark$ \\
+Temperature Sensors & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Process Management & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Process Search & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Process Kill & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Historical Graphs & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\times$ & $\checkmark$ \\
 \hline
 \end{tabular}
 \end{table}
@@ -797,7 +797,7 @@ Before marking steps complete, specific quality criteria had to be met:
     \item Manual testing confirms expected behavior
 \end{itemize}
 
-The structured workflow, though executed individually, demonstrated software engineering best practices including planning, iterative development, continuous testing, version control, and documentation—all key learning objectives for CSE-3200 Software Development II.
+The structured workflow, though executed individually, demonstrated software engineering best practices including planning, iterative development, continuous testing, version control, and documentation---all key learning objectives for CSE-3200 Software Development II.
 
 %=============================================================================
 % CHAPTER 4: PROJECT MANAGEMENT & FINANCE
@@ -872,7 +872,7 @@ The Work Breakdown Structure provides a hierarchical decomposition of the systop
 
 \textbf{WBS Summary}: 24 work packages, 97 total tasks, ~200 estimated hours over 16 weeks (~12-15 hours/week).
 
-\section{Project Schedule — Gantt Chart}
+\section{Project Schedule --- Gantt Chart}
 \label{sec:schedule}
 
 The project schedule spanned 16 weeks aligned with the academic semester. Table~\ref{tab:milestones} summarizes the major milestones and their completion status.
@@ -886,14 +886,14 @@ The project schedule spanned 16 weeks aligned with the academic semester. Table~
 \hline
 \textbf{Milestone} & \textbf{Target} & \textbf{Actual} & \textbf{Status} & \textbf{Deliverable} \\
 \hline
-M1: Project Plan & Week 2 & Week 2 & ✓ & BUILD\_PLAN.md, environment \\
-M2: Foundation & Week 4 & Week 4 & ✓ & Utils, base classes, tests \\
-M3: Core Monitors & Week 7 & Week 7 & ✓ & CPU, memory, disk modules \\
-M4: All Monitors & Week 10 & Week 10 & ✓ & Network, GPU, sensors, process \\
-M5: Functional TUI & Week 12 & Week 12 & ✓ & Integrated application \\
-M6: Tests Passing & Week 13 & Week 13 & ✓ & 142 tests passing \\
-M7: Quality Met & Week 14 & Week 14 & ✓ & 74\% coverage achieved \\
-M8: Project Done & Week 16 & Week 16 & ✓ & Complete deliverables \\
+M1: Project Plan & Week 2 & Week 2 & $\checkmark$ & BUILD\_PLAN.md, environment \\
+M2: Foundation & Week 4 & Week 4 & $\checkmark$ & Utils, base classes, tests \\
+M3: Core Monitors & Week 7 & Week 7 & $\checkmark$ & CPU, memory, disk modules \\
+M4: All Monitors & Week 10 & Week 10 & $\checkmark$ & Network, GPU, sensors, process \\
+M5: Functional TUI & Week 12 & Week 12 & $\checkmark$ & Integrated application \\
+M6: Tests Passing & Week 13 & Week 13 & $\checkmark$ & 142 tests passing \\
+M7: Quality Met & Week 14 & Week 14 & $\checkmark$ & 74\% coverage achieved \\
+M8: Project Done & Week 16 & Week 16 & $\checkmark$ & Complete deliverables \\
 \hline
 \end{tabular}
 \end{table}
@@ -957,7 +957,7 @@ As an academic project conducted individually using personal resources and open-
     \item pytest: Saved ~10 hours vs. manual testing alone
 \end{itemize}
 
-\textbf{Total Efficiency Gain}: Open-source ecosystem saved approximately 100+ hours, enabling completion of comprehensive monitoring tool within academic timeframe—roughly 2x development efficiency.
+\textbf{Total Efficiency Gain}: Open-source ecosystem saved approximately 100+ hours, enabling completion of comprehensive monitoring tool within academic timeframe---roughly 2x development efficiency.
 
 \textbf{Cost-Benefit Conclusion}: Zero financial cost, efficient resource utilization, substantial educational value (course completion, skill development, portfolio project) significantly exceeding the 210-hour time investment.
 
@@ -1041,11 +1041,11 @@ Throughout the project, key management decisions shaped development and influenc
 
 \subsection{Scope and Feature Decisions}
 
-\textbf{Decision 1 — Python Over C++/Rust}: Chose Python for development speed and educational accessibility despite performance trade-off. \textit{Outcome}: Completed on time with maintainable code.
+\textbf{Decision 1 --- Python Over C++/Rust}: Chose Python for development speed and educational accessibility despite performance trade-off. \textit{Outcome}: Completed on time with maintainable code.
 
-\textbf{Decision 2 — Textual Framework}: Selected Textual over curses for modern reactive architecture. \textit{Outcome}: UI development significantly faster than anticipated.
+\textbf{Decision 2 --- Textual Framework}: Selected Textual over curses for modern reactive architecture. \textit{Outcome}: UI development significantly faster than anticipated.
 
-\textbf{Decision 3 — Defer Customization}: Week 10 decision to postpone theme customization to maintain schedule. \textit{Outcome}: Completed all critical features on time.
+\textbf{Decision 3 --- Defer Customization}: Week 10 decision to postpone theme customization to maintain schedule. \textit{Outcome}: Completed all critical features on time.
 
 %=============================================================================
 % CHAPTER 5: SYSTEM DESIGN & ARCHITECTURE
@@ -1076,7 +1076,7 @@ The systop architecture follows a three-layer design pattern that separates conc
 
 \textbf{Defensive Programming}: Every system call is wrapped in try-except blocks with graceful fallbacks. Missing hardware (GPU, sensors) results in ``N/A'' displays rather than crashes, ensuring systop functions across diverse Linux systems.
 
-\textbf{Resource Efficiency}: Circular buffers with fixed sizes (60 data points) prevent unbounded memory growth. Update intervals are tuned per-monitor type—fast for CPU (1s), slower for disk (5s)—balancing responsiveness with overhead.
+\textbf{Resource Efficiency}: Circular buffers with fixed sizes (60 data points) prevent unbounded memory growth. Update intervals are tuned per-monitor type---fast for CPU (1s), slower for disk (5s)---balancing responsiveness with overhead.
 
 \section{High-Level Architecture Diagram}
 \label{sec:architecture-diagram}
@@ -1110,19 +1110,19 @@ Figure~\ref{fig:modules} details the relationships between specific modules with
 
 \textbf{BaseMonitor Abstract Class}: Defines the interface all monitors must implement. Contains a \texttt{CircularBuffer} for historical data and a \texttt{collect()} abstract method. Provides common functionality for tracking update times and retrieving historical data.
 
-\textbf{Concrete Monitors}: Seven monitor implementations—\texttt{CPUMonitor}, \texttt{MemoryMonitor}, \texttt{DiskMonitor}, \texttt{NetworkMonitor}, \texttt{GPUMonitor}, \texttt{SensorsMonitor}, and \texttt{ProcessMonitor}—each inherit from \texttt{BaseMonitor} and implement domain-specific data collection logic. For example, \texttt{CPUMonitor} uses \texttt{psutil.cpu\_percent()} and \texttt{cpuinfo.get\_cpu\_info()}, while \texttt{GPUMonitor} attempts to import \texttt{GPUtil} with fallback handling.
+\textbf{Concrete Monitors}: Seven monitor implementations---\texttt{CPUMonitor}, \texttt{MemoryMonitor}, \texttt{DiskMonitor}, \texttt{NetworkMonitor}, \texttt{GPUMonitor}, \texttt{SensorsMonitor}, and \texttt{ProcessMonitor}---each inherit from \texttt{BaseMonitor} and implement domain-specific data collection logic. For example, \texttt{CPUMonitor} uses \texttt{psutil.cpu\_percent()} and \texttt{cpuinfo.get\_cpu\_info()}, while \texttt{GPUMonitor} attempts to import \texttt{GPUtil} with fallback handling.
 
 \subsection{Widget Domain}
 
 \textbf{Textual Widget Base}: All widgets inherit from \texttt{textual.widget.Widget}, gaining reactive properties, lifecycle hooks, and rendering capabilities from the Textual framework.
 
-\textbf{Custom Widgets}: Seven widget implementations—\texttt{CPUWidget}, \texttt{MemoryWidget}, etc.—correspond one-to-one with monitors. Each widget holds a reference to its monitor, sets up periodic refresh timers in \texttt{on\_mount()}, and implements \texttt{render()} methods that convert monitor data into Rich renderables (panels, tables, graphs).
+\textbf{Custom Widgets}: Seven widget implementations---\texttt{CPUWidget}, \texttt{MemoryWidget}, etc.---correspond one-to-one with monitors. Each widget holds a reference to its monitor, sets up periodic refresh timers in \texttt{on\_mount()}, and implements \texttt{render()} methods that convert monitor data into Rich renderables (panels, tables, graphs).
 
 \subsection{Utility Domain}
 
 \textbf{CircularBuffer}: Thread-safe fixed-size deque for time-series data storage. Provides \texttt{append()}, \texttt{get\_all()}, and \texttt{clear()} methods. Used by all monitors to maintain 60-second historical data windows.
 
-\textbf{Formatters}: Pure functions for converting raw values to human-readable strings—\texttt{format\_bytes()} converts bytes to KB/MB/GB, \texttt{format\_percentage()} formats floats as percentages, \texttt{format\_frequency()} converts MHz values to GHz strings. Promotes consistency across widget displays.
+\textbf{Formatters}: Pure functions for converting raw values to human-readable strings---\texttt{format\_bytes()} converts bytes to KB/MB/GB, \texttt{format\_percentage()} formats floats as percentages, \texttt{format\_frequency()} converts MHz values to GHz strings. Promotes consistency across widget displays.
 
 \textbf{Config}: Dataclass holding application configuration including update intervals per monitor type, history buffer sizes, and display preferences. Currently uses hardcoded defaults but structured to support configuration file loading in future enhancements.
 
@@ -1202,7 +1202,7 @@ Widgets interact with monitors through a polling pattern:
     \item \textbf{Visualization}: \texttt{render()} transforms data dictionary into Rich renderables
 \end{enumerate}
 
-This unidirectional data flow (monitor → widget) simplifies reasoning about state and testing—monitors never know about widgets, enabling independent testing.
+This unidirectional data flow (monitor $\rightarrow$ widget) simplifies reasoning about state and testing---monitors never know about widgets, enabling independent testing.
 
 \subsection{Configuration Interface}
 
@@ -1242,7 +1242,7 @@ While systop is a local monitoring tool without network exposure, security and p
 
 \subsection{Performance Design}
 
-\textbf{Update Interval Tuning}: Different metrics update at different rates—CPU every 1 second for responsiveness, disk I/O every 5 seconds since storage metrics change slowly. This reduces unnecessary system calls and overhead.
+\textbf{Update Interval Tuning}: Different metrics update at different rates---CPU every 1 second for responsiveness, disk I/O every 5 seconds since storage metrics change slowly. This reduces unnecessary system calls and overhead.
 
 \textbf{Efficient Data Structures}: Circular buffers use \texttt{collections.deque} with fixed \texttt{maxlen}, providing O(1) append operations and automatic memory management. Deque's underlying C implementation offers performance comparable to manual circular buffer implementations.
 
@@ -1329,14 +1329,14 @@ The development environment was configured to support efficient Python developme
 \textbf{Project Structure}:
 \begin{verbatim}
 systop/
-├── src/                 # Source code
-│   ├── monitors/        # Data collection modules
-│   ├── widgets/         # UI presentation modules
-│   └── utils/           # Shared utilities
-├── tests/               # Test suite
-├── docs/                # Documentation
-├── requirements.txt     # Dependencies
-└── pyproject.toml       # Project metadata
+|-- src/                 # Source code
+|   |-- monitors/        # Data collection modules
+|   |-- widgets/         # UI presentation modules
+|   +-- utils/           # Shared utilities
+|-- tests/               # Test suite
+|-- docs/                # Documentation
+|-- requirements.txt     # Dependencies
++-- pyproject.toml       # Project metadata
 \end{verbatim}
 
 \section{Coding Standards \& Version Control Strategy}
@@ -1957,7 +1957,7 @@ We employed a multi-level testing strategy combining automated and manual testin
 
 \textbf{Unit Testing}: Focused on individual functions and classes in isolation. Each monitor module, utility function, and data structure was tested independently with 94 unit tests covering edge cases, error conditions, and normal operations. Unit tests used mocking to simulate system calls and hardware availability, enabling testing without requiring specific hardware configurations.
 
-\textbf{Integration Testing}: Validated interactions between components—monitor-widget integration, widget-app communication, and data flow through the architecture. 32 integration tests verified that monitors correctly supply data to widgets, widgets render data without errors, and the main application coordinates all components properly.
+\textbf{Integration Testing}: Validated interactions between components---monitor-widget integration, widget-app communication, and data flow through the architecture. 32 integration tests verified that monitors correctly supply data to widgets, widgets render data without errors, and the main application coordinates all components properly.
 
 \textbf{System Testing}: End-to-end testing of the complete application running in real environments. 12 system tests covered application startup, graceful shutdown, keyboard interaction, and sustained operation over 5-minute stress tests to detect memory leaks or performance degradation.
 
@@ -1976,19 +1976,19 @@ We employed a multi-level testing strategy combining automated and manual testin
 Tests organized parallel to source structure:
 \begin{verbatim}
 tests/
-├── conftest.py              # Shared fixtures
-├── test_monitors/
-│   ├── test_cpu.py         # 15 tests
-│   ├── test_memory.py      # 12 tests
-│   ├── test_disk.py        # 11 tests
-│   ├── test_network.py     # 10 tests
-│   ├── test_gpu.py         # 13 tests (mocked)
-│   ├── test_sensors.py     # 8 tests
-│   └── test_processes.py   # 18 tests
-├── test_utils/
-│   ├── test_formatters.py  # 10 tests
-│   └── test_history.py     # 7 tests
-└── test_integration.py     # 38 tests
+|-- conftest.py              # Shared fixtures
+|-- test_monitors/
+|   |-- test_cpu.py         # 15 tests
+|   |-- test_memory.py      # 12 tests
+|   |-- test_disk.py        # 11 tests
+|   |-- test_network.py     # 10 tests
+|   |-- test_gpu.py         # 13 tests (mocked)
+|   |-- test_sensors.py     # 8 tests
+|   +-- test_processes.py   # 18 tests
+|-- test_utils/
+|   |-- test_formatters.py  # 10 tests
+|   +-- test_history.py     # 7 tests
++-- test_integration.py     # 38 tests
 \end{verbatim}
 
 \section{Test Case Tables}
@@ -2007,17 +2007,17 @@ We present representative test cases demonstrating coverage of normal operations
 \hline
 \textbf{Test Case} & \textbf{Input/Setup} & \textbf{Expected Output} & \textbf{Result} \\
 \hline
-\texttt{test\_cpu\_collect} & Call \texttt{CPUMonitor.collect()} & Dict with \texttt{overall\_percent}, \texttt{per\_core\_percent}, valid ranges & ✓ Pass \\
+\texttt{test\_cpu\_collect} & Call \texttt{CPUMonitor.collect()} & Dict with \texttt{overall\_percent}, \texttt{per\_core\_percent}, valid ranges & $\checkmark$ Pass \\
 \hline
-\texttt{test\_circular\_buffer\_full} & Append 65 values to size-60 buffer & Buffer contains last 60 values only & ✓ Pass \\
+\texttt{test\_circular\_buffer\_full} & Append 65 values to size-60 buffer & Buffer contains last 60 values only & $\checkmark$ Pass \\
 \hline
-\texttt{test\_format\_bytes} & Input: 1536 bytes & Output: ``1.5 KB'' & ✓ Pass \\
+\texttt{test\_format\_bytes} & Input: 1536 bytes & Output: ``1.5 KB'' & $\checkmark$ Pass \\
 \hline
-\texttt{test\_gpu\_unavailable} & Mock GPUtil import failure & Returns \texttt{available=False}, no exception & ✓ Pass \\
+\texttt{test\_gpu\_unavailable} & Mock GPUtil import failure & Returns \texttt{available=False}, no exception & $\checkmark$ Pass \\
 \hline
-\texttt{test\_process\_sort\_cpu} & Set sort key to ``cpu'', collect processes & Processes sorted by CPU descending & ✓ Pass \\
+\texttt{test\_process\_sort\_cpu} & Set sort key to ``cpu'', collect processes & Processes sorted by CPU descending & $\checkmark$ Pass \\
 \hline
-\texttt{test\_memory\_history} & Collect 5 times & History contains 5 memory percentages & ✓ Pass \\
+\texttt{test\_memory\_history} & Collect 5 times & History contains 5 memory percentages & $\checkmark$ Pass \\
 \hline
 \end{tabular}
 \end{table}
@@ -2033,13 +2033,13 @@ We present representative test cases demonstrating coverage of normal operations
 \hline
 \textbf{Test Case} & \textbf{Scenario} & \textbf{Expected Behavior} & \textbf{Result} \\
 \hline
-\texttt{test\_monitor\_widget\_data\_flow} & CPUMonitor → CPUWidget & Widget receives valid data dict & ✓ Pass \\
+\texttt{test\_monitor\_widget\_data\_flow} & CPUMonitor $\rightarrow$ CPUWidget & Widget receives valid data dict & $\checkmark$ Pass \\
 \hline
-\texttt{test\_app\_all\_monitors\_init} & SystemMonitorApp startup & All 7 monitors instantiated & ✓ Pass \\
+\texttt{test\_app\_all\_monitors\_init} & SystemMonitorApp startup & All 7 monitors instantiated & $\checkmark$ Pass \\
 \hline
-\texttt{test\_widget\_handles\_none\_data} & Widget render with \texttt{data=None} & Displays ``Loading...'' message & ✓ Pass \\
+\texttt{test\_widget\_handles\_none\_data} & Widget render with \texttt{data=None} & Displays ``Loading...'' message & $\checkmark$ Pass \\
 \hline
-\texttt{test\_process\_kill\_confirmation} & User triggers kill without confirm & Process not terminated & ✓ Pass \\
+\texttt{test\_process\_kill\_confirmation} & User triggers kill without confirm & Process not terminated & $\checkmark$ Pass \\
 \hline
 \end{tabular}
 \end{table}
@@ -2096,11 +2096,11 @@ We measured systop's resource consumption and responsiveness to validate perform
 \hline
 \textbf{Metric} & \textbf{Target} & \textbf{Measured} & \textbf{Status} \\
 \hline
-CPU Usage (avg) & <1.0\% & 0.7\% & ✓ Met \\
-CPU Usage (peak) & <2.0\% & 1.3\% & ✓ Met \\
-Memory Usage & <50MB & 41MB & ✓ Met \\
-Startup Time & <2s & 1.2s & ✓ Met \\
-UI Update Latency & <100ms & 45ms & ✓ Met \\
+CPU Usage (avg) & <1.0\% & 0.7\% & $\checkmark$ Met \\
+CPU Usage (peak) & <2.0\% & 1.3\% & $\checkmark$ Met \\
+Memory Usage & <50MB & 41MB & $\checkmark$ Met \\
+Startup Time & <2s & 1.2s & $\checkmark$ Met \\
+UI Update Latency & <100ms & 45ms & $\checkmark$ Met \\
 \hline
 \end{tabular}
 \end{table}
@@ -2160,12 +2160,12 @@ We compared systop with three representative monitoring tools: htop (traditional
 \hline
 \textbf{Feature} & \textbf{htop} & \textbf{btop} & \textbf{glances} & \textbf{systop} \\
 \hline
-CPU Graphs & ✗ & ✓ & ✗ & ✓ \\
-GPU Support & ✗ & ✓ & ✓ & ✓ \\
-Process Search & ✓ & ✓ & ✓ & ✓ \\
-Historical Data & ✗ & ✓ & ✗ & ✓ \\
-Network Graphs & ✗ & ✓ & ✗ & ✓ \\
-Python-based & ✗ & ✗ & ✓ & ✓ \\
+CPU Graphs & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+GPU Support & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Process Search & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+Historical Data & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+Network Graphs & $\times$ & $\checkmark$ & $\times$ & $\checkmark$ \\
+Python-based & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
 \hline
 \end{tabular}
 \end{table}
@@ -2189,7 +2189,7 @@ systop 0.1.0 & 0.7\% & 41MB & 1.2s \\
 \end{tabular}
 \end{table}
 
-\textbf{Analysis}: Systop achieves middle-ground performance—more overhead than lightweight htop but less than feature-rich Python competitor glances. Comparable to btop while offering Python accessibility. Performance acceptable for educational tool demonstrating modern practices.
+\textbf{Analysis}: Systop achieves middle-ground performance---more overhead than lightweight htop but less than feature-rich Python competitor glances. Comparable to btop while offering Python accessibility. Performance acceptable for educational tool demonstrating modern practices.
 
 \subsection{Qualitative Comparison}
 
@@ -2235,7 +2235,7 @@ Figure~\ref{fig:graceful-degradation} shows systop on a system without GPU, disp
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{images/no_gpu_fallback.png}
-\caption{Graceful degradation when GPU unavailable—no crashes or errors}
+\caption{Graceful degradation when GPU unavailable---no crashes or errors}
 \label{fig:graceful-degradation}
 \end{figure}
 
@@ -2265,7 +2265,7 @@ Tested on three distinct Linux configurations:
 \textbf{System B (Ubuntu Server)}: Ubuntu 22.04, AMD Ryzen 5, 8GB RAM, no GPU
 \begin{itemize}
     \item All features except GPU functional
-    \item GPU widget displays ``N/A''—no errors
+    \item GPU widget displays ``N/A''---no errors
     \item 129/142 tests pass (13 GPU tests skipped)
 \end{itemize}
 
@@ -2282,14 +2282,14 @@ Cross-system testing validates systop's portability and graceful degradation des
 
 \textbf{Objectives Achievement}:
 \begin{itemize}
-    \item ✓ Primary Objective 1: Unified monitoring interface implemented and operational
-    \item ✓ Primary Objective 2: Real-time visualization with ASCII graphs functional
-    \item ✓ Primary Objective 3: Interactive process management with sort/search/kill works
-    \item ✓ Primary Objective 4: Modular architecture achieved (3 layers, 14 modules)
-    \item ✓ Primary Objective 5: Robust error handling validated across 3 test systems
-    \item ✓ Secondary Objective 6: Performance efficiency met (0.7\% CPU, 41MB RAM)
-    \item ✓ Secondary Objective 7: Testing coverage achieved (74\% overall, 80\%+ monitors)
-    \item ✓ Secondary Objective 8: Documentation comprehensive (README, docstrings, BUILD\_PLAN)
+    \item $\checkmark$ Primary Objective 1: Unified monitoring interface implemented and operational
+    \item $\checkmark$ Primary Objective 2: Real-time visualization with ASCII graphs functional
+    \item $\checkmark$ Primary Objective 3: Interactive process management with sort/search/kill works
+    \item $\checkmark$ Primary Objective 4: Modular architecture achieved (3 layers, 14 modules)
+    \item $\checkmark$ Primary Objective 5: Robust error handling validated across 3 test systems
+    \item $\checkmark$ Secondary Objective 6: Performance efficiency met (0.7\% CPU, 41MB RAM)
+    \item $\checkmark$ Secondary Objective 7: Testing coverage achieved (74\% overall, 80\%+ monitors)
+    \item $\checkmark$ Secondary Objective 8: Documentation comprehensive (README, docstrings, BUILD\_PLAN)
 \end{itemize}
 
 All primary and secondary objectives successfully achieved, validating systop as a functional, efficient, and educationally valuable system monitoring tool.
@@ -2359,7 +2359,7 @@ The testing and evaluation results presented in Chapter 7 provide concrete evide
 \textbf{Resource Efficiency Achievement}: Our measurements show systop consuming 0.7\% CPU and 41MB memory during normal operation. In practical terms, this means:
 
 \begin{itemize}
-    \item On a typical 4-core system at 3GHz, systop uses approximately 21 million cycles per second out of 12 billion available—negligible impact on system performance
+    \item On a typical 4-core system at 3GHz, systop uses approximately 21 million cycles per second out of 12 billion available---negligible impact on system performance
     \item Memory footprint of 41MB represents less than 0.5\% of a system with 8GB RAM, allowing systop to run continuously without resource concerns
     \item Users can keep systop running 24/7 for monitoring without degrading performance of their primary workloads
     \item The tool is suitable even for resource-constrained environments like virtual machines with limited allocations
@@ -2972,7 +2972,7 @@ Systematic problem-solving distinguishes effective engineers from those who stru
 
 \begin{itemize}
     \item Pride in craftsmanship and attention to detail
-    \item Understanding that ``working'' is insufficient—software must be maintainable, efficient, and correct
+    \item Understanding that ``working'' is insufficient---software must be maintainable, efficient, and correct
     \item Defensive programming anticipating failures
     \item Continuous refactoring to maintain code quality
     \item Recognizing technical debt and managing it consciously
@@ -3009,7 +3009,7 @@ The project provides concrete evidence of competence beyond academic grades.
 \section{Learning New Technologies \& Tools}
 \label{sec:learning-technologies}
 
-The systop project required adapting to several technologies and tools that were initially unfamiliar. Reflecting on this learning process provides insights into effective approaches for mastering new technologies—a critical career skill as software development evolves rapidly.
+The systop project required adapting to several technologies and tools that were initially unfamiliar. Reflecting on this learning process provides insights into effective approaches for mastering new technologies---a critical career skill as software development evolves rapidly.
 
 \subsection{Textual Framework: From Zero to Proficient}
 
@@ -3486,7 +3486,7 @@ We now evaluate how systop achieved each of the ten objectives stated in Chapter
 
 \subsection{Primary Objectives Achievement}
 
-\textbf{Objective 1: Unified Monitoring Interface} — \textbf{ACHIEVED ✓}
+\textbf{Objective 1: Unified Monitoring Interface} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Develop a single application displaying all essential system metrics (CPU, memory, disk, network, GPU, sensors, processes) in a cohesive interface.
 
@@ -3503,7 +3503,7 @@ We now evaluate how systop achieved each of the ten objectives stated in Chapter
 
 Users no longer need multiple terminal windows running separate tools (top, iostat, iftop, nvidia-smi); systop provides all metrics in unified interface.
 
-\textbf{Objective 2: Real-Time Data Visualization} — \textbf{ACHIEVED ✓}
+\textbf{Objective 2: Real-Time Data Visualization} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Implement real-time ASCII-based graphs displaying current values and historical trends, enabling pattern identification.
 
@@ -3518,7 +3518,7 @@ Users no longer need multiple terminal windows running separate tools (top, iost
 
 Manual testing confirmed users can identify CPU spikes, memory leaks, and usage patterns visually.
 
-\textbf{Objective 3: Interactive Process Management} — \textbf{ACHIEVED ✓}
+\textbf{Objective 3: Interactive Process Management} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Create interactive process list with sorting, searching, filtering, and termination capabilities.
 
@@ -3534,7 +3534,7 @@ Manual testing confirmed users can identify CPU spikes, memory leaks, and usage 
 
 Test case validation (Table 7.3) confirmed all process management features functional.
 
-\textbf{Objective 4: Modular and Maintainable Architecture} — \textbf{ACHIEVED ✓}
+\textbf{Objective 4: Modular and Maintainable Architecture} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Design clean, modular architecture separating data collection, business logic, and presentation concerns.
 
@@ -3550,7 +3550,7 @@ Test case validation (Table 7.3) confirmed all process management features funct
 
 Code review confirmed modular structure enables future enhancements without architectural changes.
 
-\textbf{Objective 5: Robust Error Handling} — \textbf{ACHIEVED ✓}
+\textbf{Objective 5: Robust Error Handling} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Implement comprehensive error handling ensuring stability when hardware is unavailable or system calls fail.
 
@@ -3568,7 +3568,7 @@ Testing on diverse hardware configurations (with/without GPU, various sensors) v
 
 \subsection{Secondary Objectives Achievement}
 
-\textbf{Objective 6: Performance Efficiency} — \textbf{ACHIEVED ✓}
+\textbf{Objective 6: Performance Efficiency} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Consume <1\% CPU and <50MB memory during normal operation.
 
@@ -3583,7 +3583,7 @@ Testing on diverse hardware configurations (with/without GPU, various sensors) v
 
 Performance measurements (Table 7.5) documented achieving all efficiency targets with comfortable margins.
 
-\textbf{Objective 7: Comprehensive Testing} — \textbf{ACHIEVED ✓}
+\textbf{Objective 7: Comprehensive Testing} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Achieve >70\% overall coverage and >80\% for critical monitoring modules.
 
@@ -3598,7 +3598,7 @@ Performance measurements (Table 7.5) documented achieving all efficiency targets
 
 Coverage report (Table 7.2) shows quantitative evidence of comprehensive testing achievement.
 
-\textbf{Objective 8: User-Friendly Documentation} — \textbf{ACHIEVED ✓}
+\textbf{Objective 8: User-Friendly Documentation} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Provide clear documentation enabling users and developers to understand and extend the system.
 
@@ -3614,7 +3614,7 @@ Coverage report (Table 7.2) shows quantitative evidence of comprehensive testing
 
 Documentation completeness enables future students to learn from and extend systop.
 
-\textbf{Objective 9: Cross-Platform Foundation} — \textbf{PARTIALLY ACHIEVED ⚠}
+\textbf{Objective 9: Cross-Platform Foundation} --- \textbf{PARTIALLY ACHIEVED $\triangle$}
 
 \textit{Goal}: Design architecture facilitating future ports to other Unix-like systems.
 
@@ -3629,7 +3629,7 @@ Documentation completeness enables future students to learn from and extend syst
 
 While systop currently targets Linux only per requirements, architectural decisions facilitate future porting.
 
-\textbf{Objective 10: Professional Development Practices} — \textbf{ACHIEVED ✓}
+\textbf{Objective 10: Professional Development Practices} --- \textbf{ACHIEVED $\checkmark$}
 
 \textit{Goal}: Apply industry-standard practices including version control, automated testing, and systematic planning.
 
