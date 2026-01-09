@@ -2216,41 +2216,55 @@ systop 0.1.0 & 0.7\% & 41MB & 1.2s \\
 \section{Screenshots \& Execution Results}
 \label{sec:screenshots}
 
-Figure~\ref{fig:main-interface} shows systop running on an Arch Linux system with all monitoring widgets active.
+The following screenshots demonstrate each widget in systop running on an Arch Linux system.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.95\textwidth]{images/main_interface.png}
-\caption{Main systop interface showing CPU, memory, disk, network, GPU, and process monitoring}
-\label{fig:main-interface}
+\includegraphics[width=0.9\textwidth]{images/cpu_widget.png}
+\caption{CPU widget showing per-core utilization, frequency, and 60-second history graph}
+\label{fig:cpu-widget}
 \end{figure}
 
-\textbf{Interface Elements Visible}:
-\begin{itemize}
-    \item CPU widget: 4-core utilization bars, frequency info, 60-second history graph
-    \item Memory widget: RAM/swap usage with visual bars and historical trend
-    \item Disk widget: Partition usage, read/write speeds with ASCII graphs
-    \item Network widget: Per-interface bandwidth with upload/download rates
-    \item GPU widget: NVIDIA RTX 3060 metrics (utilization, temperature, memory)
-    \item Process widget: Sortable process table with 100+ processes, search functionality
-\end{itemize}
-
-Figure~\ref{fig:process-management} demonstrates interactive process management with search active.
-
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{images/process_management.png}
-\caption{Process search and kill functionality with confirmation dialog}
-\label{fig:process-management}
+\includegraphics[width=0.9\textwidth]{images/memory_widget.png}
+\caption{Memory widget displaying RAM/swap usage with visual bars and historical trend}
+\label{fig:memory-widget}
 \end{figure}
 
-Figure~\ref{fig:graceful-degradation} shows systop on a system without GPU, displaying ``N/A'' gracefully.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/disk_widget.png}
+\caption{Disk widget showing partition usage and read/write speeds}
+\label{fig:disk-widget}
+\end{figure}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{images/no_gpu_fallback.png}
-\caption{Graceful degradation when GPU unavailable---no crashes or errors}
-\label{fig:graceful-degradation}
+\includegraphics[width=0.9\textwidth]{images/network_widget.png}
+\caption{Network widget displaying per-interface bandwidth with upload/download rates}
+\label{fig:network-widget}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/gpu_widget.png}
+\caption{GPU widget showing NVIDIA GPU metrics (utilization, temperature, memory)}
+\label{fig:gpu-widget}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/sensors_widget.png}
+\caption{Sensors widget displaying system temperatures from available sensors}
+\label{fig:sensors-widget}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/process_widget.png}
+\caption{Process widget with sortable process table showing 100+ processes}
+\label{fig:process-widget}
 \end{figure}
 
 \subsection{Execution Verification}
