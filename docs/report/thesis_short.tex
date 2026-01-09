@@ -812,67 +812,18 @@ Security and performance considerations informed several design decisions.
 \chapter{Implementation}
 \label{chap:implementation}
 
-This chapter describes the practical implementation of systop, covering the development environment, coding standards, module-by-module implementation details, system integration, and optimization techniques. We focus on key implementation decisions, challenges encountered, and solutions applied to realize the architecture described in Chapter 5.
+This chapter describes the practical implementation of systop, covering the development environment, coding standards, key module implementations, system integration, and optimization techniques.
 
 \section{Development Environment Setup}
 \label{sec:dev-environment}
 
-The development environment was configured to support efficient Python development, comprehensive testing, and version control.
+\textbf{Primary System}: Arch Linux (kernel 6.x), Python 3.13.1 with \texttt{venv}, Neovim 0.9+ with LSP integration.
 
-\subsection{Primary Development System}
+\textbf{Core Dependencies}: \texttt{textual==0.50.0} (TUI framework), \texttt{psutil==5.9.6} (system metrics), \texttt{plotext==5.2.8} (ASCII graphs), \texttt{py-cpuinfo==9.0.0}, \texttt{GPUtil==1.4.0} (optional GPU support).
 
-\textbf{Operating System}: Arch Linux (rolling release, Linux kernel 6.x)
-\begin{itemize}
-    \item Chosen for cutting-edge packages, minimal bloat, and hands-on configuration experience
-    \item Access to /proc and /sys filesystems for system metrics
-    \item Native support for sensors, GPU drivers, and monitoring tools
-    \item Rolling release ensures latest Python and library versions
-\end{itemize}
+\textbf{Dev Dependencies}: \texttt{pytest==7.4.3}, \texttt{pytest-cov==4.1.0}, \texttt{black==23.12.0}, \texttt{mypy==1.7.1}.
 
-\textbf{Python Environment}: Python 3.13.1
-\begin{itemize}
-    \item Installed via Arch official repositories (pacman)
-    \item Virtual environment managed with \texttt{venv} module
-    \item Isolated environment prevents dependency conflicts
-\end{itemize}
-
-\textbf{Development Editor}: Neovim (nvim) 0.9+
-\begin{itemize}
-    \item Modal editor with extensive plugin ecosystem
-    \item LSP integration for Python language server (pyright/pylance)
-    \item Git integration via fugitive and gitsigns plugins
-    \item Syntax highlighting and code formatting (Black) via plugins
-    \item Terminal multiplexing for running tests and systop simultaneously
-\end{itemize}
-
-\subsection{Development Dependencies}
-
-\textbf{Core Dependencies} (from requirements.txt):
-\begin{itemize}
-    \item \texttt{textual==0.50.0}: TUI framework for widgets and event handling
-    \item \texttt{psutil==5.9.6}: Cross-platform system metrics library
-    \item \texttt{plotext==5.2.8}: Terminal-native plotting for ASCII graphs
-    \item \texttt{py-cpuinfo==9.0.0}: Detailed CPU hardware information
-    \item \texttt{GPUtil==1.4.0}: NVIDIA GPU monitoring (optional)
-\end{itemize}
-
-\textbf{Development Dependencies}:
-\begin{itemize}
-    \item \texttt{pytest==7.4.3}: Testing framework
-    \item \texttt{pytest-cov==4.1.0}: Coverage reporting
-    \item \texttt{black==23.12.0}: Code formatter
-    \item \texttt{mypy==1.7.1}: Static type checker
-\end{itemize}
-
-\subsection{Version Control and Repository}
-
-\textbf{Git Configuration}:
-\begin{itemize}
-    \item Repository hosted on local system with GitHub as remote backup
-    \item Main branch for stable development
-    \item Milestone tags for significant completions (v0.1.0, step-13-complete, etc.)
-    \item Commit messages following conventional format: type(scope): description
-\end{itemize}
+\textbf{Version Control}: Git with conventional commit messages, milestone tags (v0.1.0, step-13-complete), main branch for stable development.
 
 \textbf{Project Structure}:
 \begin{verbatim}
@@ -882,28 +833,16 @@ systop/
 |   |-- widgets/         # UI presentation modules
 |   +-- utils/           # Shared utilities
 |-- tests/               # Test suite
-|-- docs/                # Documentation
-|-- requirements.txt     # Dependencies
-+-- pyproject.toml       # Project metadata
++-- requirements.txt     # Dependencies
 \end{verbatim}
 
 \section{Coding Standards \& Version Control Strategy}
 \label{sec:coding-standards}
 
-Consistent coding standards and disciplined version control ensured code quality and maintainability throughout development.
+\textbf{PEP 8 Compliance}: 4-space indentation, 88-char line length, snake\_case/PascalCase naming conventions.
 
-\subsection{Python Coding Standards}
+\textbf{Type Hints \& Documentation}: All functions include type annotations and comprehensive Google-style docstrings.
 
-\textbf{PEP 8 Compliance}: All code adheres to Python Enhancement Proposal 8 style guidelines:
-\begin{itemize}
-    \item 4-space indentation (no tabs)
-    \item Maximum line length of 88 characters (Black formatter default)
-    \item Two blank lines between top-level definitions
-    \item Snake\_case for functions and variables, PascalCase for classes
-    \item Meaningful descriptive names (e.g., \texttt{collect\_cpu\_metrics} not \texttt{get\_data})
-\end{itemize}
-
-\textbf{Type Hints}: All function signatures include type annotations for clarity and static analysis:
 \begin{lstlisting}
 def format_bytes(bytes_value: int) -> str:
     """Convert bytes to human-readable format."""
@@ -914,579 +853,139 @@ def format_bytes(bytes_value: int) -> str:
     return f"{bytes_value:.1f} PB"
 \end{lstlisting}
 
-\textbf{Documentation Standards}: Comprehensive docstrings for all modules, classes, and functions:
-\begin{itemize}
-    \item Module-level docstrings describing purpose and contents
-    \item Class docstrings with attributes and usage examples
-    \item Function docstrings with Args, Returns, and Raises sections
-    \item Google-style docstring format for consistency
-\end{itemize}
+\textbf{Error Handling}: Defensive programming with try-except blocks around all system calls, specific exception handling (\texttt{psutil.Error}), graceful degradation returning safe defaults.
 
-\textbf{Error Handling Philosophy}: Defensive programming with graceful degradation:
-\begin{itemize}
-    \item Try-except blocks around all system calls
-    \item Specific exception handling (catch \texttt{psutil.Error}, not bare \texttt{Exception})
-    \item Logging errors without crashing
-    \item Returning safe defaults or None when operations fail
-\end{itemize}
-
-\subsection{Version Control Workflow}
-
-\textbf{Branching Strategy}: Simplified single-branch workflow appropriate for individual development:
-\begin{itemize}
-    \item \textbf{main}: Primary development branch containing stable code
-    \item Feature branches used sparingly for major experimental changes
-    \item All commits to main branch must pass tests
-\end{itemize}
-
-\textbf{Commit Discipline}:
-\begin{itemize}
-    \item Frequent commits (5-10 per development session) representing logical units of work
-    \item Descriptive commit messages: \texttt{feat(cpu): add per-core frequency tracking}
-    \item Atomic commits that can be reverted independently
-    \item No commits of broken or incomplete code to main branch
-\end{itemize}
-
-\textbf{Milestone Tagging}:
-\begin{itemize}
-    \item Tags mark completion of BUILD\_PLAN.md steps: \texttt{step-6-complete}, \texttt{step-13-complete}
-    \item Semantic versioning for releases: \texttt{v0.1.0} (first production-ready version)
-    \item Annotated tags with release notes and test results
-\end{itemize}
-
-\textbf{Typical Commit Sequence}:
-\begin{verbatim}
-feat(monitors): implement BaseMonitor abstract class
-test(monitors): add tests for BaseMonitor initialization
-feat(cpu): add CPUMonitor with psutil integration
-test(cpu): add comprehensive CPU monitor tests (15 tests)
-docs(cpu): add docstrings and usage examples
-refactor(cpu): optimize frequency conversion logic
-\end{verbatim}
+\textbf{Version Control}: Main branch for stable code, frequent atomic commits (5-10 per session) with conventional messages (\texttt{feat(cpu): add per-core frequency}), milestone tagging (\texttt{step-13-complete}, \texttt{v0.1.0}).
 
 \section{Module-Wise Implementation}
 \label{sec:module-implementation}
 
-We describe the implementation of key modules, highlighting design decisions, algorithms, and code patterns. Due to space constraints, we focus on representative modules rather than exhaustive coverage.
+Key modules demonstrate design patterns and implementation decisions.
 
-\subsection{Foundation: CircularBuffer Implementation}
+\subsection{Foundation: CircularBuffer \& BaseMonitor}
 
-The \texttt{CircularBuffer} class provides efficient time-series data storage using Python's \texttt{collections.deque}:
-
-\begin{lstlisting}
-class CircularBuffer:
-    """Thread-safe circular buffer for time-series data."""
-    
-    def __init__(self, maxsize: int = 60):
-        if maxsize < 1:
-            raise ValueError("maxsize must be at least 1")
-        self._buffer = deque(maxlen=maxsize)
-        self._lock = Lock()
-        self._maxsize = maxsize
-    
-    def append(self, value: Any) -> None:
-        """Add value, automatically removing oldest if full."""
-        with self._lock:
-            self._buffer.append(value)
-    
-    def get_all(self) -> List[Any]:
-        """Return all values as list."""
-        with self._lock:
-            return list(self._buffer)
-\end{lstlisting}
-
-\textbf{Key Implementation Decisions}:
-\begin{itemize}
-    \item Used \texttt{deque} with \texttt{maxlen} for automatic FIFO behavior (O(1) operations)
-    \item Thread-safe with \texttt{Lock} for potential multi-threaded scenarios
-    \item Validation in constructor prevents invalid buffer sizes
-\end{itemize}
-
-\subsection{Base Architecture: BaseMonitor Abstract Class}
-
-The \texttt{BaseMonitor} establishes the interface all monitors implement:
+\texttt{CircularBuffer} provides efficient O(1) time-series storage using \texttt{deque(maxlen)} with thread-safe operations. \texttt{BaseMonitor} abstract class enforces consistent interface across all monitors with \texttt{CircularBuffer} composition and \texttt{\_last\_data} caching.
 
 \begin{lstlisting}
 class BaseMonitor(ABC):
-    """Abstract base class for system monitors."""
-    
     def __init__(self, history_size: int = 60):
         self.history = CircularBuffer(maxsize=history_size)
         self._last_data = None
     
     @abstractmethod
     def collect(self) -> Dict[str, Any]:
-        """Collect metrics. Must be implemented by subclasses."""
         pass
-    
-    def get_last_data(self) -> Optional[Dict[str, Any]]:
-        """Return most recently collected data."""
-        return self._last_data
-    
-    def get_history(self) -> List[Any]:
-        """Return historical data for graphing."""
-        return self.history.get_all()
 \end{lstlisting}
 
-\textbf{Design Rationale}:
-\begin{itemize}
-    \item Abstract base class enforces consistent interface across all monitors
-    \item Composition with \texttt{CircularBuffer} for reusable time-series storage
-    \item \texttt{\_last\_data} caching prevents redundant re-collection for multiple widgets
-\end{itemize}
+\subsection{CPUMonitor Implementation}
 
-\subsection{Core Monitor: CPUMonitor Implementation}
-
-The \texttt{CPUMonitor} demonstrates typical monitor implementation patterns:
+\texttt{CPUMonitor} collects overall/per-core CPU usage, frequency, and load averages using \texttt{psutil.cpu\_percent(interval=None)} for non-blocking sampling. CPU info cached at initialization, only scalar values stored in history for efficiency, error handling returns safe defaults.
 
 \begin{lstlisting}
 class CPUMonitor(BaseMonitor):
-    """Monitor for CPU metrics."""
-    
-    def __init__(self, history_size: int = 60):
-        super().__init__(history_size)
-        self._cpu_info = cpuinfo.get_cpu_info()
-    
     def collect(self) -> Dict[str, Any]:
-        """Collect comprehensive CPU metrics."""
         try:
-            # Collect basic metrics
             overall = psutil.cpu_percent(interval=None)
             per_core = psutil.cpu_percent(interval=None, percpu=True)
-            
-            # Frequency information
             freq = psutil.cpu_freq()
-            frequency = {
-                'current': freq.current if freq else 0.0,
-                'min': freq.min if freq else 0.0,
-                'max': freq.max if freq else 0.0
-            }
-            
-            # Load averages (1, 5, 15 minutes)
-            load = os.getloadavg()
-            load_avg = {'1min': load[0], '5min': load[1], 
-                       '15min': load[2]}
-            
-            # Store overall percentage for graphing
             self.history.append(overall)
-            
-            # Package all data
-            data = {
-                'overall_percent': overall,
-                'per_core_percent': per_core,
-                'frequency': frequency,
-                'load_avg': load_avg,
-                'cpu_count': {
-                    'physical': psutil.cpu_count(logical=False),
-                    'logical': psutil.cpu_count(logical=True)
-                },
-                'model': self._cpu_info.get('brand_raw', 'Unknown')
-            }
-            
-            self._last_data = data
-            return data
-            
+            return {'overall_percent': overall, 
+                    'per_core_percent': per_core, ...}
         except Exception as e:
-            # Graceful failure - return partial data
             return {'error': str(e), 'overall_percent': 0.0}
 \end{lstlisting}
 
-\textbf{Implementation Highlights}:
-\begin{itemize}
-    \item \texttt{psutil.cpu\_percent(interval=None)} uses non-blocking sampling
-    \item Separate calls for overall and per-core allow granular tracking
-    \item CPU info cached at initialization (unchanging during runtime)
-    \item Comprehensive error handling returns safe defaults
-    \item Only scalar \texttt{overall\_percent} stored in history for memory efficiency
-\end{itemize}
+\subsection{GPUMonitor: Graceful Degradation}
 
-\subsection{Graceful Degradation: GPUMonitor Implementation}
-
-The \texttt{GPUMonitor} demonstrates robust handling of optional hardware:
+\texttt{GPUMonitor} checks availability at initialization, returns consistent data structure with \texttt{available=False} when GPU absent, preventing exception propagation to calling code.
 
 \begin{lstlisting}
 class GPUMonitor(BaseMonitor):
-    """Monitor for NVIDIA GPU metrics (optional)."""
-    
     def __init__(self, history_size: int = 60):
         super().__init__(history_size)
-        self._gpu_available = False
-        
         try:
             import GPUtil
-            self._gputil = GPUtil
-            gpus = GPUtil.getGPUs()
-            self._gpu_available = len(gpus) > 0
-        except ImportError:
-            self._gpu_available = False
-        except Exception:
+            self._gpu_available = len(GPUtil.getGPUs()) > 0
+        except:
             self._gpu_available = False
     
     def collect(self) -> Dict[str, Any]:
-        """Collect GPU metrics if available."""
         if not self._gpu_available:
-            return {
-                'available': False,
-                'name': 'N/A',
-                'utilization': 0.0,
-                'memory_used': 0,
-                'temperature': 0
-            }
-        
-        try:
-            gpus = self._gputil.getGPUs()
-            gpu = gpus[0]  # Monitor first GPU
-            
-            util = gpu.load * 100
-            self.history.append(util)
-            
-            data = {
-                'available': True,
-                'name': gpu.name,
-                'utilization': util,
-                'memory_used': gpu.memoryUsed,
-                'memory_total': gpu.memoryTotal,
-                'temperature': gpu.temperature
-            }
-            self._last_data = data
-            return data
-            
-        except Exception:
-            return {'available': False, 'name': 'Error'}
+            return {'available': False, 'name': 'N/A', ...}
+        # Collect GPU metrics...
 \end{lstlisting}
 
-\textbf{Graceful Degradation Strategy}:
-\begin{itemize}
-    \item Availability checked once at initialization, not on every collect
-    \item Returns consistent data structure regardless of GPU presence
-    \item Widgets can display ``N/A'' without special handling
-    \item No exceptions propagate to calling code
-\end{itemize}
+\subsection{CPUWidget Implementation}
 
-\subsection{Interactive Widget: CPUWidget Implementation}
-
-The \texttt{CPUWidget} shows typical widget patterns for data visualization:
+Widgets use reactive \texttt{data} properties triggering re-renders, \texttt{on\_mount} hooks for interval-based polling, and \texttt{render()} methods returning Rich renderables (Panel, Table). Plotext generates ASCII graphs from historical data.
 
 \begin{lstlisting}
 class CPUWidget(Widget):
-    """Widget displaying CPU metrics and graphs."""
-    
     data: Optional[Dict[str, Any]] = reactive(None)
     
-    def __init__(self, monitor: CPUMonitor, **kwargs):
-        super().__init__(**kwargs)
-        self.monitor = monitor
-        
     def on_mount(self) -> None:
-        """Start periodic updates when mounted."""
         self.set_interval(1.0, self.refresh_data)
-        self.refresh_data()
-        
-    def refresh_data(self) -> None:
-        """Fetch new data from monitor."""
-        try:
-            self.data = self.monitor.collect()
-        except Exception:
-            pass  # Widget continues with stale data
     
     def render(self) -> RenderableType:
-        """Render CPU visualization."""
-        if not self.data:
-            return Panel("Loading CPU data...")
-        
-        # Create ASCII graph using plotext
-        history = self.monitor.get_history()
-        if len(history) > 0:
-            plt.clf()
-            plt.plot(history, marker='dot')
-            plt.ylim(0, 100)
-            plt.title("CPU Usage History")
-            graph = plt.build()
-        else:
-            graph = "Collecting data..."
-        
-        # Build info table
-        table = Table.grid()
-        table.add_row("Overall:", 
-            f"{self.data['overall_percent']:.1f}%")
-        table.add_row("Frequency:", 
-            f"{self.data['frequency']['current']:.0f} MHz")
-        
-        # Combine in panel
-        return Panel(
-            Group(Text(graph), table),
-            title="[bold]CPU Monitor[/bold]"
-        )
+        # Generate plotext graph from history
+        # Build info table with metrics
+        return Panel(Group(graph, table))
 \end{lstlisting}
 
-\textbf{Widget Implementation Patterns}:
-\begin{itemize}
-    \item Reactive \texttt{data} property triggers re-render on changes
-    \item \texttt{on\_mount} hook sets up 1-second polling interval
-    \item \texttt{render()} returns Rich renderables (Panel, Table, Text)
-    \item Plotext generates ASCII graphs from historical data
-    \item Error-tolerant: displays stale data if refresh fails
-\end{itemize}
+\subsection{ProcessMonitor: Advanced Features}
 
-\subsection{Complex Module: ProcessMonitor Implementation}
-
-The \texttt{ProcessMonitor} implements sorting, filtering, and process control:
+\texttt{ProcessMonitor} implements stateful sorting/filtering using \texttt{process\_iter} with attribute lists for efficiency, handles short-lived processes (NoSuchProcess), permission-aware termination (AccessDenied), limited to top 100 for performance.
 
 \begin{lstlisting}
 class ProcessMonitor(BaseMonitor):
-    """Monitor for process management."""
-    
-    def __init__(self, history_size: int = 60):
-        super().__init__(history_size)
-        self._sort_key = 'cpu'  # Default sort
-        self._filter_pattern = ''
-        
-    def set_sort_key(self, key: str) -> None:
-        """Set sorting: 'cpu', 'memory', 'pid', 'name'."""
-        if key in ['cpu', 'memory', 'pid', 'name']:
-            self._sort_key = key
-    
-    def set_filter(self, pattern: str) -> None:
-        """Filter processes by name pattern."""
-        self._filter_pattern = pattern.lower()
-    
     def collect(self) -> Dict[str, Any]:
-        """Collect process list with sort/filter applied."""
-        try:
-            processes = []
-            for proc in psutil.process_iter(['pid', 'name', 
-                                            'cpu_percent', 
-                                            'memory_percent']):
-                try:
-                    info = proc.info
-                    if self._filter_pattern:
-                        if self._filter_pattern not in \
-                           info['name'].lower():
-                            continue
-                    processes.append(info)
-                except (psutil.NoSuchProcess, 
-                        psutil.AccessDenied):
-                    continue
-            
-            # Sort by selected key
-            reverse = self._sort_key in ['cpu', 'memory']
-            processes.sort(
-                key=lambda p: p.get(self._sort_key, 0),
-                reverse=reverse
-            )
-            
-            data = {
-                'processes': processes[:100],  # Top 100
-                'total_count': len(processes)
-            }
-            self._last_data = data
-            return data
-            
-        except Exception as e:
-            return {'processes': [], 'error': str(e)}
+        processes = []
+        for proc in psutil.process_iter(['pid', 'name', ...]):
+            # Filter and collect
+        processes.sort(key=lambda p: p[self._sort_key])
+        return {'processes': processes[:100]}
     
-    def kill_process(self, pid: int, 
-                     signal: int = signal.SIGTERM) -> bool:
-        """Terminate process. Returns success status."""
-        try:
-            proc = psutil.Process(pid)
-            proc.send_signal(signal)
-            return True
-        except (psutil.NoSuchProcess, 
-                psutil.AccessDenied):
-            return False
+    def kill_process(self, pid: int) -> bool:
+        # Permission-aware process termination
 \end{lstlisting}
 
-\textbf{Advanced Features Implementation}:
-\begin{itemize}
-    \item Stateful sorting and filtering without polluting data
-    \item \texttt{process\_iter} with attribute list for efficiency
-    \item Graceful handling of short-lived processes (NoSuchProcess)
-    \item Permission-aware process termination (AccessDenied handling)
-    \item Limited to 100 processes for performance
-\end{itemize}
-
-\subsection{Module Ownership}
-
-\textbf{Developer}: [Your Name] (Student ID: XXXXXXXXXX)
-
-\textbf{Implementation Scope}: As the sole developer of this individual project, all modules, tests, and documentation were implemented by one person following the structured BUILD\_PLAN.md roadmap.
-
-\textbf{Development Evidence}:
-\begin{itemize}
-    \item Git commit history: 150+ commits from initial setup through v0.1.0
-    \item Commit examples:
-    \begin{verbatim}
-    a1b2c3d feat(monitors): implement all 7 monitor modules
-    d4e5f6g test(monitors): achieve 82% test coverage
-    g7h8i9j feat(widgets): complete all 7 widget implementations
-    j1k2l3m test(integration): verify monitor-widget integration
-    m4n5o6p docs: complete comprehensive docstrings
-    \end{verbatim}
-    \item Tagged milestones document completion of each BUILD\_PLAN step
-    \item Test suite (142 tests) validates all implemented functionality
-\end{itemize}
+\textbf{Module Ownership}: [Your Name] (Student ID: XXXXXXXXXX) --- sole developer implementing all modules, tests, and documentation following BUILD\_PLAN.md roadmap. Evidence: 150+ git commits, 142 tests, tagged milestones.
 
 \section{System Integration Workflow}
 \label{sec:integration-workflow}
 
-Integrating seven monitors, seven widgets, and the main application required systematic testing at multiple levels to ensure components worked correctly both independently and together.
+\textbf{Bottom-Up Integration}: Components integrated in dependency order: (1) utilities (CircularBuffer, formatters), (2) monitors with unit tests, (3) widgets with mock data, (4) full application end-to-end.
 
-\subsection{Integration Strategy}
+\textbf{Incremental Integration}: Progressive integration from Step 6 (CPU monitor+widget) through Steps 7-12 (all monitors) prevented architectural issues.
 
-\textbf{Bottom-Up Integration}: We integrated components in dependency order:
-\begin{enumerate}
-    \item \textbf{Utilities First}: Implemented and tested CircularBuffer and formatters in isolation
-    \item \textbf{Monitors Second}: Built monitors using tested utilities, verified each with unit tests
-    \item \textbf{Widgets Third}: Created widgets consuming monitor data, tested rendering with mock data
-    \item \textbf{Application Last}: Integrated all widgets into \texttt{SystemMonitorApp}, verified end-to-end
-\end{enumerate}
+\textbf{Integration Testing}: Monitor-widget data flow tests, application startup tests validating all component initialization.
 
-\textbf{Incremental Integration}: Rather than building all components then integrating, we integrated progressively:
+\textbf{Challenges \& Solutions}:
 \begin{itemize}
-    \item Step 6: CPU monitor + CPU widget + minimal app $\rightarrow$ Verified single monitor works
-    \item Step 7-8: Added memory and disk $\rightarrow$ Verified three monitors coexist
-    \item Step 9-12: Added remaining monitors $\rightarrow$ Full feature set verified
-\end{itemize}
-
-\subsection{Integration Testing Approach}
-
-\textbf{Monitor-Widget Integration Tests}:
-\begin{lstlisting}
-def test_cpu_monitor_widget_integration():
-    """Test CPUMonitor provides valid data to CPUWidget."""
-    monitor = CPUMonitor(history_size=5)
-    widget = CPUWidget(monitor)
-    
-    # Simulate widget lifecycle
-    widget.refresh_data()
-    
-    assert widget.data is not None
-    assert 'overall_percent' in widget.data
-    assert 0 <= widget.data['overall_percent'] <= 100
-    
-    # Verify history tracking
-    for _ in range(5):
-        monitor.collect()
-    
-    history = monitor.get_history()
-    assert len(history) == 5
-\end{lstlisting}
-
-\textbf{Application Integration Tests}:
-\begin{lstlisting}
-async def test_app_startup():
-    """Test SystemMonitorApp initializes all components."""
-    app = SystemMonitorApp()
-    
-    # Verify monitors initialized
-    assert app.cpu_monitor is not None
-    assert app.memory_monitor is not None
-    
-    # Verify app can collect data
-    cpu_data = app.cpu_monitor.collect()
-    assert 'overall_percent' in cpu_data
-\end{lstlisting}
-
-\subsection{Integration Challenges and Solutions}
-
-\textbf{Challenge 1: Update Interval Synchronization}
-\begin{itemize}
-    \item \textbf{Problem}: Different widgets updating at different rates caused visual jitter
-    \item \textbf{Solution}: Centralized update intervals in \texttt{Config} dataclass, widgets read from single source
-\end{itemize}
-
-\textbf{Challenge 2: Textual Event Loop Blocking}
-\begin{itemize}
-    \item \textbf{Problem}: Heavy computation in \texttt{collect()} blocked UI updates
-    \item \textbf{Solution}: Ensured all \texttt{collect()} methods complete in <100ms, used \texttt{interval=None} for psutil calls
-\end{itemize}
-
-\textbf{Challenge 3: GPU Monitor Failure Impact}
-\begin{itemize}
-    \item \textbf{Problem}: Import failures in GPUMonitor crashed application
-    \item \textbf{Solution}: Wrapped all imports and operations in try-except, set \texttt{\_gpu\_available} flag
+    \item Update synchronization: Centralized intervals in \texttt{Config} dataclass
+    \item Event loop blocking: All \texttt{collect()} methods <100ms, non-blocking psutil calls
+    \item GPU failures: Wrapped imports/operations in try-except with availability flags
 \end{itemize}
 
 \section{Performance, Optimization, and Security Techniques}
 \label{sec:performance-optimization}
 
-Several optimization and security measures ensure systop operates efficiently and safely.
-
-\subsection{Performance Optimizations}
-
-\textbf{Circular Buffer Efficiency}:
+\textbf{Performance Optimizations}:
 \begin{itemize}
-    \item Fixed-size \texttt{deque} prevents memory growth: O(1) append, O(n) read where n=60
-    \item Stores only scalar values (floats), not entire dictionaries: ~500 bytes vs ~5KB per buffer
-    \item Total historical data: ~3.5KB for all monitors vs ~35KB without optimization
+    \item Circular buffer: O(1) operations, stores scalars only (~3.5KB vs ~35KB)
+    \item Interval tuning: 1s (CPU/network), 2s (processes), 5s (disk/sensors) --- reduced usage 1.2\%$\rightarrow$0.7\%
+    \item Collection: Non-blocking psutil calls, attribute lists (~40\% faster), cached CPU info (50ms savings)
+    \item Memory: 40MB total (35MB baseline + 3MB monitors + 2MB widgets)
 \end{itemize}
 
-\textbf{Update Interval Tuning}:
+\textbf{Security Measures}:
 \begin{itemize}
-    \item Fast-changing metrics (CPU, network): 1-second updates for responsiveness
-    \item Slow-changing metrics (disk usage, sensors): 5-second updates reduce overhead
-    \item Process list: 2-second updates balance freshness with CPU cost
-    \item Measured impact: Tuned intervals reduced CPU usage from 1.2\% to 0.7\%
+    \item Process kill: Modal confirmation dialogs prevent accidental termination
+    \item Privilege awareness: Graceful \texttt{AccessDenied} handling, no escalation attempts
+    \item Input validation: Sanitized filter patterns, whitelisted sort keys, PID validation
+    \item Defensive system calls: All psutil wrapped in try-except with specific exception handling
+    \item Dependencies: Pinned versions, minimal surface (8 runtime deps), graceful optional failures
 \end{itemize}
-
-\textbf{Data Collection Optimization}:
-\begin{itemize}
-    \item \texttt{psutil.cpu\_percent(interval=None)}: Non-blocking, uses previous sample
-    \item \texttt{process\_iter} with attribute list: Fetches only needed fields, ~40\% faster
-    \item CPU info cached at init: Saves 50ms per collection cycle
-    \item Widget render caching: Re-render only when data changes (reactive properties)
-\end{itemize}
-
-\textbf{Memory Profiling Results}:
-\begin{itemize}
-    \item Baseline memory: 35MB (Python interpreter + Textual)
-    \item Monitor overhead: 3MB (all seven monitors with history)
-    \item Widget overhead: 2MB (rendering caches)
-    \item Total typical usage: 40MB (within 50MB target)
-\end{itemize}
-
-\subsection{Security Measures}
-
-\textbf{Process Kill Confirmation}:
-\begin{itemize}
-    \item Modal dialog requires explicit confirmation before terminating processes
-    \item Prevents accidental kills from mistyped keys
-    \item Displays process name and PID for user verification
-\end{itemize}
-
-\textbf{Privilege Awareness}:
-\begin{itemize}
-    \item No privilege escalation attempted
-    \item Gracefully handles \texttt{AccessDenied} exceptions when monitoring privileged processes
-    \item Process kill limited to user's own processes (OS-enforced)
-    \item Clear error messages when operations require elevated privileges
-\end{itemize}
-
-\textbf{Input Validation}:
-\begin{itemize}
-    \item Process filter patterns sanitized (lowercase conversion, length limits)
-    \item Sort key validated against whitelist: \texttt{['cpu', 'memory', 'pid', 'name']}
-    \item PID validation before kill operations: Must be positive integer, process must exist
-\end{itemize}
-
-\textbf{Defensive System Calls}:
-\begin{itemize}
-    \item All psutil calls wrapped in try-except
-    \item Specific exception handling: \texttt{NoSuchProcess}, \texttt{AccessDenied}, \texttt{ZombieProcess}
-    \item Never exposes raw system errors to users: Friendly error messages instead
-    \item Continues operation even when individual system calls fail
-\end{itemize}
-
-\textbf{Dependency Security}:
-\begin{itemize}
-    \item All dependencies pinned to specific versions in \texttt{requirements.txt}
-    \item Regular dependency updates for security patches
-    \item Minimal dependency surface: Only 8 runtime dependencies
-    \item Optional dependencies (GPUtil) fail gracefully if compromised
-\end{itemize}
-
-The implementation demonstrates that careful attention to performance and security enables systop to meet its objectives of minimal overhead (<1\% CPU, <50MB memory) while maintaining safety and reliability across diverse Linux systems.
 
 %=============================================================================
 % CHAPTER 7: TESTING, RESULTS & EVALUATION
