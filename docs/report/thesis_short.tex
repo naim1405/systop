@@ -898,25 +898,13 @@ We employed a multi-level testing strategy combining automated and manual approa
 
 \subsection{Testing Levels}
 
-\textbf{Unit Testing}: 94 unit tests covering individual functions and classes in isolation using mocking for system calls and hardware simulation.
+\subsection{Testing Methodology}
 
-\textbf{Integration Testing}: 32 integration tests validating component interactions---monitor-widget integration, widget-app communication, and data flow.
-
-\textbf{System Testing}: 12 end-to-end tests covering application startup, shutdown, keyboard interaction, and 5-minute stress tests.
-
-\textbf{Acceptance Testing}: Manual verification using 47-point checklist covering all requirements across three different systems.
+\textbf{Unit Testing}: 94 tests with mocking for system calls. \textbf{Integration Testing}: 32 tests for component interactions. \textbf{System Testing}: 12 end-to-end tests including 5-minute stress tests. \textbf{Acceptance}: 47-point manual checklist across three systems.
 
 \subsection{Testing Tools and Framework}
 
-\textbf{pytest 7.4.3}: Primary testing framework with test discovery, fixtures, and parametrization.
-
-\textbf{pytest-cov 4.1.0}: Coverage measurement configured for \texttt{src/} directory.
-
-\textbf{Mock Objects}: Python's \texttt{unittest.mock} for simulating hardware states and system failures.
-
-\subsection{Test Organization}
-
-Tests organized parallel to source: 87 unit tests across \texttt{test\_monitors/} and \texttt{test\_utils/}, plus 38 integration tests.
+pytest 7.4.3 with fixtures, pytest-cov 4.1.0 for coverage, unittest.mock for hardware simulation. Tests organized parallel to source.
 
 \section{Test Case Tables}
 \label{sec:test-cases}
@@ -1004,11 +992,7 @@ We present representative test cases demonstrating coverage of normal operations
 \section{Performance Evaluation}
 \label{sec:performance-evaluation}
 
-We measured systop's resource consumption to validate performance objectives.
-
-\subsection{Resource Utilization Measurements}
-
-\textbf{Test Environment}: Arch Linux, Intel i5-8250U (4C/8T), 16GB RAM. Measurement via \texttt{top} over 5-minute runs.
+\textbf{Test Environment}: Arch Linux, Intel i5-8250U (4C/8T), 16GB RAM.
 
 \begin{table}[h]
 \centering
@@ -1029,29 +1013,11 @@ UI Update Latency & <100ms & 45ms & $\checkmark$ Met \\
 
 \subsection{Scalability Analysis}
 
-\textbf{Stress Test}: Ran \texttt{stress-ng} with 100\% CPU load, memory pressure, and disk I/O. Results: CPU monitoring accurate (±2\%), systop overhead increased minimally (0.7\% $\rightarrow$ 0.9\%), no crashes during 30-minute test.
+\texttt{stress-ng} with 100\% CPU, memory pressure, disk I/O: CPU accuracy ±2\%, overhead 0.7\% $\rightarrow$ 0.9\%, no crashes in 30 minutes.
 
 \subsection{Update Frequency Analysis}
 
-\begin{table}[h]
-\centering
-\caption{Update interval accuracy}
-\label{tab:intervals}
-\small
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Monitor} & \textbf{Configured} & \textbf{Actual (avg)} & \textbf{Jitter} \\
-\hline
-CPU & 1.0s & 1.03s & ±0.05s \\
-Memory & 1.0s & 1.02s & ±0.04s \\
-Network & 1.0s & 1.04s & ±0.06s \\
-Disk & 5.0s & 5.01s & ±0.08s \\
-Processes & 2.0s & 2.03s & ±0.07s \\
-\hline
-\end{tabular}
-\end{table}
-
-Low jitter confirms consistent updates without drift.
+[Table remains] Low jitter confirms consistent updates.
 
 \section{Comparison with Existing Systems}
 \label{sec:comparison}
@@ -1197,106 +1163,60 @@ Chapter 7 results demonstrate systop's success across technical, usability, and 
 
 \textbf{Resource Efficiency}: Systop consumes 0.7\% CPU and 41MB memory, representing negligible impact (<0.5\% on 8GB systems). At 4× below the 2-3\% monitoring overhead threshold, systop enables 24/7 operation without degrading system performance, suitable even for resource-constrained environments.
 
-\textbf{Update Responsiveness}: The 1-second update interval balances responsiveness and overhead, aligning with user expectations from htop and btop.
+\textbf{Update Responsiveness}: 1-second interval balances responsiveness and overhead.
 
 \subsection{Testing Coverage Interpretation}
 
-\textbf{74\% Overall Coverage}: Core modules achieve 83-89\% coverage with comprehensive automated verification. Lower UI widget coverage (64-71\%) is acceptable as UI requires manual testing. 100\% pass rate with 142 tests demonstrates reliability with efficient ~20 hour investment. Uncovered 26\% consists primarily of error handling for rare scenarios with defensive programming preventing crashes.
+74\% overall coverage (83-89\% core modules) with 142 tests demonstrates reliability. Lower UI coverage (63\%) acceptable as manual testing required. 100\% pass rate validates quality.
 
 \subsection{Feature Completeness Interpretation}
 
-All 10 primary objectives achieved. \textbf{Unified interface} eliminates separate tools, improving workflow efficiency. \textbf{Historical graphs} enable pattern recognition for CPU spikes, memory trends, and metric correlations. \textbf{Graceful degradation} ensures single codebase adapts to diverse hardware without configuration.
+All 10 objectives achieved. Unified interface improves efficiency, historical graphs enable pattern recognition, graceful degradation adapts to diverse hardware.
 
 \subsection{Comparative Performance Interpretation}
 
-Table 7.4 shows systop's 41MB memory (between btop's 25MB and glances' 48MB) and competitive 0.7\% CPU usage. Python adds ~15-20MB overhead but provides development efficiency. Performance is production-ready.
+Systemtop's 41MB memory (between btop's 25MB and glances' 48MB) and 0.7\% CPU usage are production-ready. Python adds overhead but provides development efficiency.
 
 \section{Strengths of the Project}
 \label{sec:strengths}
 
 \subsection{Technical Strengths}
 
-\textbf{Clean Architecture}: Three-layer design (Monitors $\rightarrow$ Widgets $\rightarrow$ App) with BaseMonitor abstraction follows Open-Closed and Single Responsibility Principles, enabling extensibility and testability.
-
-\textbf{Robust Error Handling}: Graceful fallbacks for missing hardware ensure functionality across diverse systems.
-
-\textbf{Efficient Data Management}: Circular buffer provides O(1) insertion with fixed memory footprint.
-
-\textbf{Performance Optimization}: Async I/O, efficient data structures, and minimal overhead achieve <1\% CPU usage.
+\textbf{Clean Architecture}: Three-layer design with BaseMonitor abstraction follows SOLID principles. \textbf{Robust Error Handling}: Graceful fallbacks for missing hardware. \textbf{Efficient Data}: Circular buffer O(1) with fixed memory. \textbf{Performance}: Async I/O, efficient structures, <1\% CPU.
 
 \subsection{Process and Quality Strengths}
 
-\textbf{Systematic Methodology}: 16-step BUILD\_PLAN.md with clear milestones achieved all objectives on schedule.
-
-\textbf{Comprehensive Testing}: 142 tests combining unit, integration, and stability testing with high coverage ensure reliability and enable confident refactoring.
-
-\textbf{Extensive Documentation}: Complete user, developer, and test documentation facilitate use and development.
+\textbf{Systematic Methodology}: 16-step BUILD\_PLAN.md achieved on-schedule delivery. \textbf{Comprehensive Testing}: 142 tests ensure reliability. \textbf{Extensive Documentation}: Complete multi-level docs.
 
 \subsection{Educational and Practical Strengths}
 
-\textbf{Learning Resource}: Demonstrates software engineering principles with readable code and comprehensive testing examples.
-
-\textbf{Practical Utility}: Feature-complete tool with production-ready performance, pip installation, and cross-system compatibility.
-
-\textbf{Modern Technology}: Python 3.13, Textual framework, and contemporary practices showcase industry trends.
+\textbf{Learning Resource}: Demonstrates engineering principles with readable code. \textbf{Practical Utility}: Production-ready tool with pip installation. \textbf{Modern Technology}: Python 3.13, Textual, contemporary practices.
 
 \section{Limitations}
 \label{sec:limitations}
 
 \subsection{Functional Limitations}
 
-\textbf{Limited Historical Retention}: 60-second buffer prevents long-term trend analysis and data export.
-
-\textbf{No Configuration Persistence}: Hardcoded settings limit customization without source modification.
-
-\textbf{Single-System Monitoring}: No remote or multi-system monitoring capabilities.
-
-\textbf{Limited GPU Support}: NVIDIA-only support via nvidia-smi with basic metrics.
-
-\textbf{No Alerting}: Passive monitoring without threshold notifications or automated actions.
+60-second buffer only, no config persistence, single-system only, NVIDIA GPU only, no alerting.
 
 \subsection{Technical Limitations}
 
-\textbf{Platform-Specific}: Linux-only due to /proc filesystem dependencies.
-
-\textbf{Terminal Constraints}: Requires 80×24 minimum; no mobile/web interface.
-
-\textbf{Python Performance Ceiling}: Interpreted nature unsuitable for sub-second updates or embedded systems.
-
-\textbf{Limited Process Analysis}: Basic management lacks process trees, per-process I/O, and priority adjustment.
+Linux-only, terminal 80×24 minimum, Python performance ceiling, basic process management.
 
 \subsection{Quality Limitations}
 
-\textbf{Test Coverage}: 26\% uncovered code paths, primarily rare error scenarios.
-
-\textbf{Limited Testing Scope}: Tested on Arch, Ubuntu, Debian only.
-
-\textbf{Accessibility}: No screen reader support or color blindness accommodations.
-
-\textbf{Documentation Gaps}: Limited troubleshooting, no contribution guidelines, English-only.
+26\% uncovered code, tested on Arch/Ubuntu/Debian only, no accessibility features, documentation gaps.
 
 \section{Recommendations for Future Development}
 \label{sec:recommendations}
 
 \subsection{High-Priority Enhancements}
 
-\textbf{Configuration File Support} (10-15 hours): YAML/TOML config for persistent settings, customizable intervals, widgets, and color schemes.
-
-\textbf{Extended GPU Support} (20-25 hours): Add AMD (rocm-smi) and Intel GPU support with unified interface.
-
-\textbf{Historical Data Export} (8-12 hours): Export metrics to CSV/JSON for external analysis.
-
-\textbf{Enhanced Process Details} (25-30 hours): Detailed process view with command-line arguments, process tree, and per-process I/O.
+Config file support (10-15h), AMD/Intel GPU support (20-25h), data export (8-12h), enhanced process details (25-30h).
 
 \subsection{Medium-Priority Enhancements}
 
-\textbf{Alert System} (15-20 hours): User-defined thresholds with visual indicators and optional logging.
-
-\textbf{Extended Historical Retention} (20-30 hours): Multi-resolution storage with zoomable graphs and disk persistence.
-
-\textbf{Customizable Layout} (30-40 hours): Rearrangeable widgets with multiple predefined layouts.
-
-\textbf{Remote Monitoring} (60-80 hours): Client-server architecture for multi-system monitoring with security considerations.
+Alert system (15-20h), extended retention (20-30h), customizable layout (30-40h), remote monitoring (60-80h).
 
 \subsection{Lower-Priority Enhancements}
 
@@ -1388,60 +1308,34 @@ This chapter reflects on long-term learning outcomes from systop, examining tech
 
 \textbf{Project Management}: Breaking complex projects into increments, effort estimation, priority balancing, and maintaining momentum over 16 weeks.
 
-\textbf{Documentation}: Technical writing for multiple audiences, API documentation, architecture explanations, and version control practices.
+\textbf{Documentation}: Technical writing, API docs, architecture explanations, version control.
 
-\textbf{Problem-Solving}: Systematic debugging, hypothesis testing, effective tool usage, and knowing when to seek help.
+\textbf{Problem-Solving}: Systematic debugging, hypothesis testing, tool usage.
 
-\textbf{Quality Mindset}: Craftsmanship, maintainability focus, defensive programming, and technical debt management.
+\textbf{Quality Mindset}: Craftsmanship, maintainability, defensive programming, debt management.
 
 \subsection{Long-Term Career Competencies}
 
-\textbf{Learning How to Learn}: Approaching unfamiliar technologies systematically, building mental models, and maintaining persistence. Enables continuous adaptation.
-
-\textbf{Portfolio}: Demonstrates technical capabilities, project completion ability, and best practices for employers and interviews.
+\textbf{Learning How to Learn}: Systematic approach to unfamiliar technologies. \textbf{Portfolio}: Demonstrates capabilities and best practices.
 
 \section{Learning New Technologies \& Tools}
 \label{sec:learning-technologies}
 
 \subsection{Textual Framework: From Zero to Proficient}
 
-\textbf{Learning Approach}: Started with official documentation and tutorials, studied examples, built incrementally from simple to complex widgets, read source code, engaged community, and experimented with isolated tests.
-
-\textbf{Key Challenges}: Reactive system complexity, CSS-like styling in terminal, event propagation, debugging difficulties, and framework evolution.
-
-\textbf{Time Investment}: 20-25 hours over first 3 weeks.
-
-\textbf{Lessons}: Start with smallest examples, don't skip documentation, leverage community, accept initial frustration, build confidence incrementally.
+\textbf{Approach}: Documentation, examples, incremental building, source code study, community engagement. \textbf{Challenges}: Reactive system, CSS styling, event propagation, debugging. \textbf{Time}: 20-25 hours over 3 weeks.
 
 \subsection{psutil and System Libraries}
 
-\textbf{Approach}: Documentation study, interactive REPL exploration, comparative analysis with traditional tools, source code reading, and edge case testing.
-
-\textbf{Time Investment}: ~15 hours. Key insight: System libraries require understanding underlying OS concepts beyond API documentation.
+\textbf{Approach}: Documentation, REPL exploration, comparative analysis, edge case testing. ~15 hours. Required understanding OS concepts beyond APIs.
 
 \subsection{pytest and Development Tools}
 
-\textbf{pytest Skills}: Fixture design, parametrized tests, mocking, test organization, coverage analysis. ~30 hours developing continuously. Key realization: Testing alongside implementation far easier than deferring.
-
-\textbf{Git, Virtual Environments, Neovim}: Enhanced proficiency in version control, dependency management, and development environment.
+pytest (fixtures, mocking, coverage) ~30 hours continuously. Insight: Testing alongside implementation easier than deferring. Enhanced Git, virtual environments, Neovim skills.
 
 \subsection{Effective Learning Strategies}
 
-\textbf{1. Documentation-First}: Official docs provide authoritative information.
-
-\textbf{2. Build Mental Models}: Understand concepts, not just APIs.
-
-\textbf{3. Hands-On Experimentation}: Writing code builds understanding.
-
-\textbf{4. Incremental Complexity}: Master basics before advanced features.
-
-\textbf{5. Multiple Sources}: Combine documentation, source code, examples, and community.
-
-\textbf{6. Time-Boxed Exploration}: Balance persistence with seeking help.
-
-\textbf{7. Documentation}: Document learning contemporaneously.
-
-\textbf{8. Embrace Discomfort}: Frustration indicates growth.
+Documentation-first, build mental models, hands-on experimentation, incremental complexity, multiple sources, time-boxed exploration, contemporary documentation, embrace discomfort.
 
 \section{Future Growth \& Directions}
 \label{sec:future-growth}
