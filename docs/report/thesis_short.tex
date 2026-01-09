@@ -1290,474 +1290,174 @@ All primary and secondary objectives successfully achieved:
 \chapter{Discussion \& Analysis}
 \label{chap:discussion}
 
-This chapter provides critical analysis of the systop project, interpreting the results presented in Chapter 7, evaluating strengths and limitations, and reflecting on design decisions. We discuss what the quantitative results mean in practical contexts, compare our achievements against original objectives, acknowledge current limitations, and propose directions for future development.
+This chapter analyzes the systop project, interpreting results from Chapter 7, evaluating strengths and limitations, and reflecting on design decisions.
 
 \section{Interpretation of Findings}
 \label{sec:interpretation}
 
-The testing and evaluation results presented in Chapter 7 provide concrete evidence of systop's success across technical, usability, and quality dimensions. Here we interpret what these findings mean in real-world contexts.
+Chapter 7 results demonstrate systop's success across technical, usability, and quality dimensions.
 
 \subsection{Performance Characteristics in Context}
 
-\textbf{Resource Efficiency Achievement}: Our measurements show systop consuming 0.7\% CPU and 41MB memory during normal operation. In practical terms, this means:
+\textbf{Resource Efficiency}: Systop consumes 0.7\% CPU and 41MB memory, representing negligible impact (<0.5\% on 8GB systems). At 4× below the 2-3\% monitoring overhead threshold, systop enables 24/7 operation without degrading system performance, suitable even for resource-constrained environments.
 
-\begin{itemize}
-    \item On a typical 4-core system at 3GHz, systop uses approximately 21 million cycles per second out of 12 billion available---negligible impact on system performance
-    \item Memory footprint of 41MB represents less than 0.5\% of a system with 8GB RAM, allowing systop to run continuously without resource concerns
-    \item Users can keep systop running 24/7 for monitoring without degrading performance of their primary workloads
-    \item The tool is suitable even for resource-constrained environments like virtual machines with limited allocations
-\end{itemize}
-
-\textbf{Comparison with Monitoring Overhead}: Research suggests monitoring tools should consume <2-3\% of resources to be considered negligible. At 0.7\% CPU, systop achieves approximately 4× margin below this threshold, validating our architectural choices prioritizing efficiency.
-
-\textbf{Update Responsiveness}: The 1-second update interval strikes an effective balance between responsiveness and overhead. For typical use cases (identifying CPU spikes, memory leaks, or runaway processes), sub-second resolution is unnecessary, while multi-second intervals feel sluggish. Our choice aligns with user expectations established by tools like htop and btop.
+\textbf{Update Responsiveness}: The 1-second update interval balances responsiveness and overhead, aligning with user expectations from htop and btop.
 
 \subsection{Testing Coverage Interpretation}
 
-\textbf{74\% Overall Coverage with 83-89\% for Core Modules}: These metrics indicate strong but not exhaustive testing. In context:
-
-\begin{itemize}
-    \item Core monitoring modules (CPU, memory, network, processes) achieving 80%+ coverage means critical functionality has comprehensive automated verification
-    \item Lower coverage in UI widgets (64-71\%) is acceptable as UI code requires more manual testing and is less amenable to unit testing
-    \item 100\% test pass rate with 142 tests demonstrates reliability and reduces regression risk
-    \item The testing investment (~20 hours) represents only 10\% of development time, suggesting efficient test development
-\end{itemize}
-
-\textbf{Uncovered Code Paths}: The 26\% of uncovered code primarily consists of error handling branches for rare failure scenarios (e.g., permission denied accessing /proc files, Unicode rendering errors). While untested, these paths have defensive error handling that prevents crashes.
+\textbf{74\% Overall Coverage}: Core modules achieve 83-89\% coverage with comprehensive automated verification. Lower UI widget coverage (64-71\%) is acceptable as UI requires manual testing. 100\% pass rate with 142 tests demonstrates reliability with efficient ~20 hour investment. Uncovered 26\% consists primarily of error handling for rare scenarios with defensive programming preventing crashes.
 
 \subsection{Feature Completeness Interpretation}
 
-The comprehensive feature checklist showing all 10 primary objectives achieved indicates systop successfully fulfills its core mission. Specifically:
-
-\textbf{Unified Interface Success}: Users no longer need to run separate tools for CPU, memory, disk, network, and GPU monitoring. This consolidation saves cognitive load and terminal real estate, improving workflow efficiency for system administrators and developers.
-
-\textbf{Historical Visualization Value}: The 60-second historical graphs enable pattern recognition impossible with instantaneous metrics alone. Users can identify:
-\begin{itemize}
-    \item Periodic CPU spikes indicating scheduled tasks
-    \item Memory usage trends suggesting leaks
-    \item Network traffic patterns revealing application behavior
-    \item Correlation between metrics (e.g., disk I/O causing CPU wait)
-\end{itemize}
-
-\textbf{Graceful Degradation Success}: Testing across systems with/without GPUs and temperature sensors confirms systop adapts appropriately. This flexibility means a single codebase serves diverse hardware configurations without manual configuration.
+All 10 primary objectives achieved. \textbf{Unified interface} eliminates separate tools, improving workflow efficiency. \textbf{Historical graphs} enable pattern recognition for CPU spikes, memory trends, and metric correlations. \textbf{Graceful degradation} ensures single codebase adapts to diverse hardware without configuration.
 
 \subsection{Comparative Performance Interpretation}
 
-Table 7.4's comparison showing systop's memory usage (41MB) between btop (25MB) and glances (48MB), with CPU usage competitive with btop (0.7\% vs 0.8\%), indicates:
-
-\begin{itemize}
-    \item Python's interpreted nature adds ~15-20MB overhead versus C++, but this is acceptable for the development efficiency gained
-    \item Textual framework's overhead is modest, providing rich UI capabilities without excessive resource consumption
-    \item systop's performance is production-ready, not merely a prototype
-\end{itemize}
+Table 7.4 shows systop's 41MB memory (between btop's 25MB and glances' 48MB) and competitive 0.7\% CPU usage. Python adds ~15-20MB overhead but provides development efficiency. Performance is production-ready.
 
 \section{Strengths of the Project}
 \label{sec:strengths}
 
-Systop exhibits several notable strengths when compared to existing monitoring solutions and evaluated against software engineering best practices.
-
 \subsection{Technical Strengths}
 
-\textbf{Clean Architectural Design}: The three-layer architecture (Monitors $\rightarrow$ Widgets $\rightarrow$ App) with BaseMonitor abstraction demonstrates professional software design:
-\begin{itemize}
-    \item New monitors can be added without modifying existing code (Open-Closed Principle)
-    \item Each module has single, well-defined responsibility (Single Responsibility Principle)
-    \item Testing is simplified by clear component boundaries
-    \item Future developers can understand the system structure quickly
-\end{itemize}
+\textbf{Clean Architecture}: Three-layer design (Monitors $\rightarrow$ Widgets $\rightarrow$ App) with BaseMonitor abstraction follows Open-Closed and Single Responsibility Principles, enabling extensibility and testability.
 
-\textbf{Robust Error Handling}: Comprehensive try-except blocks with graceful fallbacks for GPU/sensor unavailability represent defensive programming. Unlike tools that crash when expected hardware is absent, systop remains functional, displaying ``N/A'' for unavailable metrics. This robustness is critical for production use across diverse systems.
+\textbf{Robust Error Handling}: Graceful fallbacks for missing hardware ensure functionality across diverse systems.
 
-\textbf{Efficient Data Management}: The circular buffer implementation for time-series storage demonstrates algorithmic thinking:
-\begin{itemize}
-    \item O(1) insertion time regardless of history size
-    \item Fixed memory footprint preventing unbounded growth
-    \item Cache-friendly sequential access patterns
-    \item Reusable design pattern applicable to similar problems
-\end{itemize}
+\textbf{Efficient Data Management}: Circular buffer provides O(1) insertion with fixed memory footprint.
 
-\textbf{Performance Optimization}: Achieving <1\% CPU usage required careful optimization:
-\begin{itemize}
-    \item Async I/O preventing blocking operations
-    \item Efficient data structures (deque for circular buffer)
-    \item Appropriate update intervals avoiding excessive polling
-    \item Minimal string formatting and rendering overhead
-\end{itemize}
+\textbf{Performance Optimization}: Async I/O, efficient data structures, and minimal overhead achieve <1\% CPU usage.
 
 \subsection{Process and Quality Strengths}
 
-\textbf{Systematic Development Methodology}: The 16-step BUILD\_PLAN.md approach demonstrates project management discipline rare in individual projects:
-\begin{itemize}
-    \item Clear milestones with measurable deliverables
-    \item Incremental progress reducing integration risks
-    \item Documentation of decisions for future reference
-    \item All eight major milestones achieved on schedule
-\end{itemize}
+\textbf{Systematic Methodology}: 16-step BUILD\_PLAN.md with clear milestones achieved all objectives on schedule.
 
-\textbf{Comprehensive Testing Strategy}: The testing approach combining unit, integration, and stability tests with 142 total tests represents professional QA practices:
-\begin{itemize}
-    \item Automated tests enable confident refactoring
-    \item High coverage for critical modules ensures reliability
-    \item Stability tests validate long-running behavior
-    \item Manual verification complements automated testing
-\end{itemize}
+\textbf{Comprehensive Testing}: 142 tests combining unit, integration, and stability testing with high coverage ensure reliability and enable confident refactoring.
 
-\textbf{Extensive Documentation}: The project includes user documentation (README), developer documentation (docstrings, BUILD\_PLAN.md), and test documentation (FINAL\_TEST\_RESULTS.md), facilitating both use and future development.
+\textbf{Extensive Documentation}: Complete user, developer, and test documentation facilitate use and development.
 
 \subsection{Educational and Practical Strengths}
 
-\textbf{Learning Resource Value}: Systop serves as an excellent educational resource:
-\begin{itemize}
-    \item Demonstrates real-world application of software engineering principles taught in CSE-3200
-    \item Readable Python codebase accessible to students
-    \item Comprehensive testing examples illustrating QA practices
-    \item Documentation of development process showing software methodology in practice
-\end{itemize}
+\textbf{Learning Resource}: Demonstrates software engineering principles with readable code and comprehensive testing examples.
 
-\textbf{Practical Utility}: Despite being an academic project, systop provides genuine value:
-\begin{itemize}
-    \item Feature-complete tool usable for daily system monitoring
-    \item Performance suitable for production environments
-    \item Installation via pip simplifies deployment
-    \item Cross-system compatibility through Python and psutil
-\end{itemize}
+\textbf{Practical Utility}: Feature-complete tool with production-ready performance, pip installation, and cross-system compatibility.
 
-\textbf{Modern Technology Demonstration}: Using Python 3.13, Textual framework, and contemporary development practices showcases current industry trends, preparing students for professional development environments.
+\textbf{Modern Technology}: Python 3.13, Textual framework, and contemporary practices showcase industry trends.
 
 \section{Limitations}
 \label{sec:limitations}
 
-While systop successfully achieved its primary objectives, we acknowledge several limitations that constrain its current capabilities and applicability.
-
 \subsection{Functional Limitations}
 
-\textbf{Limited Historical Data Retention}: The 60-second circular buffer provides only short-term history. Users cannot:
-\begin{itemize}
-    \item View long-term trends (hours or days)
-    \item Export historical data for external analysis
-    \item Resume monitoring history after restarting systop
-    \item Analyze patterns over multiple sessions
-\end{itemize}
+\textbf{Limited Historical Retention}: 60-second buffer prevents long-term trend analysis and data export.
 
-\textbf{No Configuration Persistence}: All settings (update interval, color scheme, visible widgets) are hardcoded. Users cannot customize systop behavior without modifying source code, limiting flexibility for diverse preferences and use cases.
+\textbf{No Configuration Persistence}: Hardcoded settings limit customization without source modification.
 
-\textbf{Single-System Monitoring Only}: Systop monitors only the local system. It lacks:
-\begin{itemize}
-    \item Remote monitoring capabilities for other systems
-    \item Aggregated views of multiple systems
-    \item Client-server architecture for centralized monitoring
-    \item Network-based metric collection
-\end{itemize}
+\textbf{Single-System Monitoring}: No remote or multi-system monitoring capabilities.
 
-\textbf{Limited GPU Support}: GPU monitoring supports only NVIDIA hardware via nvidia-smi. AMD and Intel GPUs are not supported, limiting utility on non-NVIDIA systems. Additionally, GPU metrics are basic (utilization, memory, temperature) without advanced features like per-process GPU usage.
+\textbf{Limited GPU Support}: NVIDIA-only support via nvidia-smi with basic metrics.
 
-\textbf{No Alerting or Thresholds}: Systop is a passive monitoring tool without active alerting. Users must manually observe metrics to identify issues; the tool does not:
-\begin{itemize}
-    \item Send notifications when metrics exceed thresholds
-    \item Log events automatically
-    \item Execute actions based on conditions (e.g., kill processes when memory exceeds limit)
-\end{itemize}
+\textbf{No Alerting}: Passive monitoring without threshold notifications or automated actions.
 
 \subsection{Technical Limitations}
 
-\textbf{Platform-Specific}: Systop is Linux-only due to reliance on psutil's Linux-specific features and /proc filesystem assumptions. Porting to macOS or Windows would require significant modifications to accommodate different system APIs.
+\textbf{Platform-Specific}: Linux-only due to /proc filesystem dependencies.
 
-\textbf{Terminal Size Constraints}: While responsive, systop requires minimum 80×24 terminal size. On very small terminals, widgets are compressed and may be difficult to read. There is no mobile/web interface option.
+\textbf{Terminal Constraints}: Requires 80×24 minimum; no mobile/web interface.
 
-\textbf{Python Performance Ceiling}: Despite achieving <1\% CPU target, Python's interpreted nature imposes a performance ceiling. For extremely high-frequency monitoring (sub-second updates) or resource-constrained embedded systems, compiled alternatives (btop, bottom) would be more appropriate.
+\textbf{Python Performance Ceiling}: Interpreted nature unsuitable for sub-second updates or embedded systems.
 
-\textbf{Limited Process Analysis}: Process management is basic (sort, filter, kill). Advanced features available in some tools are absent:
-\begin{itemize}
-    \item Process tree visualization
-    \item Per-process I/O and network statistics
-    \item System call tracing
-    \item Process priority adjustment (renice)
-    \item CPU affinity management
-\end{itemize}
+\textbf{Limited Process Analysis}: Basic management lacks process trees, per-process I/O, and priority adjustment.
 
 \subsection{Quality Limitations}
 
-\textbf{Test Coverage Gaps}: The 74\% overall coverage, while respectable, leaves ~26\% of code paths untested. Error handling branches for rare scenarios lack automated verification, relying on manual testing and defensive programming.
+\textbf{Test Coverage}: 26\% uncovered code paths, primarily rare error scenarios.
 
-\textbf{Limited Cross-Distribution Testing}: While tested on Arch, Ubuntu, and Debian, broader testing across distributions (Fedora, RHEL, SUSE, etc.) and versions was not conducted. Edge cases on exotic distributions may exist.
+\textbf{Limited Testing Scope}: Tested on Arch, Ubuntu, Debian only.
 
-\textbf{Accessibility Limitations}: Systop lacks accessibility features for users with visual impairments (screen reader support) or color blindness (configurable color schemes). The ASCII art visualizations assume color terminal support.
+\textbf{Accessibility}: No screen reader support or color blindness accommodations.
 
-\subsection{Documentation Limitations}
-
-While documentation is comprehensive in scope, some areas could be improved:
-\begin{itemize}
-    \item Limited troubleshooting guide for obscure errors
-    \item No contribution guidelines for potential open-source contributors
-    \item API documentation could include more usage examples
-    \item No internationalization (English-only interface and documentation)
-\end{itemize}
-
-These limitations represent opportunities for future enhancement rather than fundamental flaws, and most are typical for initial versions of software projects developed within academic timeframes.
+\textbf{Documentation Gaps}: Limited troubleshooting, no contribution guidelines, English-only.
 
 \section{Recommendations for Future Development}
 \label{sec:recommendations}
 
-Based on the limitations identified and user feedback during testing, we propose realistic enhancements for future iterations of systop, prioritized by feasibility and value.
-
 \subsection{High-Priority Enhancements}
 
-\textbf{Configuration File Support} (Effort: Low, Value: High)
-\begin{itemize}
-    \item Implement YAML or TOML configuration file for persistent settings
-    \item Allow customization of update intervals, visible widgets, color schemes, and keybindings
-    \item Support user-specific config in \texttt{\textasciitilde/.config/systop/config.yaml}
-    \item Estimated effort: 10-15 hours
-\end{itemize}
+\textbf{Configuration File Support} (10-15 hours): YAML/TOML config for persistent settings, customizable intervals, widgets, and color schemes.
 
-\textbf{Extended GPU Support} (Effort: Medium, Value: Medium)
-\begin{itemize}
-    \item Add AMD GPU support via \texttt{rocm-smi}
-    \item Add Intel GPU support via \texttt{intel-gpu-tools}
-    \item Implement unified GPU interface abstracting vendor differences
-    \item Estimated effort: 20-25 hours
-\end{itemize}
+\textbf{Extended GPU Support} (20-25 hours): Add AMD (rocm-smi) and Intel GPU support with unified interface.
 
-\textbf{Historical Data Export} (Effort: Low, Value: Medium)
-\begin{itemize}
-    \item Add keybinding to export current session metrics to CSV/JSON
-    \item Include timestamps, all metric values, and metadata
-    \item Enable external analysis and long-term trend visualization
-    \item Estimated effort: 8-12 hours
-\end{itemize}
+\textbf{Historical Data Export} (8-12 hours): Export metrics to CSV/JSON for external analysis.
 
-\textbf{Enhanced Process Details} (Effort: Medium, Value: High)
-\begin{itemize}
-    \item Add detailed process view showing command-line arguments, environment variables, open files
-    \item Implement process tree visualization showing parent-child relationships
-    \item Add per-process I/O and network statistics
-    \item Estimated effort: 25-30 hours
-\end{itemize}
+\textbf{Enhanced Process Details} (25-30 hours): Detailed process view with command-line arguments, process tree, and per-process I/O.
 
 \subsection{Medium-Priority Enhancements}
 
-\textbf{Alert and Threshold System} (Effort: Medium, Value: Medium)
-\begin{itemize}
-    \item Allow users to define thresholds for metrics (e.g., CPU >80\%, memory >90\%)
-    \item Display visual indicators (color changes, flashing) when thresholds exceeded
-    \item Optional logging of threshold violations to file
-    \item Estimated effort: 15-20 hours
-\end{itemize}
+\textbf{Alert System} (15-20 hours): User-defined thresholds with visual indicators and optional logging.
 
-\textbf{Extended Historical Retention} (Effort: Medium, Value: Low-Medium)
-\begin{itemize}
-    \item Implement multi-resolution storage (1s for 60s, 10s for 10min, 1min for 1hr)
-    \item Allow users to zoom historical graphs to view different time ranges
-    \item Persist history to disk for recovery after restart
-    \item Estimated effort: 20-30 hours
-\end{itemize}
+\textbf{Extended Historical Retention} (20-30 hours): Multi-resolution storage with zoomable graphs and disk persistence.
 
-\textbf{Customizable Layout} (Effort: High, Value: Medium)
-\begin{itemize}
-    \item Allow users to rearrange widgets (drag-and-drop style with keyboard)
-    \item Support multiple predefined layouts (compact, detailed, server-focused)
-    \item Enable showing/hiding individual widgets
-    \item Estimated effort: 30-40 hours
-\end{itemize}
+\textbf{Customizable Layout} (30-40 hours): Rearrangeable widgets with multiple predefined layouts.
 
-\textbf{Remote Monitoring} (Effort: High, Value: Medium)
-\begin{itemize}
-    \item Implement client-server architecture with network protocol
-    \item Allow systop to connect to remote systems via SSH or custom protocol
-    \item Support monitoring multiple systems from single interface
-    \item Security considerations: authentication, encryption
-    \item Estimated effort: 60-80 hours (major feature)
-\end{itemize}
+\textbf{Remote Monitoring} (60-80 hours): Client-server architecture for multi-system monitoring with security considerations.
 
 \subsection{Lower-Priority Enhancements}
 
-\textbf{Cross-Platform Support} (Effort: High, Value: Low for academic context)
-\begin{itemize}
-    \item Abstract platform-specific code behind interfaces
-    \item Implement macOS and Windows monitoring backends
-    \item Handle platform differences in available metrics
-    \item Estimated effort: 40-60 hours
-\end{itemize}
+\textbf{Cross-Platform Support} (40-60 hours): Abstract platform-specific code for macOS and Windows.
 
-\textbf{Web Dashboard} (Effort: Very High, Value: Low for TUI tool)
-\begin{itemize}
-    \item Add optional web server providing dashboard interface
-    \item Enable remote browser-based monitoring
-    \item Implements charts using web technologies (Chart.js, D3.js)
-    \item Estimated effort: 80-100 hours (scope expansion beyond TUI focus)
-\end{itemize}
+\textbf{Web Dashboard} (80-100 hours): Optional web interface with browser-based monitoring.
 
-\textbf{Plugin System} (Effort: Very High, Value: Medium)
-\begin{itemize}
-    \item Design plugin API for custom monitors and widgets
-    \item Allow third-party extensions without modifying core code
-    \item Implement plugin discovery and loading mechanism
-    \item Estimated effort: 60-80 hours
-\end{itemize}
+\textbf{Plugin System} (60-80 hours): Plugin API for custom monitors and third-party extensions.
 
-\subsection{Quality and Maintenance Recommendations}
+\subsection{Quality and Maintenance}
 
-\textbf{Testing Enhancements}:
-\begin{itemize}
-    \item Increase coverage to 80\%+ overall, 90\%+ for core modules
-    \item Add end-to-end UI tests using Textual's testing framework
-    \item Implement continuous integration with GitHub Actions
-    \item Add performance regression tests
-\end{itemize}
+\textbf{Testing}: Increase coverage to 80\%+, add UI tests, implement CI/CD, performance regression tests.
 
-\textbf{Documentation Improvements}:
-\begin{itemize}
-    \item Create video tutorials for installation and usage
-    \item Develop contribution guidelines for open-source community
-    \item Add troubleshooting section with common issues and solutions
-    \item Translate documentation to additional languages
-\end{itemize}
+\textbf{Documentation}: Video tutorials, contribution guidelines, troubleshooting section, internationalization.
 
-\textbf{Accessibility}:
-\begin{itemize}
-    \item Investigate screen reader compatibility
-    \item Provide alternative color schemes for color blindness
-    \item Add high-contrast mode
-    \item Ensure keyboard navigation works without mouse
-\end{itemize}
-
-These recommendations are realistic for future development, with high-priority items achievable within a follow-up semester project and medium-priority items suitable for capstone projects or open-source community contributions.
+\textbf{Accessibility}: Screen reader compatibility, color blindness schemes, high-contrast mode.
 
 \section{Reflection on Design \& Implementation Decisions}
 \label{sec:reflection}
 
-Reflecting on the design and implementation decisions made throughout systop's development provides insights into what worked well, what could have been done differently, and lessons learned for future projects.
-
 \subsection{Architectural Decisions}
 
-\textbf{Layered Architecture Choice}: The decision to separate concerns into monitors, widgets, and application layers proved highly successful. This architecture:
+\textbf{Layered Architecture}: Separating monitors, widgets, and application layers proved successful. Each layer developed independently, delivering anticipated testability and maintainability benefits. Would repeat in future projects.
 
-\begin{itemize}
-    \item \textbf{Justified by}: Need for testability, maintainability, and clear module boundaries
-    \item \textbf{Benefits realized}: Each layer was developed and tested independently; multiple widgets could use same monitor data; modifications to one layer rarely affected others
-    \item \textbf{Would we change it?}: No. The layered approach delivered exactly the benefits anticipated and would be repeated in future TUI projects
-\end{itemize}
+\textbf{BaseMonitor Abstract Class}: Provided consistent interface and shared functionality. While inheritance worked well, protocol-based approach might be more Pythonic in future.
 
-\textbf{BaseMonitor Abstract Class}: Using inheritance with abstract base class for monitors demonstrated object-oriented design:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Need for consistent interface and shared functionality across monitors
-    \item \textbf{Benefits realized}: All monitors guaranteed to implement \texttt{collect()}, shared circular buffer implementation prevented code duplication, facilitated testing with mock monitors
-    \item \textbf{Alternative considered}: Composition over inheritance with monitor interface
-    \item \textbf{Would we change it?}: Possibly. While inheritance worked, a protocol-based approach (PEP 544) might be more Pythonic and flexible
-\end{itemize}
-
-\textbf{Circular Buffer for History}: Implementing custom circular buffer rather than using deque with maxlen directly was worthwhile:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Need for clear API, type safety, potential for future enhancements
-    \item \textbf{Benefits realized}: Clean interface abstracted implementation details, easier to test, could add features like interpolation without changing calling code
-    \item \textbf{Trade-off}: Added ~50 lines of code and another test file
-    \item \textbf{Would we change it?}: No. The abstraction provided flexibility and clarity worth the modest overhead
-\end{itemize}
+\textbf{Circular Buffer}: Custom implementation provided clean API and flexibility worth the modest overhead.
 
 \subsection{Technology Choices}
 
-\textbf{Python vs. Compiled Languages}: Choosing Python over C++/Rust was fundamental:
+\textbf{Python}: Development speed and library ecosystem justified ~15-20MB overhead. Completed in 210 hours vs estimated 300-400 in C++. Appropriate for academic context.
 
-\begin{itemize}
-    \item \textbf{Justified by}: Academic learning objectives, development speed, extensive libraries, accessibility
-    \item \textbf{Benefits realized}: Completed comprehensive tool in 210 hours (estimated 300-400 hours in C++), leveraged psutil and Textual instead of implementing system interfaces from scratch
-    \item \textbf{Trade-offs}: ~15-20MB higher memory usage than C++ equivalents, ~2-3× CPU overhead
-    \item \textbf{Would we change it?}: No for academic context. For production tool targeting embedded systems, C++/Rust would be reconsidered
-\end{itemize}
+\textbf{Textual Framework}: Enabled rapid UI development with reactive updates. Learning curve and occasional bugs outweighed by benefits.
 
-\textbf{Textual Framework}: Selecting Textual over alternatives (curses, urwid):
-
-\begin{itemize}
-    \item \textbf{Justified by}: Modern framework, excellent documentation, rich widgets, CSS-like styling, active development
-    \item \textbf{Benefits realized}: Rapid UI development, reactive updates, built-in layouts and styling, minimal boilerplate
-    \item \textbf{Challenges encountered}: Learning curve for Textual's reactive system, occasional framework bugs requiring workarounds
-    \item \textbf{Would we change it?}: No. Textual's benefits far outweighed challenges. Would wait for 1.0 release in production scenarios for API stability
-\end{itemize}
-
-\textbf{psutil for System Monitoring}: Using psutil rather than direct /proc access:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Cross-platform abstractions, well-tested, comprehensive metrics, efficient C implementation
-    \item \textbf{Benefits realized}: Saved hundreds of hours parsing /proc files, benefited from 10+ years of psutil development, handled edge cases and platform differences automatically
-    \item \textbf{Limitations}: Occasionally wanted more granular control or newer kernel features not yet in psutil
-    \item \textbf{Would we change it?}: No. Could supplement with direct /proc reading for niche features if needed
-\end{itemize}
+\textbf{psutil}: Saved hundreds of hours implementing /proc parsing. Well-tested abstractions handled edge cases automatically.
 
 \subsection{Implementation Decisions}
 
-\textbf{Graceful Degradation for GPU/Sensors}: Implementing comprehensive error handling for optional hardware:
+\textbf{Graceful Degradation}: Error handling for optional hardware ensured universal compatibility. Testing effort justified by robustness.
 
-\begin{itemize}
-    \item \textbf{Justified by}: Unknown target hardware, desire for universal compatibility
-    \item \textbf{Benefits realized}: Single binary works across all Linux systems, no configuration required, professional user experience
-    \item \textbf{Cost}: Additional 30-40\% test code for error paths
-    \item \textbf{Would we change it?}: No. The robustness justified the testing effort, and displaying ``N/A'' is far superior to crashing
-\end{itemize}
+\textbf{Fixed 60-Second History}: Simple approach adequate. Would add configurability in next iteration while keeping sensible defaults.
 
-\textbf{Fixed 60-Second History}: Hardcoding history size rather than making it configurable:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Simplicity, avoiding premature configurability
-    \item \textbf{Benefits realized}: Simpler code, predictable memory usage, 60 seconds adequate for most use cases
-    \item \textbf{Limitations}: Users wanting longer history cannot extend it without code modification
-    \item \textbf{Would we change it?}: Partially. In next iteration, would add configuration file with sensible 60-second default. The decision to start simple was correct
-\end{itemize}
-
-\textbf{1-Second Update Interval}: Choosing 1-second as default update rate:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Balance between responsiveness and overhead, user expectation from similar tools
-    \item \textbf{Benefits realized}: Feels responsive without excessive CPU usage, aligns with psutil's preferred interval
-    \item \textbf{Would we change it?}: Add configurability (0.5s, 1s, 2s, 5s options) but keep 1s default
-\end{itemize}
-
-\subsection{Process Decisions}
-
-\textbf{16-Step BUILD\_PLAN.md}: Creating detailed development plan upfront:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Semester timeline constraints, complexity management, learning objective demonstration
-    \item \textbf{Benefits realized}: Maintained steady progress, avoided feature creep, completed on schedule, documented decisions
-    \item \textbf{Overhead}: 4-5 hours initial planning, periodic updates
-    \item \textbf{Would we change it?}: No. The upfront planning investment paid dividends throughout development
-\end{itemize}
-
-\textbf{Continuous Testing Approach}: Writing tests alongside implementation rather than deferred testing phase:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Prevent bug accumulation, enable refactoring confidence, demonstrate professional practices
-    \item \textbf{Benefits realized}: Caught bugs immediately when context was fresh, 100\% pass rate achieved naturally, testing never felt burdensome
-    \item \textbf{Would we change it?}: No. Would never defer testing again; continuous approach is clearly superior
-\end{itemize}
-
-\textbf{Solo Development}: Completing project individually rather than in a team:
-
-\begin{itemize}
-    \item \textbf{Justified by}: Course structure, desire for complete ownership and learning
-    \item \textbf{Benefits realized}: Complete understanding of all components, consistent coding style, fast decision-making, full credit for achievements
-    \item \textbf{Challenges}: No peer review, limited perspective diversity, sole responsibility for all aspects
-    \item \textbf{Would we change it?}: For learning context, no. For production software, team collaboration would add value through code review and knowledge sharing
-\end{itemize}
+\textbf{Continuous Testing}: Writing tests alongside implementation caught bugs early with 100\% pass rate. Superior to deferred testing.
 
 \subsection{Key Lessons Learned}
 
-Several insights emerged that will inform future software development projects:
+\textbf{Start Simple}: Incremental feature addition prevented overwhelming complexity.
 
-\textbf{Start Simple, Add Complexity Incrementally}: Beginning with minimal features (CPU monitoring only) and expanding systematically prevented overwhelming complexity. Each step built on working foundation.
+\textbf{Defensive Programming}: Comprehensive error handling prevented debugging hours and user frustration.
 
-\textbf{Defensive Programming Pays Off}: The effort invested in error handling, graceful fallbacks, and input validation prevented countless debugging hours and user frustration. Production-quality error handling should be first-class, not an afterthought.
+\textbf{Testing Enables Confidence}: 142 automated tests enabled fearless refactoring.
 
-\textbf{Testing Enables Confidence}: Comprehensive automated tests allowed fearless refactoring. Changes that would have been risky without tests became routine with 142 tests verifying correctness.
+\textbf{Documentation Contemporaneously}: Writing documentation during development easier than deferring to end.
 
-\textbf{Documentation as You Go}: Writing docstrings, updating README, and maintaining BUILD\_PLAN.md contemporaneously was far easier than deferring documentation to the end. By project completion, documentation was 90\% complete.
+\textbf{Performance Early}: Continuous profiling prevented entrenched performance problems.
 
-\textbf{Performance Matters Early}: Profiling and optimizing during development prevented performance problems from becoming entrenched. Monitoring resource usage continuously ensured we never strayed far from targets.
-
-\textbf{User Experience Details Matter}: Small touches like human-readable sizes (MB/GB), color coding, responsive layout, and helpful error messages elevated systop from functional to polished.
-
-These reflections validate most major decisions while identifying opportunities for refinement in future iterations. The systematic approach, defensive programming, continuous testing, and user-focused design collectively contributed to systop's success as both an educational project and a practical tool.
+These reflections validate major decisions while identifying refinement opportunities. The systematic approach, defensive programming, and continuous testing contributed to systop's success.
 
 %=============================================================================
 % CHAPTER 9: LIFE-LONG LEARNING IMPACT
