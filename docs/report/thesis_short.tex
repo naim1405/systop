@@ -1592,389 +1592,133 @@ Systop represents not just completed academic work, but a foundation for lifelon
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-This final chapter concludes the systop project report by summarizing the work accomplished, evaluating achievement of stated objectives, and reflecting on the project's significance. After sixteen weeks of development encompassing planning, implementation, testing, and documentation, we have successfully delivered a functional, well-tested system monitoring tool that demonstrates software engineering best practices and provides value to both users and the educational community.
+This chapter summarizes the systop project, evaluates achievement of objectives, and reflects on its significance. After sixteen weeks of systematic development, we delivered a functional system monitoring tool demonstrating software engineering best practices.
 
 \section{Summary of Work}
 \label{sec:summary}
 
-The systop project set out to create a modern Terminal User Interface (TUI) application for comprehensive system monitoring on Linux, addressing limitations in existing tools by providing a unified, visually rich, and interactive monitoring experience. This summary recaps the major accomplishments across all project phases.
+Systematic completion of all project phases delivered a comprehensive monitoring solution:
 
 \subsection{Requirements and Planning}
 
-We began with thorough requirements analysis, identifying 40+ functional and non-functional requirements organized across monitoring domains (CPU, memory, disk, network, GPU, sensors, processes) and quality attributes (performance, reliability, maintainability, usability). The requirements phase established clear targets: <1\% CPU usage, <50MB memory consumption, >70\% test coverage, and graceful handling of unavailable hardware.
-
-Technology evaluation led to selecting Python 3.13, the Textual framework for UI development, psutil for system monitoring, and pytest for testing---choices that balanced development efficiency, learning objectives, performance requirements, and ecosystem maturity.
-
-A structured 16-step development plan documented in BUILD\_PLAN.md provided the roadmap for systematic project execution, breaking the complex system into incremental, testable deliverables across 16 weeks.
+Thorough requirements analysis identified 40+ requirements across monitoring domains with clear targets: <1\% CPU, <50MB memory, >70\% coverage. Technology selection (Python 3.13, Textual, psutil, pytest) balanced efficiency and learning objectives. BUILD\_PLAN.md established a 16-step roadmap for systematic execution.
 
 \subsection{Architecture and Design}
 
-We designed a clean three-layer architecture separating concerns:
-
-\begin{itemize}
-    \item \textbf{Monitoring Layer}: Data collection modules (CPU, memory, disk, network, GPU, sensors, processes) implementing a common BaseMonitor interface with psutil integration
-    \item \textbf{Widget Layer}: Textual UI components rendering monitoring data with real-time updates, historical graphs, and interactive controls
-    \item \textbf{Application Layer}: Main application orchestrating monitors and widgets, managing keyboard input, and coordinating updates
-\end{itemize}
-
-Key design decisions included:
-\begin{itemize}
-    \item BaseMonitor abstract class enforcing consistent interfaces across all monitoring modules
-    \item Circular buffer implementation for efficient time-series storage with bounded memory
-    \item Graceful degradation patterns for optional hardware (GPU, temperature sensors)
-    \item Defensive programming with comprehensive try-except blocks preventing crashes
-    \item Separation of data collection logic from presentation concerns enabling independent testing
-\end{itemize}
+Three-layer architecture: Monitoring Layer (data collection via BaseMonitor interface), Widget Layer (Textual UI with graphs), Application Layer (orchestration). Key patterns: circular buffers for time-series, graceful degradation for optional hardware, defensive programming, separation of concerns.
 
 \subsection{Implementation}
 
-Implementation spanned 210 hours across 16 weeks, following the BUILD\_PLAN.md roadmap:
-
-\textbf{Foundation Phase}: Implemented utility functions (formatters), circular buffer, and BaseMonitor abstract class establishing patterns for all subsequent development.
-
-\textbf{Core Monitoring Phase}: Developed CPU monitoring (overall and per-core usage, frequency, load average), memory monitoring (RAM/swap utilization with historical tracking), and disk monitoring (partition usage, I/O rates).
-
-\textbf{Extended Monitoring Phase}: Added network monitoring (bandwidth per interface), GPU monitoring (NVIDIA support with graceful fallback), temperature sensors (with automatic hiding when unavailable), and comprehensive process management (sorting, filtering, search, kill with confirmation).
-
-\textbf{UI Integration Phase}: Created seven widgets (CPU, memory, disk, network, GPU, sensors, processes) integrated into cohesive Textual application with keyboard bindings, CSS styling, and responsive layouts.
-
-\textbf{Quality Assurance Phase}: Implemented 142 automated tests (94 unit, 32 integration, 12 system/stability), achieving 74\% overall coverage with 83-89\% for core monitoring modules. All tests passed with 100\% success rate.
-
-The implementation demonstrated modern Python development practices including type hints, comprehensive docstrings, PEP 8 compliance, and modular design.
+210 hours across 16 weeks delivered: Foundation (utilities, BaseMonitor), Core Monitoring (CPU, memory, disk), Extended Monitoring (network, GPU, sensors, processes), UI Integration (seven widgets), Quality Assurance (142 tests, 74\% coverage, 100\% pass rate). Modern practices: type hints, docstrings, PEP 8.
 
 \subsection{Testing and Validation}
 
-Our testing strategy combined multiple approaches:
-
-\begin{itemize}
-    \item \textbf{Unit Testing}: 94 tests verifying individual functions and classes in isolation
-    \item \textbf{Integration Testing}: 32 tests validating component interactions and end-to-end workflows
-    \item \textbf{Stability Testing}: 12 long-running tests (5+ minutes) detecting memory leaks and performance degradation
-    \item \textbf{Manual Verification}: Comprehensive checklist covering all requirements across multiple systems
-\end{itemize}
-
-Testing was integrated continuously throughout development rather than deferred to a final testing phase, enabling early bug detection and confident refactoring.
+Multi-level strategy: 94 unit tests, 32 integration tests, 12 stability tests (5+ minutes), manual verification. Continuous integration enabled early bug detection and confident refactoring.
 
 \subsection{Performance Validation}
 
-Performance evaluation confirmed systop meets all efficiency targets:
-
-\begin{itemize}
-    \item \textbf{CPU Usage}: 0.7\% average (target: <1\%) --- 30\% margin below threshold
-    \item \textbf{Memory Usage}: 41MB average (target: <50MB) --- 18\% margin below threshold
-    \item \textbf{Update Latency}: <100ms per refresh cycle ensuring smooth UI updates
-    \item \textbf{Scalability}: Handles 200+ processes without performance degradation
-    \item \textbf{Stability}: No memory leaks or crashes during 5-minute stress tests
-\end{itemize}
-
-Comparative analysis showed systop competitive with existing tools: memory usage between btop (25MB) and glances (48MB), CPU usage matching btop (0.7-0.8\%), while providing Python accessibility and educational value.
+All targets exceeded: 0.7\% CPU (30\% margin), 41MB memory (18\% margin), <100ms latency, 200+ process scalability, no memory leaks. Competitive with btop/glances while providing Python accessibility.
 
 \subsection{Documentation}
 
-Comprehensive documentation spans multiple audiences:
-
-\begin{itemize}
-    \item \textbf{User Documentation}: README with installation, usage, keyboard shortcuts, troubleshooting
-    \item \textbf{Developer Documentation}: Extensive docstrings, BUILD\_PLAN.md development roadmap, architecture overview
-    \item \textbf{Test Documentation}: Test strategy descriptions, FINAL\_TEST\_RESULTS.md with detailed metrics
-    \item \textbf{Process Documentation}: CHANGELOG.md tracking features and fixes, status documents marking milestones
-    \item \textbf{Academic Documentation}: This comprehensive thesis report documenting all project aspects
-\end{itemize}
+Comprehensive coverage: README (user guide), BUILD\_PLAN.md (development), docstrings (code), test reports (QA), CHANGELOG (history), thesis (academic).
 
 \subsection{Deliverables Summary}
 
-The completed project delivers:
-
-\begin{enumerate}
-    \item Fully functional systop application installable via pip with all dependencies
-    \item 3,500+ lines of production Python code across 25 modules
-    \item 142 automated tests with 100\% pass rate and 74\% coverage
-    \item Comprehensive documentation (README, BUILD\_PLAN, test reports, thesis)
-    \item Version-controlled Git repository with 200+ commits documenting development
-    \item Open-source codebase ready for community use and contribution
-\end{enumerate}
+Completed deliverables: pip-installable application, 3,500+ lines across 25 modules, 142 tests (100\% pass, 74\% coverage), comprehensive documentation, 200+ Git commits, open-source codebase.
 
 \section{Achievement of Objectives}
 \label{sec:objectives-achievement}
-
-We now evaluate how systop achieved each of the ten objectives stated in Chapter 1, providing evidence of success.
 
 \subsection{Primary Objectives Achievement}
 
 \textbf{Objective 1: Unified Monitoring Interface} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Develop a single application displaying all essential system metrics (CPU, memory, disk, network, GPU, sensors, processes) in a cohesive interface.
-
-\textit{Evidence}: Systop successfully consolidates seven monitoring domains in a single TUI:
-\begin{itemize}
-    \item CPU widget showing overall usage, per-core utilization, frequency, and historical graph
-    \item Memory widget displaying RAM/swap usage with historical trends
-    \item Disk widget presenting partition usage and I/O rates
-    \item Network widget tracking bandwidth per interface
-    \item GPU widget monitoring NVIDIA hardware (when available)
-    \item Sensors widget displaying system temperatures
-    \item Process widget managing running processes with sort/filter/search/kill
-\end{itemize}
-
-Users no longer need multiple terminal windows running separate tools (top, iostat, iftop, nvidia-smi); systop provides all metrics in unified interface.
+Successfully consolidates seven monitoring domains (CPU, memory, disk, network, GPU, sensors, processes) in single TUI, eliminating need for multiple tools.
 
 \textbf{Objective 2: Real-Time Data Visualization} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Implement real-time ASCII-based graphs displaying current values and historical trends, enabling pattern identification.
-
-\textit{Evidence}: 
-\begin{itemize}
-    \item CPU and memory widgets include 60-second historical graphs updated in real-time
-    \item ASCII-based visualization using plotext provides visual trend analysis
-    \item Circular buffers maintain 60 data points efficiently without memory growth
-    \item 1-second update interval provides responsive real-time monitoring
-    \item Visual graphs complement numeric values for quick pattern recognition
-\end{itemize}
-
-Manual testing confirmed users can identify CPU spikes, memory leaks, and usage patterns visually.
+60-second historical graphs with 1-second updates using plotext, circular buffers maintain efficient memory usage.
 
 \textbf{Objective 3: Interactive Process Management} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Create interactive process list with sorting, searching, filtering, and termination capabilities.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Process widget displays all running processes with PID, name, CPU\%, memory\%, status
-    \item Sorting by CPU usage, memory usage, PID, or name (ascending/descending)
-    \item Real-time search/filter by process name with instant updates
-    \item Process termination with keyboard shortcut and confirmation dialog
-    \item Handles 200+ processes efficiently without lag
-    \item Automatic refresh maintaining sort order and filters
-\end{itemize}
-
-Test case validation (Table 7.3) confirmed all process management features functional.
+Full process management: sort/filter/search/kill with confirmation, handles 200+ processes efficiently.
 
 \textbf{Objective 4: Modular and Maintainable Architecture} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Design clean, modular architecture separating data collection, business logic, and presentation concerns.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Three-layer architecture (Monitors $\rightarrow$ Widgets $\rightarrow$ App) with clear boundaries
-    \item BaseMonitor abstract class enforcing consistent interface across 7 monitors
-    \item Each monitor independently testable in isolation
-    \item Widgets depend on monitor interfaces, not implementations
-    \item New monitors can be added without modifying existing code
-    \item PEP 8 compliance and comprehensive docstrings aid maintainability
-\end{itemize}
-
-Code review confirmed modular structure enables future enhancements without architectural changes.
+Three-layer architecture with BaseMonitor interface, clear separation enabling independent testing and future extensions.
 
 \textbf{Objective 5: Robust Error Handling} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Implement comprehensive error handling ensuring stability when hardware is unavailable or system calls fail.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item GPU monitoring displays "N/A" when NVIDIA hardware unavailable instead of crashing
-    \item Temperature sensor widget hidden when no sensors detected
-    \item Try-except blocks around all system calls prevent uncaught exceptions
-    \item Graceful degradation tested on systems without GPU, temperature sensors
-    \item No crashes encountered during 5-minute stability tests
-    \item Application continues functioning even if individual modules fail
-\end{itemize}
-
-Testing on diverse hardware configurations (with/without GPU, various sensors) validated robustness.
+Graceful degradation for unavailable hardware, comprehensive exception handling, no crashes during stress tests.
 
 \subsection{Secondary Objectives Achievement}
 
 \textbf{Objective 6: Performance Efficiency} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Consume <1\% CPU and <50MB memory during normal operation.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Measured CPU usage: 0.7\% average (30\% below target)
-    \item Measured memory usage: 41MB average (18\% below target)
-    \item Performance validated on 4-core system over multiple runs
-    \item Minimal impact on monitored system enabling continuous operation
-    \item Fixed-size circular buffers prevent unbounded memory growth
-\end{itemize}
-
-Performance measurements (Table 7.5) documented achieving all efficiency targets with comfortable margins.
+0.7\% CPU (30\% below target), 41MB memory (18\% below target), validated across multiple runs.
 
 \textbf{Objective 7: Comprehensive Testing} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Achieve >70\% overall coverage and >80\% for critical monitoring modules.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Overall coverage: 74\% (exceeds 70\% target)
-    \item Core monitoring modules: 83-89\% (exceeds 80\% target)
-    \item 142 total tests implemented (94 unit, 32 integration, 12 stability)
-    \item 100\% test pass rate demonstrating reliability
-    \item Continuous testing throughout development prevented bug accumulation
-\end{itemize}
-
-Coverage report (Table 7.2) shows quantitative evidence of comprehensive testing achievement.
+74\% overall coverage (exceeds 70\%), 83-89\% for core modules (exceeds 80\%), 142 tests with 100\% pass rate.
 
 \textbf{Objective 8: User-Friendly Documentation} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Provide clear documentation enabling users and developers to understand and extend the system.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item README with installation instructions, usage guide, keyboard shortcuts
-    \item BUILD\_PLAN.md documenting 16-step development methodology
-    \item Comprehensive docstrings for all classes and functions
-    \item Test documentation explaining testing strategy and results
-    \item This thesis report providing complete project documentation
-    \item Examples and troubleshooting guides for common scenarios
-\end{itemize}
-
-Documentation completeness enables future students to learn from and extend systop.
+Complete documentation: README, BUILD\_PLAN.md, docstrings, test reports, thesis with examples and troubleshooting.
 
 \textbf{Objective 9: Cross-Platform Foundation} --- \textbf{PARTIALLY ACHIEVED $\triangle$}
 
-\textit{Goal}: Design architecture facilitating future ports to other Unix-like systems.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Current implementation Linux-only as specified in requirements
-    \item Architecture uses psutil providing cross-platform abstractions
-    \item Platform-specific code isolated in monitoring layer
-    \item No direct /proc filesystem access; all system calls through psutil
-    \item Future macOS/BSD ports feasible with monitor layer modifications
-\end{itemize}
-
-While systop currently targets Linux only per requirements, architectural decisions facilitate future porting.
+Linux-only per requirements; psutil-based architecture facilitates future porting to macOS/BSD.
 
 \textbf{Objective 10: Professional Development Practices} --- \textbf{ACHIEVED $\checkmark$}
 
-\textit{Goal}: Apply industry-standard practices including version control, automated testing, and systematic planning.
-
-\textit{Evidence}:
-\begin{itemize}
-    \item Git version control with 200+ commits documenting all changes
-    \item Automated testing with pytest and 142 tests
-    \item Structured development plan (BUILD\_PLAN.md) followed systematically
-    \item Milestone tracking with status documents at completion points
-    \item PEP 8 style compliance and code review practices
-    \item Comprehensive documentation and CHANGELOG maintenance
-\end{itemize}
-
-The project demonstrates professional software engineering practices appropriate for CSE-3200.
+Git with 200+ commits, automated testing, systematic BUILD\_PLAN.md, PEP 8 compliance, comprehensive documentation.
 
 \subsection{Achievement Summary}
 
-Of ten stated objectives:
-\begin{itemize}
-    \item \textbf{9 Fully Achieved} (90\%): Objectives 1-8 and 10 met with documented evidence
-    \item \textbf{1 Partially Achieved} (10\%): Objective 9 foundation established, full cross-platform support deferred as expected
-\end{itemize}
-
-This 90\% complete achievement rate, with all critical objectives fully met, demonstrates project success in delivering planned functionality and demonstrating required software engineering competencies.
+9 of 10 objectives fully achieved (90\%), 1 partially achieved. All critical objectives met, demonstrating project success.
 
 \section{Final Remarks}
 \label{sec:final-remarks}
 
-As we conclude this comprehensive report on the systop project, we reflect on the significance, value, and broader implications of this work for software engineering education, the Linux ecosystem, and our professional development.
-
 \subsection{Project Significance}
 
-The systop project holds significance across multiple dimensions:
-
-\textbf{Educational Impact}: For CSE-3200 Software Development II, systop demonstrates mastery of software engineering principles through concrete application. The project showcases requirements analysis, architectural design, iterative development, comprehensive testing, and professional documentation---all key learning outcomes for the course. Future students can study systop's codebase, BUILD\_PLAN.md, and test suite as examples of systematic software development methodology.
-
-\textbf{Technical Contribution}: While numerous system monitoring tools exist, systop contributes unique value through its combination of modern Python development, accessible codebase, educational documentation, and comprehensive testing. The clean three-layer architecture provides a reference implementation for building complex TUI applications in Python, and the graceful degradation patterns demonstrate defensive programming practices applicable broadly.
-
-\textbf{Practical Utility}: Beyond academic value, systop delivers real functionality. The application provides Linux users with a capable monitoring tool combining visual appeal, comprehensive metrics, and efficiency. Installation via pip and minimal dependencies make systop accessible to developers, system administrators, and students monitoring their systems during development and troubleshooting.
-
-\textbf{Open Source Contribution}: By developing systop as open-source software, we contribute to the Linux ecosystem and demonstrate that individual developers can create valuable tools. The complete source code, tests, and documentation are available for community use, learning, and improvement.
+Systemtop delivers value across dimensions: \textbf{Educational} (demonstrates full software lifecycle for CSE-3200), \textbf{Technical} (reference implementation for Python TUI applications), \textbf{Practical} (functional monitoring tool for Linux users), \textbf{Open Source} (contributes to Linux ecosystem).
 
 \subsection{Value Delivered}
 
-The systop project delivers value to multiple stakeholders:
-
-\textbf{For Users}: 
-\begin{itemize}
-    \item Unified monitoring interface eliminating need for multiple tools
-    \item Visual historical graphs aiding pattern recognition
-    \item Interactive process management streamlining system administration
-    \item Low resource overhead enabling continuous operation
-    \item Graceful handling of diverse hardware configurations
-\end{itemize}
-
-\textbf{For Students and Educators}:
-\begin{itemize}
-    \item Complete example of software development lifecycle from requirements to deployment
-    \item Demonstration of testing strategies achieving high coverage
-    \item Reference architecture for complex Python applications
-    \item Documentation of development methodology and decision-making
-    \item Accessible codebase for learning system programming concepts
-\end{itemize}
-
-\textbf{For Developers}:
-\begin{itemize}
-    \item Reusable patterns (BaseMonitor, circular buffer) applicable to similar projects
-    \item Example of Textual framework usage for TUI development
-    \item Integration patterns for psutil and system libraries
-    \item Testing approaches for system-dependent applications
-\end{itemize}
-
-\textbf{For Personal Development}:
-\begin{itemize}
-    \item Mastery of advanced Python features and frameworks
-    \item Experience with complete project lifecycle management
-    \item Portfolio project demonstrating technical capabilities
-    \item Foundation for future open-source contributions
-    \item Confidence in tackling complex software challenges
-\end{itemize}
+\textbf{Users}: Unified interface, visual graphs, interactive management, low overhead, hardware flexibility.
+\textbf{Students/Educators}: Complete lifecycle example, testing strategies, reference architecture, methodology documentation.
+\textbf{Developers}: Reusable patterns, Textual/psutil integration examples, testing approaches.
+\textbf{Personal}: Python mastery, project management experience, portfolio demonstration.
 
 \subsection{Lessons Reinforced}
 
-The systop project reinforced fundamental software engineering lessons:
-
-\textbf{Planning Enables Success}: The 16-step BUILD\_PLAN.md was instrumental in project completion. Upfront planning with clear milestones, dependencies, and deliverables prevented scope creep and maintained steady progress. The adage "hours of planning save days of work" proved accurate.
-
-\textbf{Testing Provides Confidence}: Writing 142 tests continuously throughout development enabled fearless refactoring and confident releases. The 100\% pass rate was achievable because testing was integrated from the start rather than deferred to the end.
-
-\textbf{Architecture Matters}: The three-layer architecture with clear interfaces made the system maintainable and testable. Poor architecture decisions early in projects create technical debt that compounds over time; investing in good architecture upfront pays continuous dividends.
-
-\textbf{Documentation Is First-Class}: Treating documentation as essential rather than optional made the codebase understandable and the project transferable. Future developers (including future-self) benefit immensely from comprehensive documentation.
-
-\textbf{Quality Requires Discipline}: Achieving professional quality required consistent application of standards (PEP 8, docstrings, testing) throughout development. Quality is not added at the end; it must be built in continuously through disciplined practices.
+\textbf{Planning Enables Success}: BUILD\_PLAN.md prevented scope creep and maintained progress.
+\textbf{Testing Provides Confidence}: Continuous testing enabled fearless refactoring.
+\textbf{Architecture Matters}: Clean three-layer design made system maintainable and testable.
+\textbf{Documentation Is First-Class}: Comprehensive docs made codebase understandable and transferable.
+\textbf{Quality Requires Discipline}: Consistent standards application built quality continuously.
 
 \subsection{Broader Context}
 
-Systop fits within broader trends in software development:
-
-The renaissance in terminal user interfaces (btop, lazygit, k9s) reflects recognition that CLI tools can be both powerful and beautiful. Systop contributes to this movement while demonstrating Python's viability for sophisticated TUI applications.
-
-The project also exemplifies how modern development practices (type hints, testing frameworks, reactive programming) make complex applications more approachable. What once required systems programming expertise in C/C++ is now accessible to intermediate Python developers through frameworks like Textual and libraries like psutil.
-
-Finally, systop demonstrates individual developers' continued relevance in the open-source ecosystem. While large projects dominate headlines, focused applications developed systematically by individuals still provide value and learning opportunities.
+Systop contributes to the TUI renaissance (btop, lazygit, k9s), demonstrating Python's viability for sophisticated interfaces. Modern practices (type hints, testing frameworks) make complex applications accessible. Individual developers remain relevant in open-source ecosystem.
 
 \subsection{Personal Reflection}
 
-Completing systop has been immensely rewarding. The project pushed our technical boundaries, requiring mastery of unfamiliar frameworks, system programming concepts, and testing strategies. The frustrations encountered when debugging obscure Textual behaviors or hunting memory leaks were balanced by satisfactions of seeing components integrate smoothly and tests pass reliably.
-
-Most importantly, systop demonstrated that systematic application of software engineering principles enables individuals to complete ambitious projects within realistic timeframes. The 210 hours invested over 16 weeks, while substantial, produced a comprehensive, well-tested, documented application---proof that careful planning and disciplined execution overcome complexity.
+Systemtop pushed technical boundaries through unfamiliar frameworks and concepts. Most importantly, it demonstrated that systematic methodology enables ambitious projects within realistic timeframes---210 hours produced comprehensive, well-tested results.
 
 \subsection{Looking Forward}
 
-Systop represents both an end and a beginning. As a CSE-3200 project, it concludes satisfactorily, meeting objectives and demonstrating required competencies. Yet as an open-source tool and learning experience, it marks the beginning of continued growth.
-
-The technical skills acquired (Python proficiency, TUI development, system programming, testing strategies) transfer directly to professional software development. The project management experience (planning, time management, quality assurance) applies whether working individually or in teams. The confidence gained from completing a complex system independently provides foundation for tackling future challenges.
-
-Systop may evolve through future enhancements (configuration files, extended GPU support, remote monitoring) or serve as stable foundation for other projects. Regardless of its specific trajectory, the experience of building systop---the challenges overcome, skills developed, and lessons learned---will inform our software engineering careers for years to come.
+Systop concludes as successful CSE-3200 project while marking beginning of continued growth. Technical skills (Python, TUI, testing) and project management experience transfer to professional development. The experience provides foundation for tackling future challenges.
 
 \subsection{Closing Statement}
 
-The systop project successfully delivered a modern, comprehensive system monitoring tool for Linux that demonstrates software engineering best practices, provides practical utility, and contributes educational value. Through systematic planning, careful architecture, iterative development, comprehensive testing, and thorough documentation, we achieved 9 of 10 stated objectives fully and established foundation for the tenth.
+Systemtop successfully delivered a comprehensive monitoring tool demonstrating software engineering best practices. Through systematic methodology, we achieved 9 of 10 objectives, representing significant personal and technical growth.
 
-Beyond the functional deliverable, systop represents significant personal growth in technical skills, professional practices, and project management capabilities. The experience validates that with systematic methodology and disciplined execution, complex software systems are achievable by individual developers within realistic timeframes.
+The project validates that disciplined execution enables complex systems within realistic timeframes. Systop stands as evidence of engineering competency and commitment to quality, with lessons and skills transferable to future professional work.
 
-We are proud of what systop accomplishes and confident in the value it provides to users, students, and the Linux community. The project stands as evidence of software engineering competency, commitment to quality, and ability to see ambitious undertakings through to successful completion.
-
-As we submit this report and prepare for the next chapter in our software engineering journey, we carry forward the technical skills, professional practices, problem-solving approaches, and growth mindset that systop helped develop. The lessons learned and confidence gained will serve us well in future projects, professional roles, and continued contributions to the software development community.
-
-Thank you for the opportunity to undertake this challenging and rewarding project.
+Thank you for this challenging and rewarding opportunity.
 
 %=============================================================================
 % Placeholder for remaining chapters
