@@ -1,0 +1,169 @@
+% Reflection Essay on systop Project
+% CSE-3200 Software Development II
+% Academic Year: 2025-2026
+
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{mathptmx} % Times New Roman font
+\usepackage{hyperref}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black,
+}
+
+% Double spacing
+\doublespacing
+
+% Page numbering at bottom center
+\usepackage{fancyhdr}
+\pagestyle{plain}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\thepage}
+
+% Title information
+\title{\textbf{Reflective Essay on Self-Directed Learning:\\The systop System Monitoring Project}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vspace{-2cm}
+
+\begin{center}
+\textbf{Submitted By:}\\
+\vspace{0.3cm}
+Your Name\\
+Roll: XXXXXXXXXX\\
+Section: X\\
+Session: 2021-2022\\
+\vspace{0.5cm}
+Department of Computer Science and Engineering\\
+Rajshahi University of Engineering and Technology\\
+\vspace{1.5cm}
+
+\textbf{Submitted To:}\\
+\vspace{0.3cm}
+Farjana Parvin\\
+Assistant Professor, Department of CSE\\
+Rajshahi University of Engineering and Technology\\
+\vspace{1cm}
+
+CSE-3200: Software Development II\\
+\vspace{0.5cm}
+February 2026
+\end{center}
+
+\newpage
+
+% Table of Contents
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\setcounter{page}{1}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+The development of systop, a modern system monitoring Terminal User Interface application for Linux, presented an opportunity to extend beyond classroom instruction by independently learning and integrating the Textual framework—a sophisticated Python library for building rich terminal applications. This reflection critically examines my self-directed learning experience, analyzes the technical decisions that shaped the project, and demonstrates how this experience has prepared me for continuous professional growth as a software engineer.
+
+Over sixteen weeks, I designed and implemented a comprehensive monitoring tool that consolidates CPU, memory, disk, network, GPU, temperature sensors, and process management into a unified interface with real-time ASCII graphs and interactive controls. The project required mastering new technologies, navigating incomplete documentation, and making architectural decisions without instructor guidance. More importantly, it demanded that I develop systematic learning strategies that will serve me throughout my career as technologies continue to evolve.
+
+This essay addresses three interconnected aspects of my learning journey: the technical rationale for choosing Textual and how it compared to alternative approaches, the specific challenges I encountered during independent learning and my critical evaluation of various resources, and finally, how this experience has influenced my approach to future learning and the next steps for both the project and my professional development.
+
+\section*{Technical Decision and Justification}
+\addcontentsline{toc}{section}{Technical Decision and Justification}
+
+The most significant technical decision in this project was selecting the Textual framework as the foundation for systop's user interface. This choice fundamentally shaped the architecture, development approach, and final capabilities of the system. Understanding why Textual was appropriate requires examining the project's requirements, exploring the alternatives I considered, and analyzing the technical characteristics that made Textual the superior choice for this specific problem context.
+
+The core challenge facing systop was creating a terminal-based interface that could display multiple widgets simultaneously—CPU graphs, memory statistics, disk I/O rates, network bandwidth, process tables—while maintaining smooth real-time updates and responsive user interaction. Traditional command-line tools like top or htop either lack visual sophistication or struggle with complex layouts. I needed a framework that could handle asynchronous data collection, reactive UI updates, complex widget composition, and keyboard-driven interaction without the overhead and complexity of a graphical toolkit.
+
+My investigation focused on three primary alternatives: the traditional curses library, the urwid framework, and the Rich library. Each represented a different point in the spectrum between low-level control and high-level abstraction, and understanding their trade-offs clarified why Textual emerged as the optimal solution.
+
+The curses library, Python's standard interface to terminal control, offers maximum control over terminal manipulation. It provides direct access to terminal capabilities, efficient screen updates through double-buffering, and minimal dependencies. However, my experience attempting a proof-of-concept with curses revealed significant limitations for a project of systop's complexity. Managing window layouts requires manual calculation of coordinates and dimensions. Implementing widgets means writing custom rendering logic for every component. Handling asynchronous updates demands careful synchronization between data collection and screen refreshes. Most critically, curses provides no abstraction for common UI patterns like scrollable containers, bordered panels, or interactive tables. Building these abstractions myself would have consumed weeks of development time while introducing bugs in code peripheral to the core monitoring functionality. The low-level nature that makes curses powerful for simple applications becomes a liability for complex, multi-widget interfaces.
+
+The urwid framework represented a middle ground, offering higher-level abstractions than curses while maintaining mature stability. Urwid provides widget composition through container classes, built-in widgets for common UI elements, and event handling for user input. I built a minimal prototype using urwid to evaluate its suitability. While urwid's widget model proved serviceable, I encountered friction in several areas critical to systop's requirements. The framework's design predates Python's asyncio ecosystem, making asynchronous data collection awkward to integrate. Urwid's main loop expects synchronous callbacks, requiring either threading or periodic polling to update widgets with fresh data. Additionally, urwid's styling system relies on palette configuration that felt less intuitive than modern approaches. The documentation, while comprehensive, shows its age with examples using Python 2 idioms. Perhaps most significantly, urwid's community activity has declined in recent years, raising concerns about long-term support and compatibility with evolving terminal standards.
+
+The Rich library, developed by the same author who created Textual, initially seemed promising for its beautiful terminal rendering capabilities. Rich excels at generating styled text, tables, progress bars, and syntax highlighting with minimal code. I considered using Rich as the rendering engine while building custom UI logic around it. However, Rich is fundamentally a rendering library, not an application framework. It provides no built-in event loop, no state management for interactive applications, and no widget composition system. Rich is designed for rendering output and exiting, not for maintaining long-running interactive applications. While I ultimately used Rich internally within Textual for specific rendering tasks, it could not serve as the primary framework.
+
+Textual addressed every limitation I identified in the alternatives while introducing capabilities that enhanced systop beyond my initial vision. The framework's reactive programming model proved transformative for managing state in a multi-widget monitoring application. Textual allows you to declare reactive properties on widgets using Python descriptors, and the framework automatically propagates changes to dependent components. When a CPUMonitor collects fresh data, storing it in a reactive property triggers the widget's render method without manual notification logic. This declarative approach eliminated entire classes of bugs related to state synchronization that plagued my curses prototype.
+
+The CSS-like styling system provided unexpected leverage. Rather than hardcoding colors, dimensions, and layout properties in Python code, Textual separates presentation from logic using a CSS-inspired syntax. This separation meant I could experiment with different visual designs without touching widget logic, dramatically accelerating iteration. The styling system supports responsive layouts that adapt to terminal size, nested containers with flexible dimensions, and consistent theming across all widgets. My initial layout attempts with curses required dozens of lines of calculation; the equivalent Textual layout expressed in CSS took five lines and handled edge cases automatically.
+
+Textual's built-in widget library provided production-ready components that would have taken weeks to implement myself. The DataTable widget, used for systop's process list, supports sorting, scrolling, selection, and keyboard navigation out of the box. The ScrollableContainer handles overflow content with smooth scrolling and optional scrollbars. These widgets are not merely convenient shortcuts—they implement subtle details like smooth scroll physics, focus management, and accessibility features that distinguish professional applications from prototypes. By building on these foundations, I could focus development effort on domain-specific challenges like efficient data collection and accurate metric calculation rather than reinventing UI infrastructure.
+
+The framework's asynchronous architecture aligned perfectly with systop's needs. Textual is built on Python's asyncio, allowing natural integration of asynchronous data collection with UI updates. Each monitor runs its collection logic at appropriate intervals without blocking the interface. The GPUMonitor polls every five seconds, the CPUMonitor updates every second, and the ProcessMonitor refreshes every two seconds, all executing concurrently while the UI remains responsive to keyboard input. Implementing this coordination with curses would have required complex threading or coroutine management; with Textual, it emerged naturally from the framework's design.
+
+The technical comparison reveals why Textual was not merely preferable but essential for systop's requirements. Where curses demanded low-level terminal manipulation, Textual provided high-level composition. Where urwid showed its age with synchronous architecture, Textual embraced modern asynchronous patterns. Where Rich offered beautiful rendering without application structure, Textual delivered both. The framework's reactive model, CSS styling, built-in widgets, and async foundation transformed what would have been a semester-long struggle into a manageable sixteen-week project that exceeded my initial goals. This choice exemplified effective engineering decision-making: identifying requirements, evaluating alternatives on technical merit, and selecting the tool that best balanced power, productivity, and appropriateness for the problem domain.
+
+\section*{Self-Directed Learning Experience}
+\addcontentsline{toc}{section}{Self-Directed Learning Experience}
+
+Learning Textual independently presented challenges distinct from classroom instruction, requiring me to develop strategies for navigating incomplete information, debugging without instructor support, and evaluating resource quality. The process revealed both the difficulties inherent in learning emerging technologies and the critical importance of resource selection in determining learning efficiency.
+
+The most significant challenge was understanding Textual's reactive programming model and how it differed from traditional imperative UI programming. In typical UI frameworks, you explicitly update the display when data changes: collect data, format it, call a render function, and update the screen. Textual inverts this relationship through reactive properties. You declare properties with the reactive decorator, and changes to those properties automatically trigger re-renders. My initial attempts treated Textual like a traditional UI toolkit, manually calling update methods and wondering why widgets displayed stale data. The breakthrough came from studying the official documentation's section on reactivity, which provided a mental model: reactive properties are not variables but data streams that widgets observe. Once I reconceptualized my approach—thinking in terms of data flowing through the system rather than explicit update calls—the architecture that had seemed opaque became elegant. However, reaching that understanding required several days of confusion and multiple false starts.
+
+A related challenge involved understanding Textual's component lifecycle and when different methods execute. Widgets have initialization, mounting, composing, and rendering phases, each with specific responsibilities and timing guarantees. My early widgets mixed initialization logic into the compose method, leading to errors when data wasn't yet available. I struggled with widget references being None because I accessed them before mounting completed. The official documentation described each lifecycle method, but understanding how they interrelated required experimentation. I eventually created a minimal test widget that logged every lifecycle method with timestamps, revealing the execution order and helping me understand where to place initialization code versus ongoing update logic. This experimentation approach—building minimal reproducibles to understand framework behavior—became a crucial learning strategy.
+
+The CSS styling system presented a different kind of challenge. While syntactically similar to web CSS, Textual's CSS has different selectors, different properties, and different layout algorithms optimized for terminal constraints. My web development experience initially helped but then hindered as I expected CSS features that didn't exist or discovered that familiar properties behaved differently. For example, Textual's height property accepts integers representing character rows, not flexible units like percentages in all contexts. The margin and padding properties work differently for terminal widgets than for web elements. Learning required unlearning assumptions, carefully reading the styling documentation, and experimenting with examples until I developed intuition for the terminal-specific layout model.
+
+Debugging asynchronous code in a terminal application introduced additional complexity. When a widget failed to update, diagnosing whether the problem lay in data collection timing, reactive property propagation, or rendering logic required systematic investigation. Traditional debugging tools like breakpoints disrupted Textual's event loop, rendering the terminal unusable. I learned to use logging extensively, writing timestamped log messages to a file that I could tail in another terminal. This approach revealed race conditions where data collection completed after a widget had already rendered, timing issues where updates happened too frequently and overwhelmed the display, and subtle bugs in my reactive property declarations. The experience taught me the importance of observability in asynchronous systems—you cannot debug what you cannot observe, and observation mechanisms must be designed into the system rather than added during debugging.
+
+My evaluation of learning resources revealed stark differences in effectiveness. The official Textual documentation proved invaluable as the primary learning resource. Written and maintained by the framework's creator, it provides comprehensive API references, conceptual explanations of core systems like reactivity and layouts, and working code examples for common patterns. The documentation's quality reflects Textual's relative youth and active development—it is modern, up-to-date, and designed for the current version. I found myself consulting specific sections repeatedly: the widget lifecycle documentation when implementing new widgets, the CSS reference when adjusting layouts, and the reactive programming guide when debugging state issues. The documentation's effectiveness stemmed from three factors: accuracy maintained by the primary developer, completeness covering both concepts and APIs, and currency with no outdated examples.
+
+The Textual Discord server emerged as an unexpectedly valuable resource for learning. Unlike forums where responses might take days, the Discord community provided real-time assistance from both framework users and maintainers. When I struggled with a complex layout issue where nested containers refused to size correctly despite seemingly correct CSS, I posted my code to Discord. Within an hour, another developer identified that I had misunderstood how height calculations worked in nested containers, and a maintainer pointed me to a recently added documentation section explaining the behavior. This immediate feedback loop accelerated learning dramatically compared to documentation alone. The Discord community also exposed me to how other developers used the framework, revealing patterns and approaches that documentation alone would not have taught. However, Discord's effectiveness required careful question formulation—vague questions received vague answers, while specific questions with minimal reproducible examples received detailed responses.
+
+GitHub repositories containing example Textual applications provided mixed value. Several developers have published Textual-based tools, and I studied their code to understand architecture patterns and widget composition approaches. However, Textual's rapid development meant many examples used older versions with deprecated APIs or different patterns. An example might show one approach to handling keyboard input while the current version offered a simpler mechanism. I learned to check repositories' last update dates and Textual version requirements before studying their code. The most valuable repositories were those actively maintained alongside Textual's evolution, particularly the official examples repository maintained by the Textual team. These examples demonstrated current best practices and often introduced me to features I had not discovered in documentation.
+
+AI tools like ChatGPT and Claude emerged as surprisingly effective learning aids, particularly for understanding specific Textual concepts and debugging complex issues. When I encountered confusing documentation or struggled to understand why certain reactive properties were not updating as expected, I used these tools to request explanations in simpler terms or with alternative examples. The AI tools excelled at providing conceptual explanations that bridged gaps in my understanding—for instance, when I struggled with Textual's CSS layout algorithm, Claude explained the concept using analogies to flexbox that made the behavior intuitive. More importantly, AI tools proved invaluable for debugging. When faced with cryptic error messages or unexpected widget behavior, I could paste my code and error output to receive suggestions about potential causes. In one case, GPT identified that my widget was accessing child components before the compose method had completed, a timing issue I had struggled to diagnose. However, I learned that AI assistance required critical evaluation—responses occasionally suggested outdated patterns or misunderstood Textual-specific behavior, requiring verification against official documentation. The most effective approach combined AI tools for initial understanding and debugging direction with official documentation for authoritative confirmation. This experience demonstrated that modern AI assistants can accelerate learning when used judiciously as one resource among many rather than as sole authorities.
+
+Experimentation emerged as the most effective learning strategy, more powerful than passive reading of documentation. I created a separate experiments directory where I built minimal widgets testing specific concepts: a reactive property experiment to understand update propagation, a CSS layout experiment to understand container sizing, an async experiment to understand update timing. These focused experiments, each under fifty lines of code, let me isolate concepts and manipulate variables to understand cause and effect. When documentation described behavior, experimentation confirmed and deepened that understanding through direct observation. This hands-on approach proved more effective than reading because it engaged active learning—forming hypotheses, testing them, and refining mental models based on results.
+
+The learning experience taught me that mastering new technologies requires more than finding documentation. It demands critical evaluation of resources to identify the most effective ones, systematic experimentation to build understanding beyond surface concepts, engagement with communities that can provide guidance and feedback, and persistence through confusion toward conceptual breakthroughs. These meta-skills—learning how to learn new technologies efficiently—will prove more valuable throughout my career than knowledge of any specific framework.
+
+\section*{Reflection and Future Learning Plan}
+\addcontentsline{toc}{section}{Reflection and Future Learning Plan}
+
+The systop project has fundamentally influenced my approach to learning new technologies by demonstrating the value of structured methodology, the importance of building rather than merely reading, and the necessity of engaging with communities around emerging technologies. The experience has prepared me to continue growing as a software engineer in an industry where technological change remains constant and the ability to learn independently determines career trajectory.
+
+The most significant shift in my learning mindset concerns how I approach unfamiliar technologies. Before systop, I tended toward tutorial-driven learning—following step-by-step guides that demonstrated specific outcomes. This approach works well for mature technologies with extensive educational materials, but it fails for cutting-edge tools where comprehensive tutorials do not exist. Textual forced me to become comfortable with uncertainty, with reading documentation that assumed background knowledge I lacked, with examining source code to understand behavior that documentation did not fully explain. I learned that effective learning of new technologies requires tolerance for initial confusion while building understanding incrementally through multiple complementary approaches: reading documentation for conceptual frameworks, experimenting with minimal examples to confirm understanding, studying existing code for architecture patterns, and engaging communities for guidance on unclear concepts.
+
+The project also reinforced that learning happens through building rather than passive consumption. Reading Textual documentation gave me theoretical knowledge, but implementing systop's seven widgets, debugging their reactive properties, and optimizing their layouts generated practical understanding. The difference mirrors knowing about swimming versus being able to swim—only active practice develops real capability. This realization will shape my future learning strategy: when encountering new technologies, I will prioritize building small projects that exercise core concepts rather than consuming tutorials passively. The hands-on approach may feel slower initially but produces deeper, more durable understanding.
+
+Looking toward the future, the systop project itself offers clear directions for continued growth and learning through extension. The current implementation achieved its objectives but revealed opportunities for enhancement that would require learning additional technologies and techniques. These extensions represent not just feature additions but learning opportunities that would deepen my understanding of software architecture, distributed systems, and performance optimization.
+
+The most impactful enhancement would be developing a plugin architecture that allows third-party extensions to add monitoring capabilities without modifying core code. This would require learning several advanced software engineering concepts: designing stable APIs that isolate plugins from internal implementation changes, implementing dynamic module loading in Python to discover and load plugins at runtime, creating a security model that prevents malicious plugins from compromising system stability, and developing a plugin lifecycle system that handles initialization, updates, and cleanup reliably. A plugin system would transform systop from a fixed-function tool into an extensible platform, but more importantly, it would teach me the architectural discipline required for frameworks that others will build upon.
+
+Remote monitoring capabilities represent another significant evolution that would require learning distributed systems concepts. Currently, systop monitors only the local machine, but many use cases require monitoring multiple systems from a central location. Implementing this would demand learning about network protocol design for efficient data transmission, data serialization formats that balance size and parse speed, authentication and encryption for secure remote access, and strategies for handling network latency and disconnection gracefully. The experience would also introduce me to the challenges of distributed state management—how to keep multiple clients synchronized with changing server state efficiently. These concepts extend far beyond systop into the broader domain of distributed systems engineering.
+
+Performance optimization at scale represents a third learning direction. While systop performs efficiently for its current feature set, adding capabilities like longer-term historical data storage, more frequent sampling intervals, or monitoring of container workloads would stress the current architecture. Addressing these challenges would require learning profiling techniques to identify bottlenecks, database integration for efficient time-series storage, and potentially exploring lower-level Python optimization through Cython or interfacing with Rust for performance-critical components. This path would teach the analysis and optimization skills necessary for building systems that perform well under load.
+
+The project has also clarified the importance of systematic learning strategies when approaching complex technologies independently. I plan to apply several specific approaches that proved effective during systop development. First, I will allocate explicit time for experimental learning separate from production development—creating small test projects to understand new concepts before applying them to real systems. Second, I will engage with communities around technologies I am learning, recognizing that other practitioners' experiences and guidance accelerate learning dramatically. Third, I will maintain learning documentation that captures not just what I learned but how I overcame specific challenges, creating personal knowledge resources for future reference. Finally, I will embrace the discomfort of initial confusion as an expected phase of learning rather than a sign of inadequacy, understanding that breakthrough comprehension often follows periods of struggle.
+
+Beyond the technical growth, this experience has shaped my professional identity as a software engineer committed to continuous learning. The industry's rapid evolution means that specific technologies learned today may be superseded tomorrow, but the ability to learn efficiently remains permanently valuable. By successfully mastering Textual and delivering systop, I have demonstrated to myself that I can independently acquire new capabilities as professional demands require. This confidence in my learning ability matters more than any particular technical skill.
+
+The systop project will continue to serve as a vehicle for professional growth as I extend its capabilities, refactor its architecture, and explore the advanced concepts that extensions require. Each enhancement represents an opportunity to learn new technologies and techniques in a context I understand deeply, where I can focus on new concepts rather than fighting an unfamiliar codebase. The project's value extends beyond its current functionality to its role as a learning platform that will support my development for years to come.
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+The systop project represents a successful exercise in self-directed learning that required independently mastering the Textual framework and applying it to build a comprehensive system monitoring tool. The technical decision to use Textual over alternatives like curses, urwid, or Rich was justified by the framework's reactive programming model, CSS-like styling system, rich widget library, and asynchronous architecture that aligned with systop's requirements for multi-widget coordination and real-time updates. The learning process presented challenges including understanding reactive programming concepts, navigating framework lifecycle complexity, and debugging asynchronous behavior, which I addressed through systematic experimentation, community engagement, and critical evaluation of resources. Official documentation and the Discord community proved highly effective, while traditional resources like Stack Overflow showed limitations for emerging technologies.
+
+This experience has fundamentally shaped my approach to continuous learning by demonstrating the value of building over passive consumption, the importance of tolerating initial confusion while working toward understanding, and the effectiveness of engaging with communities around new technologies. The project's future evolution through plugin architecture, remote monitoring, and performance optimization offers clear directions for continued growth, each requiring new technical skills that will deepen my software engineering capabilities. More broadly, successfully learning Textual and delivering systop has built confidence in my ability to independently acquire new technologies as professional demands evolve, preparing me for a career defined by continuous adaptation to technological change.
+
+The project validates that systematic methodology, active learning through building, and engagement with expert communities enable ambitious independent learning within realistic timeframes. The skills and mindsets developed through this experience—learning how to learn efficiently—will serve me throughout a software engineering career where the ability to master new technologies independently determines professional success.
+
+\end{document}
